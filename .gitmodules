@@ -1,0 +1,3 @@
+[submodule "api-pool"]
+	path = api-pool
+	url = git@github.com:ciphrpool/api-pool.git

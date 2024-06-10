@@ -55,3 +55,9 @@
 .bar-list li:last-child::after {
   content: ""; /* Remove separator after last item */
 }
+
+div:has(>.editor-line-readonly) {
+  background-color: #00000005;
+  cursor: not-allowed;
+  z-index: 999; /* Moves this div above the code line making it not selectable */
+}
