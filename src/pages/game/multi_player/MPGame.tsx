@@ -1,7 +1,5 @@
-
 function MPGame() {
-    return <>
-    </>
+	return <></>;
 }
 
 export default MPGame;
