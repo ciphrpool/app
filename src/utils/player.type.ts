@@ -20,4 +20,19 @@ export const C2 = Symbol('C2');
 export const C3 = Symbol('C3');
 export const C4 = Symbol('C4');
 export type Te_Cursor = typeof C1 | typeof C2 | typeof C3 | typeof C4 ;
+
+export function cursor_from(id:number) : Te_Cursor | undefined{
+    switch (id) {
+        case 1:
+            return C1;
+        case 2:
+            return C2;
+        case 3:
+            return C3;
+        case 4:
+            return C4;
+        default:
+            return undefined;
+    }
+}
   

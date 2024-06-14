@@ -516,101 +516,695 @@ export namespace ciphel_io {
         public static getTypeUrl(typeUrlPrefix?: string): string;
     }
 
-    /** Properties of a StdInRequest. */
-    interface IStdInRequest {
+    /** Properties of a CiphelRequest. */
+    interface ICiphelRequest {
 
-        /** StdInRequest flag */
-        flag?: (boolean|null);
+        /** CiphelRequest input */
+        input?: (ciphel_io.CiphelRequest.IInput|null);
+
+        /** CiphelRequest commited */
+        commited?: (ciphel_io.CiphelRequest.ICommited|null);
+
+        /** CiphelRequest reverted */
+        reverted?: (ciphel_io.CiphelRequest.IReverted|null);
+
+        /** CiphelRequest pushed */
+        pushed?: (ciphel_io.CiphelRequest.IPushed|null);
+
+        /** CiphelRequest spawnThread */
+        spawnThread?: (ciphel_io.CiphelRequest.ISpawn|null);
+
+        /** CiphelRequest closeThread */
+        closeThread?: (ciphel_io.CiphelRequest.IClose|null);
     }
 
-    /** Represents a StdInRequest. */
-    class StdInRequest implements IStdInRequest {
+    /** Represents a CiphelRequest. */
+    class CiphelRequest implements ICiphelRequest {
 
         /**
-         * Constructs a new StdInRequest.
+         * Constructs a new CiphelRequest.
          * @param [properties] Properties to set
          */
-        constructor(properties?: ciphel_io.IStdInRequest);
+        constructor(properties?: ciphel_io.ICiphelRequest);
 
-        /** StdInRequest flag. */
-        public flag: boolean;
+        /** CiphelRequest input. */
+        public input?: (ciphel_io.CiphelRequest.IInput|null);
+
+        /** CiphelRequest commited. */
+        public commited?: (ciphel_io.CiphelRequest.ICommited|null);
+
+        /** CiphelRequest reverted. */
+        public reverted?: (ciphel_io.CiphelRequest.IReverted|null);
+
+        /** CiphelRequest pushed. */
+        public pushed?: (ciphel_io.CiphelRequest.IPushed|null);
+
+        /** CiphelRequest spawnThread. */
+        public spawnThread?: (ciphel_io.CiphelRequest.ISpawn|null);
+
+        /** CiphelRequest closeThread. */
+        public closeThread?: (ciphel_io.CiphelRequest.IClose|null);
+
+        /** CiphelRequest requestType. */
+        public requestType?: ("input"|"commited"|"reverted"|"pushed"|"spawnThread"|"closeThread");
 
         /**
-         * Creates a new StdInRequest instance using the specified properties.
+         * Creates a new CiphelRequest instance using the specified properties.
          * @param [properties] Properties to set
-         * @returns StdInRequest instance
+         * @returns CiphelRequest instance
          */
-        public static create(properties?: ciphel_io.IStdInRequest): ciphel_io.StdInRequest;
+        public static create(properties?: ciphel_io.ICiphelRequest): ciphel_io.CiphelRequest;
 
         /**
-         * Encodes the specified StdInRequest message. Does not implicitly {@link ciphel_io.StdInRequest.verify|verify} messages.
-         * @param message StdInRequest message or plain object to encode
+         * Encodes the specified CiphelRequest message. Does not implicitly {@link ciphel_io.CiphelRequest.verify|verify} messages.
+         * @param message CiphelRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encode(message: ciphel_io.IStdInRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encode(message: ciphel_io.ICiphelRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Encodes the specified StdInRequest message, length delimited. Does not implicitly {@link ciphel_io.StdInRequest.verify|verify} messages.
-         * @param message StdInRequest message or plain object to encode
+         * Encodes the specified CiphelRequest message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.verify|verify} messages.
+         * @param message CiphelRequest message or plain object to encode
          * @param [writer] Writer to encode to
          * @returns Writer
          */
-        public static encodeDelimited(message: ciphel_io.IStdInRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+        public static encodeDelimited(message: ciphel_io.ICiphelRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
         /**
-         * Decodes a StdInRequest message from the specified reader or buffer.
+         * Decodes a CiphelRequest message from the specified reader or buffer.
          * @param reader Reader or buffer to decode from
          * @param [length] Message length if known beforehand
-         * @returns StdInRequest
+         * @returns CiphelRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.StdInRequest;
+        public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest;
 
         /**
-         * Decodes a StdInRequest message from the specified reader or buffer, length delimited.
+         * Decodes a CiphelRequest message from the specified reader or buffer, length delimited.
          * @param reader Reader or buffer to decode from
-         * @returns StdInRequest
+         * @returns CiphelRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.StdInRequest;
+        public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest;
 
         /**
-         * Verifies a StdInRequest message.
+         * Verifies a CiphelRequest message.
          * @param message Plain object to verify
          * @returns `null` if valid, otherwise the reason why it is not
          */
         public static verify(message: { [k: string]: any }): (string|null);
 
         /**
-         * Creates a StdInRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a CiphelRequest message from a plain object. Also converts values to their respective internal types.
          * @param object Plain object
-         * @returns StdInRequest
+         * @returns CiphelRequest
          */
-        public static fromObject(object: { [k: string]: any }): ciphel_io.StdInRequest;
+        public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest;
 
         /**
-         * Creates a plain object from a StdInRequest message. Also converts values to other types if specified.
-         * @param message StdInRequest
+         * Creates a plain object from a CiphelRequest message. Also converts values to other types if specified.
+         * @param message CiphelRequest
          * @param [options] Conversion options
          * @returns Plain object
          */
-        public static toObject(message: ciphel_io.StdInRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+        public static toObject(message: ciphel_io.CiphelRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
         /**
-         * Converts this StdInRequest to JSON.
+         * Converts this CiphelRequest to JSON.
          * @returns JSON object
          */
         public toJSON(): { [k: string]: any };
 
         /**
-         * Gets the default type url for StdInRequest
+         * Gets the default type url for CiphelRequest
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */
         public static getTypeUrl(typeUrlPrefix?: string): string;
+    }
+
+    namespace CiphelRequest {
+
+        /** Properties of an Input. */
+        interface IInput {
+        }
+
+        /** Represents an Input. */
+        class Input implements IInput {
+
+            /**
+             * Constructs a new Input.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: ciphel_io.CiphelRequest.IInput);
+
+            /**
+             * Creates a new Input instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Input instance
+             */
+            public static create(properties?: ciphel_io.CiphelRequest.IInput): ciphel_io.CiphelRequest.Input;
+
+            /**
+             * Encodes the specified Input message. Does not implicitly {@link ciphel_io.CiphelRequest.Input.verify|verify} messages.
+             * @param message Input message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: ciphel_io.CiphelRequest.IInput, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Input message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Input.verify|verify} messages.
+             * @param message Input message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: ciphel_io.CiphelRequest.IInput, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an Input message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Input
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest.Input;
+
+            /**
+             * Decodes an Input message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Input
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest.Input;
+
+            /**
+             * Verifies an Input message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an Input message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Input
+             */
+            public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest.Input;
+
+            /**
+             * Creates a plain object from an Input message. Also converts values to other types if specified.
+             * @param message Input
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: ciphel_io.CiphelRequest.Input, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Input to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Input
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a Commited. */
+        interface ICommited {
+        }
+
+        /** Represents a Commited. */
+        class Commited implements ICommited {
+
+            /**
+             * Constructs a new Commited.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: ciphel_io.CiphelRequest.ICommited);
+
+            /**
+             * Creates a new Commited instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Commited instance
+             */
+            public static create(properties?: ciphel_io.CiphelRequest.ICommited): ciphel_io.CiphelRequest.Commited;
+
+            /**
+             * Encodes the specified Commited message. Does not implicitly {@link ciphel_io.CiphelRequest.Commited.verify|verify} messages.
+             * @param message Commited message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: ciphel_io.CiphelRequest.ICommited, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Commited message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Commited.verify|verify} messages.
+             * @param message Commited message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: ciphel_io.CiphelRequest.ICommited, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Commited message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Commited
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest.Commited;
+
+            /**
+             * Decodes a Commited message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Commited
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest.Commited;
+
+            /**
+             * Verifies a Commited message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Commited message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Commited
+             */
+            public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest.Commited;
+
+            /**
+             * Creates a plain object from a Commited message. Also converts values to other types if specified.
+             * @param message Commited
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: ciphel_io.CiphelRequest.Commited, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Commited to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Commited
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a Reverted. */
+        interface IReverted {
+        }
+
+        /** Represents a Reverted. */
+        class Reverted implements IReverted {
+
+            /**
+             * Constructs a new Reverted.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: ciphel_io.CiphelRequest.IReverted);
+
+            /**
+             * Creates a new Reverted instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Reverted instance
+             */
+            public static create(properties?: ciphel_io.CiphelRequest.IReverted): ciphel_io.CiphelRequest.Reverted;
+
+            /**
+             * Encodes the specified Reverted message. Does not implicitly {@link ciphel_io.CiphelRequest.Reverted.verify|verify} messages.
+             * @param message Reverted message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: ciphel_io.CiphelRequest.IReverted, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Reverted message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Reverted.verify|verify} messages.
+             * @param message Reverted message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: ciphel_io.CiphelRequest.IReverted, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Reverted message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Reverted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest.Reverted;
+
+            /**
+             * Decodes a Reverted message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Reverted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest.Reverted;
+
+            /**
+             * Verifies a Reverted message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Reverted message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Reverted
+             */
+            public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest.Reverted;
+
+            /**
+             * Creates a plain object from a Reverted message. Also converts values to other types if specified.
+             * @param message Reverted
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: ciphel_io.CiphelRequest.Reverted, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Reverted to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Reverted
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a Pushed. */
+        interface IPushed {
+        }
+
+        /** Represents a Pushed. */
+        class Pushed implements IPushed {
+
+            /**
+             * Constructs a new Pushed.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: ciphel_io.CiphelRequest.IPushed);
+
+            /**
+             * Creates a new Pushed instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Pushed instance
+             */
+            public static create(properties?: ciphel_io.CiphelRequest.IPushed): ciphel_io.CiphelRequest.Pushed;
+
+            /**
+             * Encodes the specified Pushed message. Does not implicitly {@link ciphel_io.CiphelRequest.Pushed.verify|verify} messages.
+             * @param message Pushed message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: ciphel_io.CiphelRequest.IPushed, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Pushed message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Pushed.verify|verify} messages.
+             * @param message Pushed message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: ciphel_io.CiphelRequest.IPushed, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Pushed message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Pushed
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest.Pushed;
+
+            /**
+             * Decodes a Pushed message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Pushed
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest.Pushed;
+
+            /**
+             * Verifies a Pushed message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Pushed message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Pushed
+             */
+            public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest.Pushed;
+
+            /**
+             * Creates a plain object from a Pushed message. Also converts values to other types if specified.
+             * @param message Pushed
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: ciphel_io.CiphelRequest.Pushed, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Pushed to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Pushed
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a Spawn. */
+        interface ISpawn {
+
+            /** Spawn cursor */
+            cursor?: (number|null);
+        }
+
+        /** Represents a Spawn. */
+        class Spawn implements ISpawn {
+
+            /**
+             * Constructs a new Spawn.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: ciphel_io.CiphelRequest.ISpawn);
+
+            /** Spawn cursor. */
+            public cursor: number;
+
+            /**
+             * Creates a new Spawn instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Spawn instance
+             */
+            public static create(properties?: ciphel_io.CiphelRequest.ISpawn): ciphel_io.CiphelRequest.Spawn;
+
+            /**
+             * Encodes the specified Spawn message. Does not implicitly {@link ciphel_io.CiphelRequest.Spawn.verify|verify} messages.
+             * @param message Spawn message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: ciphel_io.CiphelRequest.ISpawn, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Spawn message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Spawn.verify|verify} messages.
+             * @param message Spawn message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: ciphel_io.CiphelRequest.ISpawn, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Spawn message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Spawn
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest.Spawn;
+
+            /**
+             * Decodes a Spawn message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Spawn
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest.Spawn;
+
+            /**
+             * Verifies a Spawn message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Spawn message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Spawn
+             */
+            public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest.Spawn;
+
+            /**
+             * Creates a plain object from a Spawn message. Also converts values to other types if specified.
+             * @param message Spawn
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: ciphel_io.CiphelRequest.Spawn, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Spawn to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Spawn
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a Close. */
+        interface IClose {
+
+            /** Close cursor */
+            cursor?: (number|null);
+        }
+
+        /** Represents a Close. */
+        class Close implements IClose {
+
+            /**
+             * Constructs a new Close.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: ciphel_io.CiphelRequest.IClose);
+
+            /** Close cursor. */
+            public cursor: number;
+
+            /**
+             * Creates a new Close instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Close instance
+             */
+            public static create(properties?: ciphel_io.CiphelRequest.IClose): ciphel_io.CiphelRequest.Close;
+
+            /**
+             * Encodes the specified Close message. Does not implicitly {@link ciphel_io.CiphelRequest.Close.verify|verify} messages.
+             * @param message Close message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: ciphel_io.CiphelRequest.IClose, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Close message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Close.verify|verify} messages.
+             * @param message Close message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: ciphel_io.CiphelRequest.IClose, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Close message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Close
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): ciphel_io.CiphelRequest.Close;
+
+            /**
+             * Decodes a Close message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Close
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): ciphel_io.CiphelRequest.Close;
+
+            /**
+             * Verifies a Close message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Close message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Close
+             */
+            public static fromObject(object: { [k: string]: any }): ciphel_io.CiphelRequest.Close;
+
+            /**
+             * Creates a plain object from a Close message. Also converts values to other types if specified.
+             * @param message Close
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: ciphel_io.CiphelRequest.Close, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Close to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Close
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
     }
 
     /** Properties of a StdIO. */
@@ -625,8 +1219,8 @@ export namespace ciphel_io {
         /** StdIO in */
         "in"?: (ciphel_io.IStdIn|null);
 
-        /** StdIO inReq */
-        inReq?: (ciphel_io.IStdInRequest|null);
+        /** StdIO request */
+        request?: (ciphel_io.ICiphelRequest|null);
 
         /** StdIO command */
         command?: (ciphel_io.ICommand|null);
@@ -650,14 +1244,14 @@ export namespace ciphel_io {
         /** StdIO in. */
         public in?: (ciphel_io.IStdIn|null);
 
-        /** StdIO inReq. */
-        public inReq?: (ciphel_io.IStdInRequest|null);
+        /** StdIO request. */
+        public request?: (ciphel_io.ICiphelRequest|null);
 
         /** StdIO command. */
         public command?: (ciphel_io.ICommand|null);
 
         /** StdIO stdType. */
-        public stdType?: ("out"|"err"|"in"|"inReq"|"command");
+        public stdType?: ("out"|"err"|"in"|"request"|"command");
 
         /**
          * Creates a new StdIO instance using the specified properties.

@@ -1183,24 +1183,29 @@ export const ciphel_io = $root.ciphel_io = (() => {
         return StdIn;
     })();
 
-    ciphel_io.StdInRequest = (function() {
+    ciphel_io.CiphelRequest = (function() {
 
         /**
-         * Properties of a StdInRequest.
+         * Properties of a CiphelRequest.
          * @memberof ciphel_io
-         * @interface IStdInRequest
-         * @property {boolean|null} [flag] StdInRequest flag
+         * @interface ICiphelRequest
+         * @property {ciphel_io.CiphelRequest.IInput|null} [input] CiphelRequest input
+         * @property {ciphel_io.CiphelRequest.ICommited|null} [commited] CiphelRequest commited
+         * @property {ciphel_io.CiphelRequest.IReverted|null} [reverted] CiphelRequest reverted
+         * @property {ciphel_io.CiphelRequest.IPushed|null} [pushed] CiphelRequest pushed
+         * @property {ciphel_io.CiphelRequest.ISpawn|null} [spawnThread] CiphelRequest spawnThread
+         * @property {ciphel_io.CiphelRequest.IClose|null} [closeThread] CiphelRequest closeThread
          */
 
         /**
-         * Constructs a new StdInRequest.
+         * Constructs a new CiphelRequest.
          * @memberof ciphel_io
-         * @classdesc Represents a StdInRequest.
-         * @implements IStdInRequest
+         * @classdesc Represents a CiphelRequest.
+         * @implements ICiphelRequest
          * @constructor
-         * @param {ciphel_io.IStdInRequest=} [properties] Properties to set
+         * @param {ciphel_io.ICiphelRequest=} [properties] Properties to set
          */
-        function StdInRequest(properties) {
+        function CiphelRequest(properties) {
             if (properties)
                 for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                     if (properties[keys[i]] != null)
@@ -1208,75 +1213,159 @@ export const ciphel_io = $root.ciphel_io = (() => {
         }
 
         /**
-         * StdInRequest flag.
-         * @member {boolean} flag
-         * @memberof ciphel_io.StdInRequest
+         * CiphelRequest input.
+         * @member {ciphel_io.CiphelRequest.IInput|null|undefined} input
+         * @memberof ciphel_io.CiphelRequest
          * @instance
          */
-        StdInRequest.prototype.flag = false;
+        CiphelRequest.prototype.input = null;
 
         /**
-         * Creates a new StdInRequest instance using the specified properties.
-         * @function create
-         * @memberof ciphel_io.StdInRequest
-         * @static
-         * @param {ciphel_io.IStdInRequest=} [properties] Properties to set
-         * @returns {ciphel_io.StdInRequest} StdInRequest instance
+         * CiphelRequest commited.
+         * @member {ciphel_io.CiphelRequest.ICommited|null|undefined} commited
+         * @memberof ciphel_io.CiphelRequest
+         * @instance
          */
-        StdInRequest.create = function create(properties) {
-            return new StdInRequest(properties);
+        CiphelRequest.prototype.commited = null;
+
+        /**
+         * CiphelRequest reverted.
+         * @member {ciphel_io.CiphelRequest.IReverted|null|undefined} reverted
+         * @memberof ciphel_io.CiphelRequest
+         * @instance
+         */
+        CiphelRequest.prototype.reverted = null;
+
+        /**
+         * CiphelRequest pushed.
+         * @member {ciphel_io.CiphelRequest.IPushed|null|undefined} pushed
+         * @memberof ciphel_io.CiphelRequest
+         * @instance
+         */
+        CiphelRequest.prototype.pushed = null;
+
+        /**
+         * CiphelRequest spawnThread.
+         * @member {ciphel_io.CiphelRequest.ISpawn|null|undefined} spawnThread
+         * @memberof ciphel_io.CiphelRequest
+         * @instance
+         */
+        CiphelRequest.prototype.spawnThread = null;
+
+        /**
+         * CiphelRequest closeThread.
+         * @member {ciphel_io.CiphelRequest.IClose|null|undefined} closeThread
+         * @memberof ciphel_io.CiphelRequest
+         * @instance
+         */
+        CiphelRequest.prototype.closeThread = null;
+
+        // OneOf field names bound to virtual getters and setters
+        let $oneOfFields;
+
+        /**
+         * CiphelRequest requestType.
+         * @member {"input"|"commited"|"reverted"|"pushed"|"spawnThread"|"closeThread"|undefined} requestType
+         * @memberof ciphel_io.CiphelRequest
+         * @instance
+         */
+        Object.defineProperty(CiphelRequest.prototype, "requestType", {
+            get: $util.oneOfGetter($oneOfFields = ["input", "commited", "reverted", "pushed", "spawnThread", "closeThread"]),
+            set: $util.oneOfSetter($oneOfFields)
+        });
+
+        /**
+         * Creates a new CiphelRequest instance using the specified properties.
+         * @function create
+         * @memberof ciphel_io.CiphelRequest
+         * @static
+         * @param {ciphel_io.ICiphelRequest=} [properties] Properties to set
+         * @returns {ciphel_io.CiphelRequest} CiphelRequest instance
+         */
+        CiphelRequest.create = function create(properties) {
+            return new CiphelRequest(properties);
         };
 
         /**
-         * Encodes the specified StdInRequest message. Does not implicitly {@link ciphel_io.StdInRequest.verify|verify} messages.
+         * Encodes the specified CiphelRequest message. Does not implicitly {@link ciphel_io.CiphelRequest.verify|verify} messages.
          * @function encode
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
-         * @param {ciphel_io.IStdInRequest} message StdInRequest message or plain object to encode
+         * @param {ciphel_io.ICiphelRequest} message CiphelRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        StdInRequest.encode = function encode(message, writer) {
+        CiphelRequest.encode = function encode(message, writer) {
             if (!writer)
                 writer = $Writer.create();
-            if (message.flag != null && Object.hasOwnProperty.call(message, "flag"))
-                writer.uint32(/* id 1, wireType 0 =*/8).bool(message.flag);
+            if (message.input != null && Object.hasOwnProperty.call(message, "input"))
+                $root.ciphel_io.CiphelRequest.Input.encode(message.input, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.commited != null && Object.hasOwnProperty.call(message, "commited"))
+                $root.ciphel_io.CiphelRequest.Commited.encode(message.commited, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
+            if (message.reverted != null && Object.hasOwnProperty.call(message, "reverted"))
+                $root.ciphel_io.CiphelRequest.Reverted.encode(message.reverted, writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
+            if (message.pushed != null && Object.hasOwnProperty.call(message, "pushed"))
+                $root.ciphel_io.CiphelRequest.Pushed.encode(message.pushed, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.spawnThread != null && Object.hasOwnProperty.call(message, "spawnThread"))
+                $root.ciphel_io.CiphelRequest.Spawn.encode(message.spawnThread, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+            if (message.closeThread != null && Object.hasOwnProperty.call(message, "closeThread"))
+                $root.ciphel_io.CiphelRequest.Close.encode(message.closeThread, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
             return writer;
         };
 
         /**
-         * Encodes the specified StdInRequest message, length delimited. Does not implicitly {@link ciphel_io.StdInRequest.verify|verify} messages.
+         * Encodes the specified CiphelRequest message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.verify|verify} messages.
          * @function encodeDelimited
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
-         * @param {ciphel_io.IStdInRequest} message StdInRequest message or plain object to encode
+         * @param {ciphel_io.ICiphelRequest} message CiphelRequest message or plain object to encode
          * @param {$protobuf.Writer} [writer] Writer to encode to
          * @returns {$protobuf.Writer} Writer
          */
-        StdInRequest.encodeDelimited = function encodeDelimited(message, writer) {
+        CiphelRequest.encodeDelimited = function encodeDelimited(message, writer) {
             return this.encode(message, writer).ldelim();
         };
 
         /**
-         * Decodes a StdInRequest message from the specified reader or buffer.
+         * Decodes a CiphelRequest message from the specified reader or buffer.
          * @function decode
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
          * @param {number} [length] Message length if known beforehand
-         * @returns {ciphel_io.StdInRequest} StdInRequest
+         * @returns {ciphel_io.CiphelRequest} CiphelRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        StdInRequest.decode = function decode(reader, length) {
+        CiphelRequest.decode = function decode(reader, length) {
             if (!(reader instanceof $Reader))
                 reader = $Reader.create(reader);
-            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.StdInRequest();
+            let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest();
             while (reader.pos < end) {
                 let tag = reader.uint32();
                 switch (tag >>> 3) {
                 case 1: {
-                        message.flag = reader.bool();
+                        message.input = $root.ciphel_io.CiphelRequest.Input.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 2: {
+                        message.commited = $root.ciphel_io.CiphelRequest.Commited.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 3: {
+                        message.reverted = $root.ciphel_io.CiphelRequest.Reverted.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 4: {
+                        message.pushed = $root.ciphel_io.CiphelRequest.Pushed.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 5: {
+                        message.spawnThread = $root.ciphel_io.CiphelRequest.Spawn.decode(reader, reader.uint32());
+                        break;
+                    }
+                case 6: {
+                        message.closeThread = $root.ciphel_io.CiphelRequest.Close.decode(reader, reader.uint32());
                         break;
                     }
                 default:
@@ -1288,102 +1377,1318 @@ export const ciphel_io = $root.ciphel_io = (() => {
         };
 
         /**
-         * Decodes a StdInRequest message from the specified reader or buffer, length delimited.
+         * Decodes a CiphelRequest message from the specified reader or buffer, length delimited.
          * @function decodeDelimited
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
          * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-         * @returns {ciphel_io.StdInRequest} StdInRequest
+         * @returns {ciphel_io.CiphelRequest} CiphelRequest
          * @throws {Error} If the payload is not a reader or valid buffer
          * @throws {$protobuf.util.ProtocolError} If required fields are missing
          */
-        StdInRequest.decodeDelimited = function decodeDelimited(reader) {
+        CiphelRequest.decodeDelimited = function decodeDelimited(reader) {
             if (!(reader instanceof $Reader))
                 reader = new $Reader(reader);
             return this.decode(reader, reader.uint32());
         };
 
         /**
-         * Verifies a StdInRequest message.
+         * Verifies a CiphelRequest message.
          * @function verify
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
          * @param {Object.<string,*>} message Plain object to verify
          * @returns {string|null} `null` if valid, otherwise the reason why it is not
          */
-        StdInRequest.verify = function verify(message) {
+        CiphelRequest.verify = function verify(message) {
             if (typeof message !== "object" || message === null)
                 return "object expected";
-            if (message.flag != null && message.hasOwnProperty("flag"))
-                if (typeof message.flag !== "boolean")
-                    return "flag: boolean expected";
+            let properties = {};
+            if (message.input != null && message.hasOwnProperty("input")) {
+                properties.requestType = 1;
+                {
+                    let error = $root.ciphel_io.CiphelRequest.Input.verify(message.input);
+                    if (error)
+                        return "input." + error;
+                }
+            }
+            if (message.commited != null && message.hasOwnProperty("commited")) {
+                if (properties.requestType === 1)
+                    return "requestType: multiple values";
+                properties.requestType = 1;
+                {
+                    let error = $root.ciphel_io.CiphelRequest.Commited.verify(message.commited);
+                    if (error)
+                        return "commited." + error;
+                }
+            }
+            if (message.reverted != null && message.hasOwnProperty("reverted")) {
+                if (properties.requestType === 1)
+                    return "requestType: multiple values";
+                properties.requestType = 1;
+                {
+                    let error = $root.ciphel_io.CiphelRequest.Reverted.verify(message.reverted);
+                    if (error)
+                        return "reverted." + error;
+                }
+            }
+            if (message.pushed != null && message.hasOwnProperty("pushed")) {
+                if (properties.requestType === 1)
+                    return "requestType: multiple values";
+                properties.requestType = 1;
+                {
+                    let error = $root.ciphel_io.CiphelRequest.Pushed.verify(message.pushed);
+                    if (error)
+                        return "pushed." + error;
+                }
+            }
+            if (message.spawnThread != null && message.hasOwnProperty("spawnThread")) {
+                if (properties.requestType === 1)
+                    return "requestType: multiple values";
+                properties.requestType = 1;
+                {
+                    let error = $root.ciphel_io.CiphelRequest.Spawn.verify(message.spawnThread);
+                    if (error)
+                        return "spawnThread." + error;
+                }
+            }
+            if (message.closeThread != null && message.hasOwnProperty("closeThread")) {
+                if (properties.requestType === 1)
+                    return "requestType: multiple values";
+                properties.requestType = 1;
+                {
+                    let error = $root.ciphel_io.CiphelRequest.Close.verify(message.closeThread);
+                    if (error)
+                        return "closeThread." + error;
+                }
+            }
             return null;
         };
 
         /**
-         * Creates a StdInRequest message from a plain object. Also converts values to their respective internal types.
+         * Creates a CiphelRequest message from a plain object. Also converts values to their respective internal types.
          * @function fromObject
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
          * @param {Object.<string,*>} object Plain object
-         * @returns {ciphel_io.StdInRequest} StdInRequest
+         * @returns {ciphel_io.CiphelRequest} CiphelRequest
          */
-        StdInRequest.fromObject = function fromObject(object) {
-            if (object instanceof $root.ciphel_io.StdInRequest)
+        CiphelRequest.fromObject = function fromObject(object) {
+            if (object instanceof $root.ciphel_io.CiphelRequest)
                 return object;
-            let message = new $root.ciphel_io.StdInRequest();
-            if (object.flag != null)
-                message.flag = Boolean(object.flag);
+            let message = new $root.ciphel_io.CiphelRequest();
+            if (object.input != null) {
+                if (typeof object.input !== "object")
+                    throw TypeError(".ciphel_io.CiphelRequest.input: object expected");
+                message.input = $root.ciphel_io.CiphelRequest.Input.fromObject(object.input);
+            }
+            if (object.commited != null) {
+                if (typeof object.commited !== "object")
+                    throw TypeError(".ciphel_io.CiphelRequest.commited: object expected");
+                message.commited = $root.ciphel_io.CiphelRequest.Commited.fromObject(object.commited);
+            }
+            if (object.reverted != null) {
+                if (typeof object.reverted !== "object")
+                    throw TypeError(".ciphel_io.CiphelRequest.reverted: object expected");
+                message.reverted = $root.ciphel_io.CiphelRequest.Reverted.fromObject(object.reverted);
+            }
+            if (object.pushed != null) {
+                if (typeof object.pushed !== "object")
+                    throw TypeError(".ciphel_io.CiphelRequest.pushed: object expected");
+                message.pushed = $root.ciphel_io.CiphelRequest.Pushed.fromObject(object.pushed);
+            }
+            if (object.spawnThread != null) {
+                if (typeof object.spawnThread !== "object")
+                    throw TypeError(".ciphel_io.CiphelRequest.spawnThread: object expected");
+                message.spawnThread = $root.ciphel_io.CiphelRequest.Spawn.fromObject(object.spawnThread);
+            }
+            if (object.closeThread != null) {
+                if (typeof object.closeThread !== "object")
+                    throw TypeError(".ciphel_io.CiphelRequest.closeThread: object expected");
+                message.closeThread = $root.ciphel_io.CiphelRequest.Close.fromObject(object.closeThread);
+            }
             return message;
         };
 
         /**
-         * Creates a plain object from a StdInRequest message. Also converts values to other types if specified.
+         * Creates a plain object from a CiphelRequest message. Also converts values to other types if specified.
          * @function toObject
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
-         * @param {ciphel_io.StdInRequest} message StdInRequest
+         * @param {ciphel_io.CiphelRequest} message CiphelRequest
          * @param {$protobuf.IConversionOptions} [options] Conversion options
          * @returns {Object.<string,*>} Plain object
          */
-        StdInRequest.toObject = function toObject(message, options) {
+        CiphelRequest.toObject = function toObject(message, options) {
             if (!options)
                 options = {};
             let object = {};
-            if (options.defaults)
-                object.flag = false;
-            if (message.flag != null && message.hasOwnProperty("flag"))
-                object.flag = message.flag;
+            if (message.input != null && message.hasOwnProperty("input")) {
+                object.input = $root.ciphel_io.CiphelRequest.Input.toObject(message.input, options);
+                if (options.oneofs)
+                    object.requestType = "input";
+            }
+            if (message.commited != null && message.hasOwnProperty("commited")) {
+                object.commited = $root.ciphel_io.CiphelRequest.Commited.toObject(message.commited, options);
+                if (options.oneofs)
+                    object.requestType = "commited";
+            }
+            if (message.reverted != null && message.hasOwnProperty("reverted")) {
+                object.reverted = $root.ciphel_io.CiphelRequest.Reverted.toObject(message.reverted, options);
+                if (options.oneofs)
+                    object.requestType = "reverted";
+            }
+            if (message.pushed != null && message.hasOwnProperty("pushed")) {
+                object.pushed = $root.ciphel_io.CiphelRequest.Pushed.toObject(message.pushed, options);
+                if (options.oneofs)
+                    object.requestType = "pushed";
+            }
+            if (message.spawnThread != null && message.hasOwnProperty("spawnThread")) {
+                object.spawnThread = $root.ciphel_io.CiphelRequest.Spawn.toObject(message.spawnThread, options);
+                if (options.oneofs)
+                    object.requestType = "spawnThread";
+            }
+            if (message.closeThread != null && message.hasOwnProperty("closeThread")) {
+                object.closeThread = $root.ciphel_io.CiphelRequest.Close.toObject(message.closeThread, options);
+                if (options.oneofs)
+                    object.requestType = "closeThread";
+            }
             return object;
         };
 
         /**
-         * Converts this StdInRequest to JSON.
+         * Converts this CiphelRequest to JSON.
          * @function toJSON
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @instance
          * @returns {Object.<string,*>} JSON object
          */
-        StdInRequest.prototype.toJSON = function toJSON() {
+        CiphelRequest.prototype.toJSON = function toJSON() {
             return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
         };
 
         /**
-         * Gets the default type url for StdInRequest
+         * Gets the default type url for CiphelRequest
          * @function getTypeUrl
-         * @memberof ciphel_io.StdInRequest
+         * @memberof ciphel_io.CiphelRequest
          * @static
          * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns {string} The default type url
          */
-        StdInRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+        CiphelRequest.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
             if (typeUrlPrefix === undefined) {
                 typeUrlPrefix = "type.googleapis.com";
             }
-            return typeUrlPrefix + "/ciphel_io.StdInRequest";
+            return typeUrlPrefix + "/ciphel_io.CiphelRequest";
         };
 
-        return StdInRequest;
+        CiphelRequest.Input = (function() {
+
+            /**
+             * Properties of an Input.
+             * @memberof ciphel_io.CiphelRequest
+             * @interface IInput
+             */
+
+            /**
+             * Constructs a new Input.
+             * @memberof ciphel_io.CiphelRequest
+             * @classdesc Represents an Input.
+             * @implements IInput
+             * @constructor
+             * @param {ciphel_io.CiphelRequest.IInput=} [properties] Properties to set
+             */
+            function Input(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Creates a new Input instance using the specified properties.
+             * @function create
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {ciphel_io.CiphelRequest.IInput=} [properties] Properties to set
+             * @returns {ciphel_io.CiphelRequest.Input} Input instance
+             */
+            Input.create = function create(properties) {
+                return new Input(properties);
+            };
+
+            /**
+             * Encodes the specified Input message. Does not implicitly {@link ciphel_io.CiphelRequest.Input.verify|verify} messages.
+             * @function encode
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {ciphel_io.CiphelRequest.IInput} message Input message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Input.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Input message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Input.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {ciphel_io.CiphelRequest.IInput} message Input message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Input.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes an Input message from the specified reader or buffer.
+             * @function decode
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {ciphel_io.CiphelRequest.Input} Input
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Input.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest.Input();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an Input message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {ciphel_io.CiphelRequest.Input} Input
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Input.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an Input message.
+             * @function verify
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Input.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                return null;
+            };
+
+            /**
+             * Creates an Input message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {ciphel_io.CiphelRequest.Input} Input
+             */
+            Input.fromObject = function fromObject(object) {
+                if (object instanceof $root.ciphel_io.CiphelRequest.Input)
+                    return object;
+                return new $root.ciphel_io.CiphelRequest.Input();
+            };
+
+            /**
+             * Creates a plain object from an Input message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {ciphel_io.CiphelRequest.Input} message Input
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Input.toObject = function toObject() {
+                return {};
+            };
+
+            /**
+             * Converts this Input to JSON.
+             * @function toJSON
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Input.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for Input
+             * @function getTypeUrl
+             * @memberof ciphel_io.CiphelRequest.Input
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            Input.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/ciphel_io.CiphelRequest.Input";
+            };
+
+            return Input;
+        })();
+
+        CiphelRequest.Commited = (function() {
+
+            /**
+             * Properties of a Commited.
+             * @memberof ciphel_io.CiphelRequest
+             * @interface ICommited
+             */
+
+            /**
+             * Constructs a new Commited.
+             * @memberof ciphel_io.CiphelRequest
+             * @classdesc Represents a Commited.
+             * @implements ICommited
+             * @constructor
+             * @param {ciphel_io.CiphelRequest.ICommited=} [properties] Properties to set
+             */
+            function Commited(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Creates a new Commited instance using the specified properties.
+             * @function create
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {ciphel_io.CiphelRequest.ICommited=} [properties] Properties to set
+             * @returns {ciphel_io.CiphelRequest.Commited} Commited instance
+             */
+            Commited.create = function create(properties) {
+                return new Commited(properties);
+            };
+
+            /**
+             * Encodes the specified Commited message. Does not implicitly {@link ciphel_io.CiphelRequest.Commited.verify|verify} messages.
+             * @function encode
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {ciphel_io.CiphelRequest.ICommited} message Commited message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Commited.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Commited message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Commited.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {ciphel_io.CiphelRequest.ICommited} message Commited message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Commited.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Commited message from the specified reader or buffer.
+             * @function decode
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {ciphel_io.CiphelRequest.Commited} Commited
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Commited.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest.Commited();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Commited message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {ciphel_io.CiphelRequest.Commited} Commited
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Commited.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Commited message.
+             * @function verify
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Commited.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                return null;
+            };
+
+            /**
+             * Creates a Commited message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {ciphel_io.CiphelRequest.Commited} Commited
+             */
+            Commited.fromObject = function fromObject(object) {
+                if (object instanceof $root.ciphel_io.CiphelRequest.Commited)
+                    return object;
+                return new $root.ciphel_io.CiphelRequest.Commited();
+            };
+
+            /**
+             * Creates a plain object from a Commited message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {ciphel_io.CiphelRequest.Commited} message Commited
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Commited.toObject = function toObject() {
+                return {};
+            };
+
+            /**
+             * Converts this Commited to JSON.
+             * @function toJSON
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Commited.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for Commited
+             * @function getTypeUrl
+             * @memberof ciphel_io.CiphelRequest.Commited
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            Commited.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/ciphel_io.CiphelRequest.Commited";
+            };
+
+            return Commited;
+        })();
+
+        CiphelRequest.Reverted = (function() {
+
+            /**
+             * Properties of a Reverted.
+             * @memberof ciphel_io.CiphelRequest
+             * @interface IReverted
+             */
+
+            /**
+             * Constructs a new Reverted.
+             * @memberof ciphel_io.CiphelRequest
+             * @classdesc Represents a Reverted.
+             * @implements IReverted
+             * @constructor
+             * @param {ciphel_io.CiphelRequest.IReverted=} [properties] Properties to set
+             */
+            function Reverted(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Creates a new Reverted instance using the specified properties.
+             * @function create
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {ciphel_io.CiphelRequest.IReverted=} [properties] Properties to set
+             * @returns {ciphel_io.CiphelRequest.Reverted} Reverted instance
+             */
+            Reverted.create = function create(properties) {
+                return new Reverted(properties);
+            };
+
+            /**
+             * Encodes the specified Reverted message. Does not implicitly {@link ciphel_io.CiphelRequest.Reverted.verify|verify} messages.
+             * @function encode
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {ciphel_io.CiphelRequest.IReverted} message Reverted message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Reverted.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Reverted message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Reverted.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {ciphel_io.CiphelRequest.IReverted} message Reverted message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Reverted.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Reverted message from the specified reader or buffer.
+             * @function decode
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {ciphel_io.CiphelRequest.Reverted} Reverted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Reverted.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest.Reverted();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Reverted message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {ciphel_io.CiphelRequest.Reverted} Reverted
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Reverted.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Reverted message.
+             * @function verify
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Reverted.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                return null;
+            };
+
+            /**
+             * Creates a Reverted message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {ciphel_io.CiphelRequest.Reverted} Reverted
+             */
+            Reverted.fromObject = function fromObject(object) {
+                if (object instanceof $root.ciphel_io.CiphelRequest.Reverted)
+                    return object;
+                return new $root.ciphel_io.CiphelRequest.Reverted();
+            };
+
+            /**
+             * Creates a plain object from a Reverted message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {ciphel_io.CiphelRequest.Reverted} message Reverted
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Reverted.toObject = function toObject() {
+                return {};
+            };
+
+            /**
+             * Converts this Reverted to JSON.
+             * @function toJSON
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Reverted.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for Reverted
+             * @function getTypeUrl
+             * @memberof ciphel_io.CiphelRequest.Reverted
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            Reverted.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/ciphel_io.CiphelRequest.Reverted";
+            };
+
+            return Reverted;
+        })();
+
+        CiphelRequest.Pushed = (function() {
+
+            /**
+             * Properties of a Pushed.
+             * @memberof ciphel_io.CiphelRequest
+             * @interface IPushed
+             */
+
+            /**
+             * Constructs a new Pushed.
+             * @memberof ciphel_io.CiphelRequest
+             * @classdesc Represents a Pushed.
+             * @implements IPushed
+             * @constructor
+             * @param {ciphel_io.CiphelRequest.IPushed=} [properties] Properties to set
+             */
+            function Pushed(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Creates a new Pushed instance using the specified properties.
+             * @function create
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {ciphel_io.CiphelRequest.IPushed=} [properties] Properties to set
+             * @returns {ciphel_io.CiphelRequest.Pushed} Pushed instance
+             */
+            Pushed.create = function create(properties) {
+                return new Pushed(properties);
+            };
+
+            /**
+             * Encodes the specified Pushed message. Does not implicitly {@link ciphel_io.CiphelRequest.Pushed.verify|verify} messages.
+             * @function encode
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {ciphel_io.CiphelRequest.IPushed} message Pushed message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Pushed.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Pushed message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Pushed.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {ciphel_io.CiphelRequest.IPushed} message Pushed message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Pushed.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Pushed message from the specified reader or buffer.
+             * @function decode
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {ciphel_io.CiphelRequest.Pushed} Pushed
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Pushed.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest.Pushed();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Pushed message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {ciphel_io.CiphelRequest.Pushed} Pushed
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Pushed.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Pushed message.
+             * @function verify
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Pushed.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                return null;
+            };
+
+            /**
+             * Creates a Pushed message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {ciphel_io.CiphelRequest.Pushed} Pushed
+             */
+            Pushed.fromObject = function fromObject(object) {
+                if (object instanceof $root.ciphel_io.CiphelRequest.Pushed)
+                    return object;
+                return new $root.ciphel_io.CiphelRequest.Pushed();
+            };
+
+            /**
+             * Creates a plain object from a Pushed message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {ciphel_io.CiphelRequest.Pushed} message Pushed
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Pushed.toObject = function toObject() {
+                return {};
+            };
+
+            /**
+             * Converts this Pushed to JSON.
+             * @function toJSON
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Pushed.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for Pushed
+             * @function getTypeUrl
+             * @memberof ciphel_io.CiphelRequest.Pushed
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            Pushed.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/ciphel_io.CiphelRequest.Pushed";
+            };
+
+            return Pushed;
+        })();
+
+        CiphelRequest.Spawn = (function() {
+
+            /**
+             * Properties of a Spawn.
+             * @memberof ciphel_io.CiphelRequest
+             * @interface ISpawn
+             * @property {number|null} [cursor] Spawn cursor
+             */
+
+            /**
+             * Constructs a new Spawn.
+             * @memberof ciphel_io.CiphelRequest
+             * @classdesc Represents a Spawn.
+             * @implements ISpawn
+             * @constructor
+             * @param {ciphel_io.CiphelRequest.ISpawn=} [properties] Properties to set
+             */
+            function Spawn(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Spawn cursor.
+             * @member {number} cursor
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @instance
+             */
+            Spawn.prototype.cursor = 0;
+
+            /**
+             * Creates a new Spawn instance using the specified properties.
+             * @function create
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {ciphel_io.CiphelRequest.ISpawn=} [properties] Properties to set
+             * @returns {ciphel_io.CiphelRequest.Spawn} Spawn instance
+             */
+            Spawn.create = function create(properties) {
+                return new Spawn(properties);
+            };
+
+            /**
+             * Encodes the specified Spawn message. Does not implicitly {@link ciphel_io.CiphelRequest.Spawn.verify|verify} messages.
+             * @function encode
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {ciphel_io.CiphelRequest.ISpawn} message Spawn message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Spawn.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.cursor);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Spawn message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Spawn.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {ciphel_io.CiphelRequest.ISpawn} message Spawn message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Spawn.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Spawn message from the specified reader or buffer.
+             * @function decode
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {ciphel_io.CiphelRequest.Spawn} Spawn
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Spawn.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest.Spawn();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.cursor = reader.uint32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Spawn message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {ciphel_io.CiphelRequest.Spawn} Spawn
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Spawn.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Spawn message.
+             * @function verify
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Spawn.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.cursor != null && message.hasOwnProperty("cursor"))
+                    if (!$util.isInteger(message.cursor))
+                        return "cursor: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a Spawn message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {ciphel_io.CiphelRequest.Spawn} Spawn
+             */
+            Spawn.fromObject = function fromObject(object) {
+                if (object instanceof $root.ciphel_io.CiphelRequest.Spawn)
+                    return object;
+                let message = new $root.ciphel_io.CiphelRequest.Spawn();
+                if (object.cursor != null)
+                    message.cursor = object.cursor >>> 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a Spawn message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {ciphel_io.CiphelRequest.Spawn} message Spawn
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Spawn.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults)
+                    object.cursor = 0;
+                if (message.cursor != null && message.hasOwnProperty("cursor"))
+                    object.cursor = message.cursor;
+                return object;
+            };
+
+            /**
+             * Converts this Spawn to JSON.
+             * @function toJSON
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Spawn.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for Spawn
+             * @function getTypeUrl
+             * @memberof ciphel_io.CiphelRequest.Spawn
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            Spawn.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/ciphel_io.CiphelRequest.Spawn";
+            };
+
+            return Spawn;
+        })();
+
+        CiphelRequest.Close = (function() {
+
+            /**
+             * Properties of a Close.
+             * @memberof ciphel_io.CiphelRequest
+             * @interface IClose
+             * @property {number|null} [cursor] Close cursor
+             */
+
+            /**
+             * Constructs a new Close.
+             * @memberof ciphel_io.CiphelRequest
+             * @classdesc Represents a Close.
+             * @implements IClose
+             * @constructor
+             * @param {ciphel_io.CiphelRequest.IClose=} [properties] Properties to set
+             */
+            function Close(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * Close cursor.
+             * @member {number} cursor
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @instance
+             */
+            Close.prototype.cursor = 0;
+
+            /**
+             * Creates a new Close instance using the specified properties.
+             * @function create
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {ciphel_io.CiphelRequest.IClose=} [properties] Properties to set
+             * @returns {ciphel_io.CiphelRequest.Close} Close instance
+             */
+            Close.create = function create(properties) {
+                return new Close(properties);
+            };
+
+            /**
+             * Encodes the specified Close message. Does not implicitly {@link ciphel_io.CiphelRequest.Close.verify|verify} messages.
+             * @function encode
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {ciphel_io.CiphelRequest.IClose} message Close message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Close.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.cursor != null && Object.hasOwnProperty.call(message, "cursor"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).uint32(message.cursor);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified Close message, length delimited. Does not implicitly {@link ciphel_io.CiphelRequest.Close.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {ciphel_io.CiphelRequest.IClose} message Close message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            Close.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a Close message from the specified reader or buffer.
+             * @function decode
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {ciphel_io.CiphelRequest.Close} Close
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Close.decode = function decode(reader, length) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.ciphel_io.CiphelRequest.Close();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.cursor = reader.uint32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a Close message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {ciphel_io.CiphelRequest.Close} Close
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            Close.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a Close message.
+             * @function verify
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            Close.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.cursor != null && message.hasOwnProperty("cursor"))
+                    if (!$util.isInteger(message.cursor))
+                        return "cursor: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a Close message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {ciphel_io.CiphelRequest.Close} Close
+             */
+            Close.fromObject = function fromObject(object) {
+                if (object instanceof $root.ciphel_io.CiphelRequest.Close)
+                    return object;
+                let message = new $root.ciphel_io.CiphelRequest.Close();
+                if (object.cursor != null)
+                    message.cursor = object.cursor >>> 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a Close message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {ciphel_io.CiphelRequest.Close} message Close
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            Close.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults)
+                    object.cursor = 0;
+                if (message.cursor != null && message.hasOwnProperty("cursor"))
+                    object.cursor = message.cursor;
+                return object;
+            };
+
+            /**
+             * Converts this Close to JSON.
+             * @function toJSON
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            Close.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for Close
+             * @function getTypeUrl
+             * @memberof ciphel_io.CiphelRequest.Close
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            Close.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/ciphel_io.CiphelRequest.Close";
+            };
+
+            return Close;
+        })();
+
+        return CiphelRequest;
     })();
 
     ciphel_io.StdIO = (function() {
@@ -1395,7 +2700,7 @@ export const ciphel_io = $root.ciphel_io = (() => {
          * @property {ciphel_io.IStdOut|null} [out] StdIO out
          * @property {ciphel_io.IStdErr|null} [err] StdIO err
          * @property {ciphel_io.IStdIn|null} ["in"] StdIO in
-         * @property {ciphel_io.IStdInRequest|null} [inReq] StdIO inReq
+         * @property {ciphel_io.ICiphelRequest|null} [request] StdIO request
          * @property {ciphel_io.ICommand|null} [command] StdIO command
          */
 
@@ -1439,12 +2744,12 @@ export const ciphel_io = $root.ciphel_io = (() => {
         StdIO.prototype["in"] = null;
 
         /**
-         * StdIO inReq.
-         * @member {ciphel_io.IStdInRequest|null|undefined} inReq
+         * StdIO request.
+         * @member {ciphel_io.ICiphelRequest|null|undefined} request
          * @memberof ciphel_io.StdIO
          * @instance
          */
-        StdIO.prototype.inReq = null;
+        StdIO.prototype.request = null;
 
         /**
          * StdIO command.
@@ -1459,12 +2764,12 @@ export const ciphel_io = $root.ciphel_io = (() => {
 
         /**
          * StdIO stdType.
-         * @member {"out"|"err"|"in"|"inReq"|"command"|undefined} stdType
+         * @member {"out"|"err"|"in"|"request"|"command"|undefined} stdType
          * @memberof ciphel_io.StdIO
          * @instance
          */
         Object.defineProperty(StdIO.prototype, "stdType", {
-            get: $util.oneOfGetter($oneOfFields = ["out", "err", "in", "inReq", "command"]),
+            get: $util.oneOfGetter($oneOfFields = ["out", "err", "in", "request", "command"]),
             set: $util.oneOfSetter($oneOfFields)
         });
 
@@ -1498,8 +2803,8 @@ export const ciphel_io = $root.ciphel_io = (() => {
                 $root.ciphel_io.StdErr.encode(message.err, writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim();
             if (message["in"] != null && Object.hasOwnProperty.call(message, "in"))
                 $root.ciphel_io.StdIn.encode(message["in"], writer.uint32(/* id 3, wireType 2 =*/26).fork()).ldelim();
-            if (message.inReq != null && Object.hasOwnProperty.call(message, "inReq"))
-                $root.ciphel_io.StdInRequest.encode(message.inReq, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+            if (message.request != null && Object.hasOwnProperty.call(message, "request"))
+                $root.ciphel_io.CiphelRequest.encode(message.request, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
             if (message.command != null && Object.hasOwnProperty.call(message, "command"))
                 $root.ciphel_io.Command.encode(message.command, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
             return writer;
@@ -1549,7 +2854,7 @@ export const ciphel_io = $root.ciphel_io = (() => {
                         break;
                     }
                 case 4: {
-                        message.inReq = $root.ciphel_io.StdInRequest.decode(reader, reader.uint32());
+                        message.request = $root.ciphel_io.CiphelRequest.decode(reader, reader.uint32());
                         break;
                     }
                 case 5: {
@@ -1620,14 +2925,14 @@ export const ciphel_io = $root.ciphel_io = (() => {
                         return "in." + error;
                 }
             }
-            if (message.inReq != null && message.hasOwnProperty("inReq")) {
+            if (message.request != null && message.hasOwnProperty("request")) {
                 if (properties.stdType === 1)
                     return "stdType: multiple values";
                 properties.stdType = 1;
                 {
-                    let error = $root.ciphel_io.StdInRequest.verify(message.inReq);
+                    let error = $root.ciphel_io.CiphelRequest.verify(message.request);
                     if (error)
-                        return "inReq." + error;
+                        return "request." + error;
                 }
             }
             if (message.command != null && message.hasOwnProperty("command")) {
@@ -1670,10 +2975,10 @@ export const ciphel_io = $root.ciphel_io = (() => {
                     throw TypeError(".ciphel_io.StdIO.in: object expected");
                 message["in"] = $root.ciphel_io.StdIn.fromObject(object["in"]);
             }
-            if (object.inReq != null) {
-                if (typeof object.inReq !== "object")
-                    throw TypeError(".ciphel_io.StdIO.inReq: object expected");
-                message.inReq = $root.ciphel_io.StdInRequest.fromObject(object.inReq);
+            if (object.request != null) {
+                if (typeof object.request !== "object")
+                    throw TypeError(".ciphel_io.StdIO.request: object expected");
+                message.request = $root.ciphel_io.CiphelRequest.fromObject(object.request);
             }
             if (object.command != null) {
                 if (typeof object.command !== "object")
@@ -1711,10 +3016,10 @@ export const ciphel_io = $root.ciphel_io = (() => {
                 if (options.oneofs)
                     object.stdType = "in";
             }
-            if (message.inReq != null && message.hasOwnProperty("inReq")) {
-                object.inReq = $root.ciphel_io.StdInRequest.toObject(message.inReq, options);
+            if (message.request != null && message.hasOwnProperty("request")) {
+                object.request = $root.ciphel_io.CiphelRequest.toObject(message.request, options);
                 if (options.oneofs)
-                    object.stdType = "inReq";
+                    object.stdType = "request";
             }
             if (message.command != null && message.hasOwnProperty("command")) {
                 object.command = $root.ciphel_io.Command.toObject(message.command, options);

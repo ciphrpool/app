@@ -1,13 +1,16 @@
 
 import {ciphel_io} from "@assets/api/game/ciphel_io";
-const {StdIn,StdErr,StdInRequest,StdIO,StdOut,SrcCode,Command,PlayerSide} = ciphel_io;
+const {StdIn,StdErr,CiphelRequest,StdIO,StdOut,SrcCode,Command,PlayerSide} = ciphel_io;
 
 export type WebSocketCom = {
     socket : WebSocket,
     send : (msg:ciphel_io.IStdIO) => void,
-    on_stderr ?: (msg:string) => void,
-    on_stdout ?: (msg:string) => void,
-    on_req_input ?: () => void,
+    on_stderr_handlers : ((msg:string) => void)[],
+    on_stdout_handlers : ((msg:string) => void)[],
+    on_request_handlers : ((req:ciphel_io.CiphelRequest) => void)[],
+    on_request : (handler:(req:ciphel_io.CiphelRequest) => void) => void,
+    on_stderr : (handler:((msg:string) => void)) => void,
+    on_stdout : (handler:((msg:string) => void)) => void,
 }
 
 export function createWebSocket() {
@@ -25,6 +28,19 @@ export function createWebSocket() {
                 console.error("websocket is not open, current state:", this.socket.readyState);
             }
         },
+        on_request_handlers : [],
+        on_stderr_handlers : [],
+        on_stdout_handlers : [],
+
+        on_request(handler : (req:ciphel_io.CiphelRequest) => void) {
+            this.on_request_handlers.push(handler);
+        },
+        on_stderr(handler : (msg:string) => void) {
+            this.on_stderr_handlers.push(handler);
+        },
+        on_stdout(handler : (msg:string) => void) {
+            this.on_stdout_handlers.push(handler);
+        }
     }
 
     com.socket.onopen = () => {
@@ -39,16 +55,29 @@ export function createWebSocket() {
     com.socket.onmessage = (event) => {
         const data = new Uint8Array(event.data);
         const message = StdIO.decode(data);
-        
+        let msg : string;
         switch (message.stdType) {
           case "err":
-                if(com.on_stderr && message.err?.content) com.on_stderr(message.err.content)
+                if(!message.err?.content) return;
+                msg = message.err.content;
+                com.on_stderr_handlers?.forEach(handle => {
+                    handle(msg);
+                });
                 break;
           case "out":
-                if(com.on_stdout && message.out?.content) com.on_stdout(message.out.content)
+                if(!message.out?.content) return;
+                msg = message.out.content;
+                com.on_stdout_handlers?.forEach(handle => {
+                    handle(msg);
+                });
                 break;
-          case "inReq":
-                if(com.on_req_input) com.on_req_input()
+          case "request":
+                if(!(message.request)) return;
+                console.log(message.request);
+                const request = new ciphel_io.CiphelRequest(message.request);
+                com.on_request_handlers?.forEach(handle => {
+                    handle(request);
+                });
                 break;
           default:
               break;

@@ -1,22 +1,30 @@
-import { languages, editor as monaco_editor, Range} from 'monaco-editor'
+import { IDisposable, languages, editor as monaco_editor, Range} from 'monaco-editor'
 import loader, { Monaco } from '@monaco-editor/loader'
 import { createEffect, createSignal, on, onCleanup, onMount } from 'solid-js';
 import theme from "@assets/editor/theme.json";
 import syntax from "@assets/editor/syntax";
-import { C1, C2, C3, C4, Te_Cursor } from '@utils/player.type';
-import { model_from, path_of, setup_editor, to_readonly } from './utils';
+import { C1, C2, C3, C4, cursor_from, Te_Cursor } from '@utils/player.type';
+import { CursorMetadata, model_from, path_of, setup_editor, to_readonly, undo_readonly } from './editor.utils';
+import { WebSocketCom } from '@utils/websocket/com';
+import { ciphel_io } from '@assets/api/game/ciphel_io';
+import { produce, SetStoreFunction } from 'solid-js/store';
 
 export type EditorApi = {
-    snapshot ?: () => {content :string,last_line:number} | null,
+    snapshot ?: () => string | null,
     to_readonly ?: (line:number) => void,
+    get_last_edited_line_number ?: () => number | undefined,
 }
 
 type EditorProps = {
-    e_cursor : Te_Cursor,
     api : EditorApi,
+    socket : WebSocketCom,
+    cursor_data: CursorMetadata,
+    set_cursor_data: SetStoreFunction<CursorMetadata>,
 }
 
 const EDITOR_VIEWSTATES : Map<Te_Cursor,monaco_editor.ICodeEditorViewState> = new Map();
+
+
 
 function Editor(props:EditorProps) {
     let container_ref!: HTMLDivElement ;
@@ -29,23 +37,103 @@ function Editor(props:EditorProps) {
         cancel = load_monaco.cancel;
         try {
             const monaco = await load_monaco;
-            const model = model_from(monaco,path_of(props.e_cursor))
+            const model = model_from(monaco,path_of(props.cursor_data.current_cursor))
             const editor = setup_editor(monaco,model,container_ref);
 
             set_editor(editor);set_monaco(monaco);
+            to_readonly(props.cursor_data.current_cursor,4,editor);
             props.api.snapshot = () => {
                 const editor = get_editor();
                 if (!editor) return null;
                 const model =  editor.getModel()
                 if (!model) return null;
                 const last_line = model.getLineCount();
-                return {content:editor.getValue(),last_line};
+                const last_line_content = model.getLineContent(last_line);
+                const range = new Range(props.cursor_data.info[props.cursor_data.current_cursor]
+                    .last_commited_line+1,0,last_line, last_line_content.length + 1);
+                console.log(range);
+                
+                return model.getValueInRange(range);
             };
             props.api.to_readonly = (line:number) => {
                 const editor = get_editor();
                 if (!editor) return;
-                to_readonly(line, editor);
+                to_readonly(props.cursor_data.current_cursor,line, editor);
             };
+            props.api.get_last_edited_line_number = () => {
+                const editor = get_editor();
+                if (!editor) return;
+                const model = editor.getModel();
+                if(!model) return;
+
+                const last_line = model.getLineCount();
+                return last_line;
+            }
+            props.socket.on_request((request:ciphel_io.CiphelRequest) => {
+                const editor = get_editor();
+                if (!editor) return;
+                const model = editor.getModel();
+                if(!model) return;
+
+                const last_line = model.getLineCount();
+                if (!editor) return;
+                console.log({request,last_line});
+
+                let cursor : Te_Cursor | undefined;
+                
+                switch (request.requestType) {
+                    case 'commited':
+                        undo_readonly(props.cursor_data.current_cursor,editor);
+                        to_readonly(props.cursor_data.current_cursor,last_line,editor);
+                        props.set_cursor_data(produce((draft) => {
+                            const cursor = draft.current_cursor;
+                            draft.info[cursor].last_commited_line = last_line;
+                        }))
+                        break;
+                    case 'reverted':
+                        undo_readonly(props.cursor_data.current_cursor,editor);
+                        
+                        if (props.cursor_data.info[props.cursor_data.current_cursor]
+                            .last_pushed_line > 0) {
+                            to_readonly(
+                                props.cursor_data.current_cursor,
+                                props.cursor_data.info[props.cursor_data.current_cursor]
+                                    .last_pushed_line,
+                                editor);
+                        }
+                        props.set_cursor_data(produce((draft) => {
+                            const cursor = draft.current_cursor;
+                            draft.info[cursor].last_commited_line = draft.info[cursor].last_pushed_line;
+                        }))
+                        break;
+                    case 'pushed':
+                        props.set_cursor_data(produce((draft) => {
+                            const cursor = draft.current_cursor;
+                            draft.info[cursor].last_pushed_line = draft.info[cursor].last_commited_line;
+                        }))
+                        break;
+                    case 'spawnThread':
+                        if (!request.spawnThread || !request.spawnThread?.cursor) return;
+                        cursor = cursor_from(request.spawnThread?.cursor);
+                        if(!cursor) return;
+
+                        props.set_cursor_data(produce((draft) => {
+                            draft.info[cursor!].active = true;
+                        }))
+                        break;
+                    case 'closeThread':
+                        if (!request.closeThread || !request.closeThread?.cursor) return;
+                        cursor = cursor_from(request.closeThread?.cursor);
+                        if(!cursor) return;
+                        
+                        props.set_cursor_data(produce((draft) => {
+                            draft.info[cursor!].active = false;
+                        }))
+                        break;
+                    default:
+                        break;
+                }
+            })
         } catch(err) {
             /* TODO : handle error*/
         }
@@ -65,14 +153,14 @@ function Editor(props:EditorProps) {
     /* Change model base on the provided cursor */
     createEffect(
         on(
-            () => props.e_cursor,
+            () => props.cursor_data.current_cursor,
             (cursor,prev_cursor) => {
                 const monaco = get_monaco()
                 if (!monaco) return
                 const editor = get_editor()
                 if (!editor) return
                 
-                const model = model_from(monaco,path_of(props.e_cursor))
+                const model = model_from(monaco,path_of(props.cursor_data.current_cursor))
                 
                 
                 if (model !== editor.getModel()) {
