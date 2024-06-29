@@ -12,12 +12,14 @@ import {
 	default_cursor_metadata,
 } from "@components/editor/editor.utils";
 import { createStore } from "solid-js/store";
+import Pool from "@components/canvas/Pool";
 
 function Arena() {
 	const [cursor_data, set_cursor_data] = createStore<CursorMetadata>(
 		default_cursor_metadata()
 	);
 	const socket = createWebSocket();
+	let pool_container !: HTMLDivElement;
 	const editor_api = {};
 
 	return (
@@ -46,10 +48,16 @@ function Arena() {
 						editor_api={editor_api}
 						socket={socket}
 						side={P1}
+						cursor_data={cursor_data}
 					/>
 				</section>
-				<section class="bg-night-600">
-					<Todo> Game</Todo>
+				<section class="bg-night-600 flex flex-col gap-4 justify-between items-center">
+					{/* <Todo> Game</Todo> */}
+					<div class="dbg-1 w-full"></div>
+					<div class="w-[512px] h-[512px] max-w-[512px] max-h-[512px]" ref={pool_container}>
+						<Pool container_ref={pool_container}/>
+					</div>
+					<div class="dbg-2 w-full"></div>
 				</section>
 			</main>
 			<Footer />

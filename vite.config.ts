@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 import solid_svg from "vite-plugin-solid-svg";
+import glsl from "vite-plugin-glsl";
 import path from "path";
 
 export default defineConfig({
@@ -9,6 +10,7 @@ export default defineConfig({
 		solid_svg({
 			defaultAsComponent: true,
 		}),
+		glsl(),
 	],
 	resolve: {
 		alias: {

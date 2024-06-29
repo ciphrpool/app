@@ -11,10 +11,10 @@ import {
 	onMount,
 	splitProps,
 } from "solid-js";
-import { preprocess_cmd } from "../editor.utils";
+import { CursorMetadata, preprocess_cmd } from "../editor.utils";
 import { EditorApi } from "../Editor";
 import { WebSocketCom } from "@utils/websocket/com";
-import { Te_Player, side_of } from "@utils/player.type";
+import { C1, C2, C3, C4, P1, P2, Te_Player, side_of } from "@utils/player.type";
 import { createStore, produce } from "solid-js/store";
 import {
 	In,
@@ -36,6 +36,7 @@ type ConsoleProps = {
 	editor_api: EditorApi;
 	socket: WebSocketCom;
 	side: Te_Player;
+	cursor_data: CursorMetadata;
 };
 function Console(props: ConsoleProps) {
 	let input_ref!: HTMLInputElement;
@@ -79,7 +80,35 @@ function Console(props: ConsoleProps) {
 			update_command_from_history
 		);
 		handle_submit = (line: string, is_cmd: boolean) => {
-			submit(line, is_cmd);
+			let player: number;
+			switch (props.side) {
+				case P1:
+					player = 1;
+					break;
+				case P2:
+					player = 2;
+					break;
+				default:
+					return;
+			}
+			let cursor: number;
+			switch (props.cursor_data.current_cursor) {
+				case C1:
+					cursor = 0;
+					break;
+				case C2:
+					cursor = 1;
+					break;
+				case C3:
+					cursor = 2;
+					break;
+				case C4:
+					cursor = 3;
+					break;
+				default:
+					return;
+			}
+			submit(player, cursor, line, is_cmd);
 			clear_history_idx();
 		};
 	});

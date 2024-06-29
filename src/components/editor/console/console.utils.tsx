@@ -107,7 +107,12 @@ export function createSubmitHandler(
 	add_command: (cmd: string) => void,
 	focus: (force?: boolean) => void
 ) {
-	return function handle_submit(line: string, is_cmd: boolean) {
+	return function handle_submit(
+		player: number,
+		cursor: number,
+		line: string,
+		is_cmd: boolean
+	) {
 		if (!line) return;
 
 		if (is_cmd) {
@@ -145,6 +150,8 @@ export function createSubmitHandler(
 				if (!res) return;
 				socket.send({
 					command: {
+						cursor,
+						player,
 						cmd: cmd_id,
 						args,
 						src: {
@@ -158,6 +165,8 @@ export function createSubmitHandler(
 
 			socket.send({
 				command: {
+					cursor,
+					player,
 					cmd: cmd_id,
 					args,
 				},

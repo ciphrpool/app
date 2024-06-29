@@ -23,13 +23,13 @@ export type Te_Cursor = typeof C1 | typeof C2 | typeof C3 | typeof C4;
 
 export function cursor_from(id: number): Te_Cursor | undefined {
 	switch (id) {
-		case 1:
+		case 0:
 			return C1;
-		case 2:
+		case 1:
 			return C2;
-		case 3:
+		case 2:
 			return C3;
-		case 4:
+		case 3:
 			return C4;
 		default:
 			return undefined;

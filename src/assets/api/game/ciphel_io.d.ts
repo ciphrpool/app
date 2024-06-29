@@ -130,6 +130,12 @@ export namespace ciphel_io {
 
 	/** Properties of a Command. */
 	interface ICommand {
+		/** Command player */
+		player?: ciphel_io.PlayerSide | null;
+
+		/** Command cursor */
+		cursor?: number | null;
+
 		/** Command cmd */
 		cmd?: string | null;
 
@@ -147,6 +153,12 @@ export namespace ciphel_io {
 		 * @param [properties] Properties to set
 		 */
 		constructor(properties?: ciphel_io.ICommand);
+
+		/** Command player. */
+		public player: ciphel_io.PlayerSide;
+
+		/** Command cursor. */
+		public cursor: number;
 
 		/** Command cmd. */
 		public cmd: string;

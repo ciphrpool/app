@@ -8,13 +8,13 @@ type PrefixProps = {
 function Prefix(props: PrefixProps) {
 	return (
 		<>
-			<span class="text-pl1-200">{props.username}</span>
-			<span class="text-ego">@ciphel</span>
+			<span class="text-pl1-200 select-none">{props.username}</span>
+			<span class="text-ego select-none">@ciphel</span>
 			<Show
 				when={props.file}
-				fallback={<span class="text-night-300 mx-1"> $ </span>}
+				fallback={<span class="text-night-300 select-none mx-1"> $ </span>}
 			>
-				<span class="text-night-300 mx-1"> : {props.file}$</span>
+				<span class="text-night-300 mx-1 select-none"> : {props.file}$</span>
 			</Show>
 		</>
 	);

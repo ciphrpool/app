@@ -84,7 +84,6 @@ export function createWebSocket() {
 				break;
 			case "request":
 				if (!message.request) return;
-				console.log(message.request);
 				const request = new ciphel_io.CiphelRequest(message.request);
 				com.on_request_handlers?.forEach((handle) => {
 					handle(request);

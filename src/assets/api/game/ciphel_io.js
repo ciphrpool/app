@@ -305,6 +305,8 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 		 * Properties of a Command.
 		 * @memberof ciphel_io
 		 * @interface ICommand
+		 * @property {ciphel_io.PlayerSide|null} [player] Command player
+		 * @property {number|null} [cursor] Command cursor
 		 * @property {string|null} [cmd] Command cmd
 		 * @property {Array.<string>|null} [args] Command args
 		 * @property {ciphel_io.ISrcCode|null} [src] Command src
@@ -329,6 +331,22 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 					if (properties[keys[i]] != null)
 						this[keys[i]] = properties[keys[i]];
 		}
+
+		/**
+		 * Command player.
+		 * @member {ciphel_io.PlayerSide} player
+		 * @memberof ciphel_io.Command
+		 * @instance
+		 */
+		Command.prototype.player = 0;
+
+		/**
+		 * Command cursor.
+		 * @member {number} cursor
+		 * @memberof ciphel_io.Command
+		 * @instance
+		 */
+		Command.prototype.cursor = 0;
 
 		/**
 		 * Command cmd.
@@ -392,14 +410,26 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 		Command.encode = function encode(message, writer) {
 			if (!writer) writer = $Writer.create();
 			if (
+				message.player != null &&
+				Object.hasOwnProperty.call(message, "player")
+			)
+				writer.uint32(/* id 1, wireType 0 =*/ 8).int32(message.player);
+			if (
+				message.cursor != null &&
+				Object.hasOwnProperty.call(message, "cursor")
+			)
+				writer
+					.uint32(/* id 2, wireType 0 =*/ 16)
+					.uint32(message.cursor);
+			if (
 				message.cmd != null &&
 				Object.hasOwnProperty.call(message, "cmd")
 			)
-				writer.uint32(/* id 1, wireType 2 =*/ 10).string(message.cmd);
+				writer.uint32(/* id 3, wireType 2 =*/ 26).string(message.cmd);
 			if (message.args != null && message.args.length)
 				for (let i = 0; i < message.args.length; ++i)
 					writer
-						.uint32(/* id 2, wireType 2 =*/ 18)
+						.uint32(/* id 4, wireType 2 =*/ 34)
 						.string(message.args[i]);
 			if (
 				message.src != null &&
@@ -407,7 +437,7 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 			)
 				$root.ciphel_io.SrcCode.encode(
 					message.src,
-					writer.uint32(/* id 3, wireType 2 =*/ 26).fork()
+					writer.uint32(/* id 5, wireType 2 =*/ 42).fork()
 				).ldelim();
 			return writer;
 		};
@@ -444,16 +474,24 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 				let tag = reader.uint32();
 				switch (tag >>> 3) {
 					case 1: {
-						message.cmd = reader.string();
+						message.player = reader.int32();
 						break;
 					}
 					case 2: {
+						message.cursor = reader.uint32();
+						break;
+					}
+					case 3: {
+						message.cmd = reader.string();
+						break;
+					}
+					case 4: {
 						if (!(message.args && message.args.length))
 							message.args = [];
 						message.args.push(reader.string());
 						break;
 					}
-					case 3: {
+					case 5: {
 						message.src = $root.ciphel_io.SrcCode.decode(
 							reader,
 							reader.uint32()
@@ -495,6 +533,18 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 			if (typeof message !== "object" || message === null)
 				return "object expected";
 			let properties = {};
+			if (message.player != null && message.hasOwnProperty("player"))
+				switch (message.player) {
+					default:
+						return "player: enum value expected";
+					case 0:
+					case 1:
+					case 2:
+						break;
+				}
+			if (message.cursor != null && message.hasOwnProperty("cursor"))
+				if (!$util.isInteger(message.cursor))
+					return "cursor: integer expected";
 			if (message.cmd != null && message.hasOwnProperty("cmd"))
 				if (!$util.isString(message.cmd)) return "cmd: string expected";
 			if (message.args != null && message.hasOwnProperty("args")) {
@@ -524,6 +574,27 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 		Command.fromObject = function fromObject(object) {
 			if (object instanceof $root.ciphel_io.Command) return object;
 			let message = new $root.ciphel_io.Command();
+			switch (object.player) {
+				default:
+					if (typeof object.player === "number") {
+						message.player = object.player;
+						break;
+					}
+					break;
+				case "DEFAULT":
+				case 0:
+					message.player = 0;
+					break;
+				case "P1":
+				case 1:
+					message.player = 1;
+					break;
+				case "P2":
+				case 2:
+					message.player = 2;
+					break;
+			}
+			if (object.cursor != null) message.cursor = object.cursor >>> 0;
 			if (object.cmd != null) message.cmd = String(object.cmd);
 			if (object.args) {
 				if (!Array.isArray(object.args))
@@ -553,7 +624,21 @@ export const ciphel_io = ($root.ciphel_io = (() => {
 			if (!options) options = {};
 			let object = {};
 			if (options.arrays || options.defaults) object.args = [];
-			if (options.defaults) object.cmd = "";
+			if (options.defaults) {
+				object.player = options.enums === String ? "DEFAULT" : 0;
+				object.cursor = 0;
+				object.cmd = "";
+			}
+			if (message.player != null && message.hasOwnProperty("player"))
+				object.player =
+					options.enums === String
+						? $root.ciphel_io.PlayerSide[message.player] ===
+							undefined
+							? message.player
+							: $root.ciphel_io.PlayerSide[message.player]
+						: message.player;
+			if (message.cursor != null && message.hasOwnProperty("cursor"))
+				object.cursor = message.cursor;
 			if (message.cmd != null && message.hasOwnProperty("cmd"))
 				object.cmd = message.cmd;
 			if (message.args && message.args.length) {

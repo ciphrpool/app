@@ -72,7 +72,6 @@ function Editor(props: EditorProps) {
 					last_line,
 					last_line_content.length + 1
 				);
-				console.log(range);
 
 				return model.getValueInRange(range);
 			};
@@ -98,7 +97,6 @@ function Editor(props: EditorProps) {
 
 				const last_line = model.getLineCount();
 				if (!editor) return;
-				console.log({ request, last_line });
 
 				let cursor: Te_Cursor | undefined;
 
@@ -154,10 +152,12 @@ function Editor(props: EditorProps) {
 					case "spawnThread":
 						if (
 							!request.spawnThread ||
-							!request.spawnThread?.cursor
+							request.spawnThread?.cursor === undefined ||
+							request.spawnThread?.cursor === null
 						)
 							return;
 						cursor = cursor_from(request.spawnThread?.cursor);
+
 						if (!cursor) return;
 
 						props.set_cursor_data(

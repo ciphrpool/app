@@ -27,7 +27,7 @@ export function default_cursor_metadata(): CursorMetadata {
 			[C1]: {
 				last_commited_line: 0,
 				last_pushed_line: 0,
-				active: true,
+				active: false,
 			},
 			[C2]: {
 				last_commited_line: 0,
@@ -179,8 +179,6 @@ export function to_readonly(
 
 	const last_line = model.getLineCount();
 	const last_line_content = model.getLineContent(last_line);
-	console.log({ last_line, until });
-
 	if (last_line <= until) {
 		model.pushEditOperations(
 			[],
@@ -199,7 +197,6 @@ export function to_readonly(
 		);
 	}
 
-	console.log({ decoration });
 	editor.createDecorationsCollection([decoration]);
 	const on_key_down = editor.onKeyDown((e) => {
 		if (is_lock(range, editor)) {
@@ -207,7 +204,6 @@ export function to_readonly(
 			e.preventDefault();
 		}
 	});
-	console.log({ after_read_only: model.getAllDecorations() });
 
 	const on_did_change_cursor_selection = editor.onDidChangeCursorSelection(
 		(_) => {
@@ -258,19 +254,15 @@ export function undo_readonly(
 	if (!model) return;
 
 	const allDecorations = model.getAllDecorations();
-	console.log({ before: allDecorations });
 
 	const readOnlyDecorations = allDecorations?.filter(
 		(decoration) => decoration.options.className === "editor-line-readonly"
 	);
 	if (readOnlyDecorations) {
 		// editor.createDecorationsCollection(readOnlyDecorations);
-		console.log(readOnlyDecorations);
 
 		editor.removeDecorations(readOnlyDecorations.map((d) => d.id));
 	}
-
-	console.log({ after: model.getAllDecorations() });
 
 	const disposables = EDITOR_READONLY_LISTENERS.get(cursor);
 	if (disposables) {
