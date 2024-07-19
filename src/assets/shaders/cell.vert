@@ -1,13 +1,20 @@
+#define NB_TEXTURES
 
 in vec2 a_vertex_position;
 in vec2 a_texture_position;
+in vec2 a_frame_position;
+in vec2 a_frame_size;
+in float a_texture_idx;
 
 uniform mat3 u_proj_trans;
+uniform vec4 u_texture_size[NB_TEXTURES];
 uniform vec2 u_cell_size;
 
 out vec2 v_vertex_position;
 out vec2 v_texture_position;
+out vec2 v_frame_position;
 out vec4 v_frame;
+out float v_texture_idx;
 
 void main(void)
 {
@@ -16,6 +23,14 @@ void main(void)
     gl_Position=vec4(projected,0.,1.);
     
     v_vertex_position=a_vertex_position;
-    v_texture_position=(a_texture_position)/u_cell_size;
+    v_texture_idx=a_texture_idx;
+    
+    int index=int(a_texture_idx);
+    if(index<0){
+        v_texture_position=a_texture_position/a_frame_size;
+    }else{
+        v_texture_position=(a_texture_position+a_frame_position)/u_texture_size[index].xy;
+    }
+    
     v_frame=vec4(a_texture_position,a_texture_position);
 }

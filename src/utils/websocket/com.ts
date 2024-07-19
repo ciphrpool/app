@@ -1,4 +1,5 @@
 import { ciphel_io } from "@assets/api/game/ciphel_io";
+import { useFault } from "@components/errors/fault";
 const {
 	StdIn,
 	StdErr,
@@ -22,8 +23,11 @@ export type WebSocketCom = {
 };
 
 export function createWebSocket() {
+    const fault = useFault();
+
 	const path = "ws://localhost:3000/ws/arena";
 	const socket = new WebSocket(path);
+
 	socket.binaryType = "arraybuffer";
 
 	const com: WebSocketCom = {
@@ -57,11 +61,11 @@ export function createWebSocket() {
 	com.socket.onopen = () => {
 		console.debug(`websocket connection to : ${path} succeeded`);
 	};
-	com.socket.onerror = (error) => {
-		console.error("websocket error:", error);
+	com.socket.onerror = () => {
+		fault.major({message:"Communication with the cipherpool server had an unexpected error"})
 	};
 	com.socket.onclose = () => {
-		console.debug(`websocket ${path} is closed`);
+		fault.info({message:"Communication with the cipherpool server is now closed"})
 	};
 	com.socket.onmessage = (event) => {
 		const data = new Uint8Array(event.data);

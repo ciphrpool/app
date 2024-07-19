@@ -3,6 +3,7 @@ import { render } from "solid-js/web";
 import { Router } from "@solidjs/router";
 import { lazy } from "solid-js";
 import "./index.css";
+import { FaultContext, FaultHandler, FaultTarget } from "@components/errors/fault";
 
 const routes = [
 	{
@@ -23,5 +24,9 @@ const routes = [
 	},
 ];
 const root = document.getElementById("root");
+const fault = new FaultTarget();
 
-render(() => <Router>{routes}</Router>, root!);
+render(() => <FaultContext.Provider value={fault}>
+		<Router>{routes}</Router>
+		<FaultHandler/>
+	</FaultContext.Provider>, root!);

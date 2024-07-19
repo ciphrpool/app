@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import { Point, Restrained } from "./interaction.utils";
-import { Grid } from "../wireframe.utils";
 import { Container } from "pixi.js";
+import { Grid } from "../grid/grid";
 
 export interface InteractionPlanner {
 	on_start?: (zoom:number,position:Point) => void;

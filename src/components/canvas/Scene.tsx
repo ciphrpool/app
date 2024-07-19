@@ -21,9 +21,9 @@ import {
 	Mesh,
 	Shader,
 } from "pixi.js";
-import { CanvaContext, ContainerContext } from "./context";
-import { init_grid_render_pipeline } from "./wireframe.utils";
-import { manifest } from "./textures_bundle";
+import { CanvaContext, ContainerContext } from "./utils/context";
+import manifest from "./utils/manifest";
+import { init_grid_render_pipeline } from "./grid/pipeline";
 
 type SceneProps = {
 	children?: JSXElement;

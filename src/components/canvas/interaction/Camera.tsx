@@ -1,9 +1,9 @@
 import { JSXElement, onCleanup, onMount, splitProps } from "solid-js";
-import { CameraContext, ContainerContext, useCanva, useContainer } from "./context";
-import { Grid, init_grid_render_pipeline } from "./wireframe.utils";
-import { PanningHandler } from "./interaction/panning";
-import { ZoomingHandler } from "./interaction/zooming";
+import { CameraContext, ContainerContext, useCanva, useContainer } from "../utils/context";
+import { PanningHandler } from "./panning";
+import { ZoomingHandler } from "./zooming";
 import { Container } from "pixi.js";
+import { Grid } from "../grid/grid";
 export class CameraHandler {
     panning_handler:PanningHandler;
     zooming_handler:ZoomingHandler;

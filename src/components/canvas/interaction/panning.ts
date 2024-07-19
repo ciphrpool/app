@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import { Point, angle_of, distance_of } from "./interaction.utils";
 import { Container } from "pixi.js";
-import { Grid } from "../wireframe.utils";
+import { Grid } from "../grid/grid";
 
 export class PanningHandler {
     static PANNING_RADIUS_RATE = 0.3; 

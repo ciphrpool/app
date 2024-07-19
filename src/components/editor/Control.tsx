@@ -13,7 +13,7 @@ function Control(props: ControlProps) {
 	return (
 		<aside class="h-full w-fit p-4 bg-night-900">
 			<nav class="flex flex-col gap-8">
-				<Show when={props.cursor_data.info[C1].active}>
+				<Show when={props.cursor_data.info[C1].active} fallback={<ControlCursor e_cursor={C1}/>}>
 					<ControlCursor
 						on_click={() => props.change_cursor(C1)}
 						class="cursor-pointer"

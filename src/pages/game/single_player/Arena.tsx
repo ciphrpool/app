@@ -1,10 +1,8 @@
 import Header from "@components/headers/in_game/ArenaHeader";
 import Footer from "@components/footers/DefaultFooter";
-import Editor from "@components/editor/Editor";
-import Todo from "@components/utils/Todo";
+import Editor, { EditorErrorFallback } from "@components/editor/Editor";
 import Control from "@components/editor/Control";
-import { createSignal } from "solid-js";
-import { C1, C2, C3, C4, P1, Te_Cursor } from "@utils/player.type";
+import { P1 } from "@utils/player.type";
 import Console from "@components/editor/console/Console";
 import { createWebSocket } from "@utils/websocket/com";
 import {
@@ -13,6 +11,8 @@ import {
 } from "@components/editor/editor.utils";
 import { createStore } from "solid-js/store";
 import Pool from "@components/canvas/Pool";
+import Game from "@components/game/game";
+import { Barrier } from "@components/errors/barrier";
 
 function Arena() {
 	const [cursor_data, set_cursor_data] = createStore<CursorMetadata>(
@@ -36,12 +36,14 @@ function Arena() {
 							}}
 							cursor_data={cursor_data}
 						/>
-						<Editor
-							socket={socket}
-							cursor_data={cursor_data}
-							set_cursor_data={set_cursor_data}
-							api={editor_api}
-						/>
+						<Barrier fallback={<EditorErrorFallback/>}>
+							<Editor
+								socket={socket}
+								cursor_data={cursor_data}
+								set_cursor_data={set_cursor_data}
+								api={editor_api}
+							/>
+						</Barrier>
 					</div>
 					<Console
 						class="flex-grow-0 max-h-[50%] overflow-hidden"
@@ -55,7 +57,9 @@ function Arena() {
 					{/* <Todo> Game</Todo> */}
 					<div class="dbg-1 w-full"></div>
 					<div class="w-[512px] h-[512px] max-w-[512px] max-h-[512px]" ref={pool_container}>
-						<Pool container_ref={pool_container}/>
+						<Pool container_ref={pool_container}>
+							<Game/>
+						</Pool>
 					</div>
 					<div class="dbg-2 w-full"></div>
 				</section>
