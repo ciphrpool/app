@@ -1,14 +1,8 @@
 import { ciphel_io } from "@assets/api/game/ciphel_io";
 import { useFault } from "@components/errors/fault";
 const {
-	StdIn,
-	StdErr,
 	CiphelRequest,
 	StdIO,
-	StdOut,
-	SrcCode,
-	Command,
-	PlayerSide,
 } = ciphel_io;
 
 export type WebSocketCom = {
@@ -22,10 +16,9 @@ export type WebSocketCom = {
 	on_stdout: (handler: (msg: string) => void) => void;
 };
 
-export function createWebSocket() {
+export function createWebSocket(path:string) {
     const fault = useFault();
 
-	const path = "ws://localhost:3000/ws/arena";
 	const socket = new WebSocket(path);
 
 	socket.binaryType = "arraybuffer";
@@ -71,6 +64,7 @@ export function createWebSocket() {
 		const data = new Uint8Array(event.data);
 		const message = StdIO.decode(data);
 		let msg: string;
+		let request : ciphel_io.CiphelRequest;
 		switch (message.stdType) {
 			case "err":
 				if (!message.err?.content) return;
@@ -88,7 +82,7 @@ export function createWebSocket() {
 				break;
 			case "request":
 				if (!message.request) return;
-				const request = new ciphel_io.CiphelRequest(message.request);
+				request = new ciphel_io.CiphelRequest(message.request);
 				com.on_request_handlers?.forEach((handle) => {
 					handle(request);
 				});
