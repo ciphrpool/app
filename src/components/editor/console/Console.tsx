@@ -11,9 +11,9 @@ import {
 	onMount,
 	splitProps,
 } from "solid-js";
-import { CursorMetadata, preprocess_cmd } from "../editor.utils";
+import { CursorMetadata, preprocess_cmd, useCursorMetadata } from "../editor.utils";
 import { EditorApi } from "../Editor";
-import { WebSocketCom } from "@utils/websocket/com";
+import { useSocket, WebSocketCom } from "@utils/websocket/com";
 import { C1, C2, C3, C4, P1, P2, Te_Player, side_of } from "@utils/player.type";
 import { createStore, produce } from "solid-js/store";
 import {
@@ -34,15 +34,16 @@ type ConsoleProps = {
 		[k: string]: boolean | undefined;
 	};
 	editor_api: EditorApi;
-	socket: WebSocketCom;
 	side: Te_Player;
-	cursor_data: CursorMetadata;
 };
 function Console(props: ConsoleProps) {
 	let input_ref!: HTMLInputElement;
 	let default_input_ref!: HTMLInputElement;
 	let outputs_ref!: HTMLDivElement;
 
+	const socket = useSocket();
+	const cursor_metadata = useCursorMetadata();
+	
 	const [lines, set_lines] = createStore<LineData[]>([]);
 	const [is_waiting_input, set_waiting_input] = createSignal(false);
 	const [is_focus, set_focus] = createSignal<boolean>(false);
@@ -66,13 +67,13 @@ function Console(props: ConsoleProps) {
 		const submit = createSubmitHandler(
 			props.editor_api,
 			props.side,
-			props.socket,
+			socket,
 			set_lines,
 			set_waiting_input,
 			add_command,
 			focus
 		);
-		setup_socket_events(props.socket, set_lines, set_waiting_input, focus);
+		setup_socket_events(socket, set_lines, set_waiting_input, focus);
 		const clear_history_idx = setup_history_events(
 			default_input_ref,
 			is_focus,
@@ -92,7 +93,7 @@ function Console(props: ConsoleProps) {
 					return;
 			}
 			let cursor: number;
-			switch (props.cursor_data.current_cursor) {
+			switch (cursor_metadata.current_cursor) {
 				case C1:
 					cursor = 0;
 					break;

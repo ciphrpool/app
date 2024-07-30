@@ -12,8 +12,9 @@ import {
 	setup_editor,
 	to_readonly,
 	undo_readonly,
+	useCursorMetadata,
 } from "./editor.utils";
-import { WebSocketCom } from "@utils/websocket/com";
+import { useSocket, WebSocketCom } from "@utils/websocket/com";
 import { ciphel_io } from "@assets/api/game/ciphel_io";
 import { produce, SetStoreFunction } from "solid-js/store";
 import { async_safe, HandledError, safe } from "@components/errors/barrier";
@@ -26,15 +27,16 @@ export type EditorApi = {
 
 type EditorProps = {
 	api: EditorApi;
-	socket: WebSocketCom;
-	cursor_data: CursorMetadata;
-	set_cursor_data: SetStoreFunction<CursorMetadata>;
 };
 
 const EDITOR_VIEWSTATES: Map<Te_Cursor, monaco_editor.ICodeEditorViewState> =
 	new Map();
 
 function Editor(props: EditorProps) {
+	
+	const socket = useSocket();
+	const cursor_metadata = useCursorMetadata();
+
 	let container_ref!: HTMLDivElement;
 	const [get_monaco, set_monaco] = createSignal<Monaco>();
 	const [get_editor, set_editor] =
@@ -42,6 +44,7 @@ function Editor(props: EditorProps) {
 	let cancel: () => void = () => {};
 
 	onMount(async_safe(async () => {
+		
 		const load_monaco = loader.init();
 		cancel = load_monaco.cancel;
 		
@@ -49,17 +52,18 @@ function Editor(props: EditorProps) {
 			const monaco = await load_monaco;
 			const model = model_from(
 				monaco,
-				path_of(props.cursor_data.current_cursor)
+				path_of(cursor_metadata.current_cursor)
 			);
 			const editor = setup_editor(monaco, model, container_ref);
 
 			set_editor(editor);
 			set_monaco(monaco);
-			to_readonly(props.cursor_data.current_cursor, 4, editor);
+			to_readonly(cursor_metadata.current_cursor, 4, editor);
 		} catch (err) {
 			const editor = get_editor();
 			editor?.getModel()?.dispose();
 			editor?.dispose();
+			
 			throw new HandledError(
 				"Unable to create the editor.");
 		}
@@ -71,7 +75,7 @@ function Editor(props: EditorProps) {
 			const last_line = model.getLineCount();
 			const last_line_content = model.getLineContent(last_line);
 			const range = new Range(
-				props.cursor_data.info[props.cursor_data.current_cursor]
+				cursor_metadata.info[cursor_metadata.current_cursor]
 					.last_commited_line + 1,
 				0,
 				last_line,
@@ -83,7 +87,7 @@ function Editor(props: EditorProps) {
 		props.api.to_readonly = (line: number) => {
 			const editor = get_editor();
 			if (!editor) return;
-			to_readonly(props.cursor_data.current_cursor, line, editor);
+			to_readonly(cursor_metadata.current_cursor, line, editor);
 		};
 		props.api.get_last_edited_line_number = () => {
 			const editor = get_editor();
@@ -94,7 +98,7 @@ function Editor(props: EditorProps) {
 			const last_line = model.getLineCount();
 			return last_line;
 		};
-		props.socket.on_request((request: ciphel_io.CiphelRequest) => {
+		socket.on_request((request: ciphel_io.CiphelRequest) => {
 			const editor = get_editor();
 			if (!editor) return;
 			const model = editor.getModel();
@@ -107,52 +111,42 @@ function Editor(props: EditorProps) {
 
 			switch (request.requestType) {
 				case "commited":
-					undo_readonly(props.cursor_data.current_cursor, editor);
+					undo_readonly(cursor_metadata.current_cursor, editor);
 					to_readonly(
-						props.cursor_data.current_cursor,
+						cursor_metadata.current_cursor,
 						last_line,
 						editor
 					);
-					props.set_cursor_data(
-						produce((draft) => {
-							const cursor = draft.current_cursor;
-							draft.info[cursor].last_commited_line =
-								last_line;
-						})
-					);
+					cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line =
+						last_line;
+						
 					break;
 				case "reverted":
-					undo_readonly(props.cursor_data.current_cursor, editor);
+					undo_readonly(cursor_metadata.current_cursor, editor);
 
 					if (
-						props.cursor_data.info[
-							props.cursor_data.current_cursor
+						cursor_metadata.info[
+							cursor_metadata.current_cursor
 						].last_pushed_line > 0
 					) {
 						to_readonly(
-							props.cursor_data.current_cursor,
-							props.cursor_data.info[
-								props.cursor_data.current_cursor
+							cursor_metadata.current_cursor,
+							cursor_metadata.info[
+								cursor_metadata.current_cursor
 							].last_pushed_line,
 							editor
 						);
 					}
-					props.set_cursor_data(
-						produce((draft) => {
-							const cursor = draft.current_cursor;
-							draft.info[cursor].last_commited_line =
-								draft.info[cursor].last_pushed_line;
-						})
-					);
+
+					cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line =
+						cursor_metadata.info[cursor_metadata.current_cursor].last_pushed_line;
+	
 					break;
 				case "pushed":
-					props.set_cursor_data(
-						produce((draft) => {
-							const cursor = draft.current_cursor;
-							draft.info[cursor].last_pushed_line =
-								draft.info[cursor].last_commited_line;
-						})
-					);
+
+					cursor_metadata.info[cursor_metadata.current_cursor].last_pushed_line =
+						cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line;
+
 					break;
 				case "spawnThread":
 					if (
@@ -165,11 +159,8 @@ function Editor(props: EditorProps) {
 
 					if (!cursor) return;
 
-					props.set_cursor_data(
-						produce((draft) => {
-							draft.info[cursor!].active = true;
-						})
-					);
+					cursor_metadata.info[cursor!].active = true;
+
 					break;
 				case "closeThread":
 					if (
@@ -180,11 +171,8 @@ function Editor(props: EditorProps) {
 					cursor = cursor_from(request.closeThread?.cursor);
 					if (!cursor) return;
 
-					props.set_cursor_data(
-						produce((draft) => {
-							draft.info[cursor!].active = false;
-						})
-					);
+					cursor_metadata.info[cursor!].active = false;
+
 					break;
 				default:
 					break;
@@ -206,7 +194,7 @@ function Editor(props: EditorProps) {
 	/* Change model base on the provided cursor */
 	createEffect(
 		on(
-			() => props.cursor_data.current_cursor,
+			() => cursor_metadata.current_cursor,
 			(cursor, prev_cursor) => {
 				const monaco = get_monaco();
 				if (!monaco) return;
@@ -215,7 +203,7 @@ function Editor(props: EditorProps) {
 
 				const model = model_from(
 					monaco,
-					path_of(props.cursor_data.current_cursor)
+					path_of(cursor_metadata.current_cursor)
 				);
 
 				if (model !== editor.getModel()) {

@@ -3,6 +3,7 @@ import { Monaco } from "@monaco-editor/loader";
 import theme from "@assets/editor/theme.json";
 import syntax from "@assets/editor/syntax";
 import { C1, C2, C3, C4, Te_Cursor } from "@utils/player.type";
+import { createContext, JSXElement, useContext } from "solid-js";
 
 type CursorInfo = {
 	last_commited_line: number;
@@ -10,7 +11,7 @@ type CursorInfo = {
 	active: boolean;
 };
 
-export type CursorMetadata = {
+export class CursorMetadata {
 	current_cursor: Te_Cursor;
 	info: {
 		[C1]: CursorInfo;
@@ -18,12 +19,9 @@ export type CursorMetadata = {
 		[C3]: CursorInfo;
 		[C4]: CursorInfo;
 	};
-};
-
-export function default_cursor_metadata(): CursorMetadata {
-	return {
-		current_cursor: C1,
-		info: {
+	constructor() {
+		this.current_cursor = C1;
+		this.info = {
 			[C1]: {
 				last_commited_line: 0,
 				last_pushed_line: 0,
@@ -44,8 +42,27 @@ export function default_cursor_metadata(): CursorMetadata {
 				last_pushed_line: 0,
 				active: false,
 			},
-		},
-	};
+		};
+	}
+	change_cursor(cursor:Te_Cursor) {
+		this.current_cursor = cursor;
+	}
+};
+
+export const CursorMetadataContext = createContext<CursorMetadata>();
+export function useCursorMetadata<T = CursorMetadata>() {
+	return useContext(CursorMetadataContext) as T;
+}
+
+type CursorMetadataProviderProps = {
+	children?: JSXElement;
+}
+
+export function CursorMetadataProvider(props:CursorMetadataProviderProps) {
+	const cursor_metadat = new CursorMetadata();
+	return <CursorMetadataContext.Provider value={cursor_metadat}>
+		{props.children}
+	</CursorMetadataContext.Provider>
 }
 
 const default_code = `/* 

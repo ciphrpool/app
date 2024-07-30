@@ -24,6 +24,7 @@ export function setup_socket_events(
 	set_waiting_input: Setter<boolean>,
 	focus: (force?: boolean) => void
 ) {
+	if (!socket) return;
 	socket.on_request((req: ciphel_io.CiphelRequest) => {
 		switch (req.requestType) {
 			case "input":
