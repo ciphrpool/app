@@ -13,7 +13,6 @@ import {
 } from "solid-js";
 import { CursorMetadata, preprocess_cmd, useCursorMetadata } from "../editor.utils";
 import { EditorApi } from "../Editor";
-import { useSocket, WebSocketCom } from "@utils/websocket/com";
 import { C1, C2, C3, C4, P1, P2, Te_Player, side_of } from "@utils/player.type";
 import { createStore, produce } from "solid-js/store";
 import {
@@ -26,6 +25,7 @@ import {
 	setup_socket_events,
 } from "./console.utils";
 import { Line } from "./Line";
+import { useSocket } from "@components/io_com/ws";
 
 // choco <3
 type ConsoleProps = {

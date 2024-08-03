@@ -18,6 +18,7 @@ export default defineConfig({
 			"@assets": path.resolve(__dirname, "./src/assets"),
 			"@components": path.resolve(__dirname, "./src/components"),
 			"@utils": path.resolve(__dirname, "./src/utils"),
+			'ts_proto_api': path.resolve(__dirname, './api-pool/ts_proto_api')
 		},
 	},
 });

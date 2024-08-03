@@ -4,7 +4,6 @@ import Editor, { EditorErrorFallback } from "@components/editor/Editor";
 import Control from "@components/editor/Control";
 import { P1 } from "@utils/player.type";
 import Console from "@components/editor/console/Console";
-import { useSocket, WebSocketCom } from "@utils/websocket/com";
 import {
 	CursorMetadata,
 	CursorMetadataProvider,
@@ -16,10 +15,11 @@ import Game from "@components/game/game";
 import { Barrier } from "@components/errors/barrier";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { useFault } from "@components/errors/fault";
-import { SocketCom } from "@components/io_com/SocketCom";
+import { Network } from "@components/io_com/Network";
 
 type ArenaSession = {
-	url : string,
+	ws_url : string,
+	sse_url : string,
 	session_id : string,
 }
 
@@ -28,10 +28,13 @@ function ArenaManager() {
 	
 	const editor_api = {};
 
-	return <SocketCom 
+	return <Network 
 		connexion_url={'http://127.0.0.1:3000/arena/unregistered'}
 		socket_url={(session:ArenaSession) => {
-			return `${session?.url}?session_id=${session?.session_id}`
+			return `${session?.ws_url}?session_id=${session?.session_id}`
+		}}
+		sse_url={(session:ArenaSession) => {
+			return `${session?.sse_url}?session_id=${session?.session_id}`
 		}}
 		>
 			<CursorMetadataProvider>
@@ -58,7 +61,7 @@ function ArenaManager() {
 				</div>
 			</section>
 		</CursorMetadataProvider>
-	</SocketCom>
+	</Network>
 }
 
 function Arena() {

@@ -1,10 +1,9 @@
-import { ciphel_io } from "@assets/api/game/ciphel_io";
+import { ciphel_io } from "ts_proto_api";
+
+const { CiphelRequest, StdIO } = ciphel_io;
+
 import { FaultTarget, useFault } from "@components/errors/fault";
 import { createContext, useContext } from "solid-js";
-const {
-	CiphelRequest,
-	StdIO,
-} = ciphel_io;
 
 export const SocketContext = createContext<WebSocketCom>();
 export function useSocket<T = WebSocketCom>() {

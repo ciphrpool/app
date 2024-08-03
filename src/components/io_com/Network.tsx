@@ -1,11 +1,15 @@
+import { ciphel_io } from "ts_proto_api";
+
 import { useFault } from "@components/errors/fault";
-import { SocketContext, WebSocketCom } from "@utils/websocket/com";
 import { createSignal, JSXElement, onMount, Show } from "solid-js";
+import { SocketContext, WebSocketCom } from "./ws";
+import { SSECom, SSEContext } from "./sse";
 
 type SocketComProps<S> = {
 	children?: JSXElement;
     connexion_url : string
 	socket_url : (session:S) => string
+	sse_url : (session:S) => string
 }
 
 type ArenaSession = {
@@ -13,9 +17,10 @@ type ArenaSession = {
 	session_id : string,
 }
 
-export function SocketCom<Session>(props:SocketComProps<Session>) {
+export function Network<Session>(props:SocketComProps<Session>) {
 	const fault = useFault();
-	const com = new WebSocketCom();
+	const ws = new WebSocketCom();
+	const sse = new SSECom();
     const [is_connected,set_connected] = createSignal<boolean>(false);
 
 	onMount(async () => {
@@ -23,22 +28,30 @@ export function SocketCom<Session>(props:SocketComProps<Session>) {
 			const response = await fetch(props.connexion_url, {
 				method: 'GET',
 			});
-			if (!response.ok) {			
+			if (response.ok) {			
 				fault.major({message:"The Arena session could not be created"})
 			}
+			
 			const session: Session = await response.json(); // TODO : validate the json ?
-			com.connect(props.socket_url(session),
+			ws.connect(props.socket_url(session),
                 fault,
                 () => set_connected(true)
             )
+			ws.on_request((req: ciphel_io.CiphelRequest) => {
+				if (req.requestType == "sseReady") {
+					sse.connect(props.sse_url(session),fault)
+				}
+			})
 		} catch (error) {
 			fault.major({message:"The Arena session could not be created"})
 		}
 	})
 
-	return <SocketContext.Provider value={com}>
+	return <SocketContext.Provider value={ws}>
 		<Show when={is_connected()} fallback={<SocketComFallback/>}>
-            {props.children}
+			<SSEContext.Provider value={sse}>
+            	{props.children}
+			</SSEContext.Provider>
 		</Show>
 	</SocketContext.Provider>
 }

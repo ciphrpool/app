@@ -1,10 +1,10 @@
 import { Te_Player, side_of } from "@utils/player.type";
-import { WebSocketCom } from "@utils/websocket/com";
 import { Accessor, Setter, onCleanup } from "solid-js";
 import { SetStoreFunction, createStore, produce } from "solid-js/store";
 import { EditorApi } from "../Editor";
 import { preprocess_cmd } from "../editor.utils";
-import { ciphel_io } from "@assets/api/game/ciphel_io";
+import { ciphel_io } from "ts_proto_api";
+import { WebSocketCom } from "@components/io_com/ws";
 
 export const In = Symbol("In");
 export const Out = Symbol("Out");

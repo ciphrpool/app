@@ -1,3 +1,6 @@
 [submodule "api-pool"]
 	path = api-pool
 	url = git@github.com:ciphrpool/api-pool.git
+[submodule "assets-pool"]
+	path = assets-pool
+	url = git@github.com:ciphrpool/assets-pool.git

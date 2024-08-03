@@ -14,10 +14,11 @@ import {
 	undo_readonly,
 	useCursorMetadata,
 } from "./editor.utils";
-import { useSocket, WebSocketCom } from "@utils/websocket/com";
-import { ciphel_io } from "@assets/api/game/ciphel_io";
+import { ciphel_io } from "ts_proto_api";
+
 import { produce, SetStoreFunction } from "solid-js/store";
 import { async_safe, HandledError, safe } from "@components/errors/barrier";
+import { useSocket } from "@components/io_com/ws";
 
 export type EditorApi = {
 	snapshot?: () => string | null;

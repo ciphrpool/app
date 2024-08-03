@@ -1,4 +1,5 @@
-import { ciphel_io } from "@assets/api/game/ciphel_io";
+import { ciphel_io } from "ts_proto_api";
+
 
 export const P1 = Symbol("P1");
 export const P2 = Symbol("P2");
