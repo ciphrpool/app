@@ -32,7 +32,8 @@ import { CameraHandler } from "../interaction/Camera";
 import { Cell, CellAttributes, CellCoordinate, CellData, CellOptions } from "./cell";
 import { GridInstruction, GridRenderPipe } from "./pipeline";
 import { P1 } from "@utils/player.type";
-import { find_texture } from "../utils/manifest";
+import { get_texture_position } from "ts_textures";
+import { ciphel_io } from "ts_proto_api";
 
 type GridConfig = {
 	size?: number;
@@ -69,9 +70,9 @@ export class Grid extends Container {
 			config.camera.pin(this);
 		}
 
-		for (let x = 0; x < this.size; x++) {
-			for (let y = 0; y < this.size; y++) {
-				this.cells_data[x * this.size + y] = {
+		for (let y = 0; y < this.size; y++) {
+			for (let x = 0; x < this.size; x++) {
+				this.cells_data[y * this.size + x] = {
 					x: x * this.cell_width,
 					y: y * this.cell_width,
 
@@ -112,10 +113,10 @@ export class Grid extends Container {
 		if (this.cell_width === width) return;
 		this.cell_width = width;
 
-		for (let x = 0; x < this.size; x++) {
-			for (let y = 0; y < this.size; y++) {
-				this.cells_data[x * this.size + y] = {
-					...this.cells_data[x * this.size + y],
+		for (let y = 0; y < this.size; y++) {
+			for (let x = 0; x < this.size; x++) {
+				this.cells_data[y * this.size + x] = {
+					...this.cells_data[y * this.size + x],
 					x: x * this.cell_width,
 					y: y * this.cell_width,
 
@@ -147,7 +148,7 @@ export class Grid extends Container {
 		return this.grid_bounds;
 	}
 	modify_cell({ x, y }: CellCoordinate, new_config: Partial<CellOptions>) {
-		const idx = x * this.size + y;
+		const idx = y * this.size + x;
 		if (idx >= this.cells_data.length || idx < 0) return;
 
         if (new_config.player !== undefined) {
@@ -158,28 +159,33 @@ export class Grid extends Container {
 
 
         if (new_config.texture_id) {
-            const [x,y] = find_texture(new_config.texture_id);
+            const [x,y] = get_texture_position(new_config.texture_id);
             this.cells_data[idx].frame_x = x;
             this.cells_data[idx].frame_y = y;
         }
 		this.update_geometry();
 	}
 
-    batch_modify_cells(new_config: Partial<CellOptions>[]) {
-		if (new_config.length >= this.cells_data.length) return;
+    batch_modify_cells(new_config: ciphel_io.ICellData[]) {
+		
+		if (new_config.length != this.cells_data.length) return;
 
-        for (let idx = 0;idx < this.cells_data.length; idx++) {
-            if (new_config[idx].player !== undefined) {
-                this.cells_data[idx].texture_idx = new_config[idx].player === P1 ? 0 : 1;
-            } else {
-                this.cells_data[idx].texture_idx = -1;
+        for (let idx = 0;idx < this.cells_data.length; idx++) {			
+			this.cells_data[idx].texture_idx = new_config[idx].side! - 1;
+
+            if (new_config[idx].texture !== -1) {
+				const [x,y] = get_texture_position(new_config[idx].texture!);
+				
+                this.cells_data[idx].frame_x = x/32;
+                this.cells_data[idx].frame_y = y/32;
             }
-    
-            if (new_config[idx].texture_id !== undefined) {
-                const [x,y] = find_texture(new_config[idx].texture_id!);
-                this.cells_data[idx].frame_x = x;
-                this.cells_data[idx].frame_y = y;
-            }
+        }
+		this.update_geometry();
+	}
+
+	clear() {
+		for (let idx = 0;idx < this.cells_data.length; idx++) {
+			this.cells_data[idx].texture_idx = -1
         }
 		this.update_geometry();
 	}
@@ -263,8 +269,8 @@ export class Grid extends Container {
 
 				texture_idx :this.cells_data[i].texture_idx,
 			});
-			this.cell_geometry.buffer.update();
 		}
+		this.cell_geometry.buffer.update();
 	}
 
 	destroy_geometry() {

@@ -40,27 +40,34 @@ export class WebSocketCom {
 			const message = StdIO.decode(data);
 			let msg: string;
 			let request : ciphel_io.CiphelRequest;
+			let handlers;
 			switch (message.stdType) {
 				case "err":
 					if (!message.err?.content) return;
 					msg = message.err.content;
-					this.on_stderr_handlers?.forEach((handle) => {
-						handle(msg);
-					});
+
+					handlers = this.on_stderr_handlers;
+					for (let i = 0, len = handlers.length; i < len; i++) {
+						handlers[i](msg);
+					}
 					break;
 				case "out":
 					if (!message.out?.content) return;
 					msg = message.out.content;
-					this.on_stdout_handlers?.forEach((handle) => {
-						handle(msg);
-					});
+					
+					handlers = this.on_stdout_handlers;
+					for (let i = 0, len = handlers.length; i < len; i++) {
+						handlers[i](msg);
+					}
 					break;
 				case "request":
 					if (!message.request) return;
 					request = new ciphel_io.CiphelRequest(message.request);
-					this.on_request_handlers?.forEach((handle) => {
-						handle(request);
-					});
+
+					handlers = this.on_request_handlers;
+					for (let i = 0, len = handlers.length; i < len; i++) {
+						handlers[i](request);
+					}
 					break;
 				default:
 					break;

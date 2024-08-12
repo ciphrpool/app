@@ -167,6 +167,7 @@ function Console(props: ConsoleProps) {
 											idx === lines.length - 1
 												? line.editable
 												: undefined,
+										is_error : line.is_error
 									} as LineData;
 								});
 							})}
@@ -178,6 +179,7 @@ function Console(props: ConsoleProps) {
 											username: line.username,
 											file: line.file,
 										}}
+										is_error={line.is_error}
 										readonly={line.content}
 										editable={line.editable}
 										on_submit={
@@ -206,6 +208,7 @@ function Console(props: ConsoleProps) {
 						}}
 					>
 						<Line
+							is_error={false}
 							prefix={{ username: "user", file: "cmd" }}
 							readonly={""}
 							editable={true}

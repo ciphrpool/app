@@ -21,7 +21,7 @@ import { async_safe, HandledError, safe } from "@components/errors/barrier";
 import { useSocket } from "@components/io_com/ws";
 
 export type EditorApi = {
-	snapshot?: () => string | null;
+	snapshot?: () => [string,number] | null;
 	to_readonly?: (line: number) => void;
 	get_last_edited_line_number?: () => number | undefined;
 };
@@ -83,7 +83,7 @@ function Editor(props: EditorProps) {
 				last_line_content.length + 1
 			);
 
-			return model.getValueInRange(range);
+			return [model.getValueInRange(range),last_line+1];
 		};
 		props.api.to_readonly = (line: number) => {
 			const editor = get_editor();

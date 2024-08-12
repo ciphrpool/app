@@ -15,6 +15,7 @@ export type LineData = {
 	file?: string;
 	content: string;
 	editable: boolean;
+	is_error: boolean;
 	in_out: Te_IOstate;
 };
 
@@ -69,6 +70,7 @@ export function setup_socket_events(
 					username: "user",
 					editable: false,
 					in_out: Out,
+					is_error:true,
 				});
 			})
 		);
@@ -92,6 +94,7 @@ export function setup_socket_events(
 					username: "user",
 					editable: false,
 					in_out: Out,
+					is_error:false,
 				});
 			})
 		);
@@ -141,6 +144,7 @@ export function createSubmitHandler(
 						file: "cmd",
 						editable: false,
 						in_out: In,
+						is_error:false,
 					});
 				})
 			);
@@ -149,6 +153,8 @@ export function createSubmitHandler(
 			if (cmd_id === "compile" && editor_api.snapshot) {
 				const res = editor_api.snapshot();
 				if (!res) return;
+				const [src,line] = res;
+				
 				socket.send({
 					command: {
 						cursor,
@@ -156,8 +162,9 @@ export function createSubmitHandler(
 						cmd: cmd_id,
 						args,
 						src: {
-							content: res,
+							content: src,
 							side: side_of(side),
+							lineOffset : line,
 						},
 					},
 				});

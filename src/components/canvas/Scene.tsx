@@ -22,7 +22,7 @@ import {
 	Shader,
 } from "pixi.js";
 import { CanvaContext, ContainerContext } from "./utils/context";
-import manifest from "./utils/manifest";
+import { manifest } from "ts_textures";
 import { init_grid_render_pipeline } from "./grid/pipeline";
 
 type SceneProps = {

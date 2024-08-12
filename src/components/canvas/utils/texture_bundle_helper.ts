@@ -1,5 +1,5 @@
 import { Assets } from "pixi.js";
-import manifest from "./manifest";
+import { manifest } from "ts_textures";
 
 
 export function gen_textures_info_placeholders():[number[],number[]] {

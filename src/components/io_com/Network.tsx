@@ -28,7 +28,7 @@ export function Network<Session>(props:SocketComProps<Session>) {
 			const response = await fetch(props.connexion_url, {
 				method: 'GET',
 			});
-			if (response.ok) {			
+			if (!response.ok) {			
 				fault.major({message:"The Arena session could not be created"})
 			}
 			

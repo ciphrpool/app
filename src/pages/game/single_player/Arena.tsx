@@ -11,7 +11,7 @@ import {
 } from "@components/editor/editor.utils";
 import { createStore } from "solid-js/store";
 import Pool from "@components/canvas/Pool";
-import Game from "@components/game/game";
+import {Game,GameState} from "@components/game/game";
 import { Barrier } from "@components/errors/barrier";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { useFault } from "@components/errors/fault";
@@ -54,11 +54,14 @@ function ArenaManager() {
 				/>
 			</section>
 			<section class="bg-night-600 flex flex-col gap-4 justify-between items-center">
+				<GameState />
+
 				<div class="w-[512px] h-[512px] max-w-[512px] max-h-[512px]" ref={pool_container}>
 					<Pool container_ref={pool_container}>
 						<Game/>
 					</Pool>
 				</div>
+				<div>a</div>
 			</section>
 		</CursorMetadataProvider>
 	</Network>
