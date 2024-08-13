@@ -40,6 +40,7 @@ export class WebSocketCom {
 			const message = StdIO.decode(data);
 			let msg: string;
 			let request : ciphel_io.CiphelRequest;
+			
 			let handlers;
 			switch (message.stdType) {
 				case "err":
@@ -54,7 +55,7 @@ export class WebSocketCom {
 				case "out":
 					if (!message.out?.content) return;
 					msg = message.out.content;
-					
+
 					handlers = this.on_stdout_handlers;
 					for (let i = 0, len = handlers.length; i < len; i++) {
 						handlers[i](msg);
@@ -63,7 +64,7 @@ export class WebSocketCom {
 				case "request":
 					if (!message.request) return;
 					request = new ciphel_io.CiphelRequest(message.request);
-
+					
 					handlers = this.on_request_handlers;
 					for (let i = 0, len = handlers.length; i < len; i++) {
 						handlers[i](request);

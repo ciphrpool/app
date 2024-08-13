@@ -3,7 +3,8 @@ import { Monaco } from "@monaco-editor/loader";
 import theme from "@assets/editor/theme.json";
 import syntax from "@assets/editor/syntax";
 import { C1, C2, C3, C4, Te_Cursor } from "@utils/player.type";
-import { createContext, JSXElement, useContext } from "solid-js";
+import { createContext, createSignal, JSXElement, useContext } from "solid-js";
+import { createStore } from "solid-js/store";
 
 type CursorInfo = {
 	last_commited_line: number;
@@ -11,56 +12,58 @@ type CursorInfo = {
 	active: boolean;
 };
 
-export class CursorMetadata {
-	current_cursor: Te_Cursor;
+type CursorMetadataStore = {
 	info: {
-		[C1]: CursorInfo;
-		[C2]: CursorInfo;
-		[C3]: CursorInfo;
-		[C4]: CursorInfo;
+	  [C1]: CursorInfo;
+	  [C2]: CursorInfo;
+	  [C3]: CursorInfo;
+	  [C4]: CursorInfo;
 	};
-	constructor() {
-		this.current_cursor = C1;
-		this.info = {
-			[C1]: {
-				last_commited_line: 0,
-				last_pushed_line: 0,
-				active: false,
-			},
-			[C2]: {
-				last_commited_line: 0,
-				last_pushed_line: 0,
-				active: false,
-			},
-			[C3]: {
-				last_commited_line: 0,
-				last_pushed_line: 0,
-				active: false,
-			},
-			[C4]: {
-				last_commited_line: 0,
-				last_pushed_line: 0,
-				active: false,
-			},
-		};
-	}
-	change_cursor(cursor:Te_Cursor) {
-		this.current_cursor = cursor;
-	}
-};
+  };
+  
+function createCursorMetadata() {
+	const [store, setStore] = createStore<CursorMetadataStore>({
+		info: {
+		[C1]: { last_commited_line: 0, last_pushed_line: 0, active: false },
+		[C2]: { last_commited_line: 0, last_pushed_line: 0, active: false },
+		[C3]: { last_commited_line: 0, last_pushed_line: 0, active: false },
+		[C4]: { last_commited_line: 0, last_pushed_line: 0, active: false },
+		},
+	});
+	const [currentCursor, setCurrentCursor] = createSignal<Te_Cursor>(C1);
 
-export const CursorMetadataContext = createContext<CursorMetadata>();
-export function useCursorMetadata<T = CursorMetadata>() {
-	return useContext(CursorMetadataContext) as T;
+	return {
+		get current_cursor() {
+			return currentCursor();
+		},
+		set current_cursor(cursor: Te_Cursor) {
+			setCurrentCursor(cursor);
+		},
+		get info() {
+			return store.info;
+		},
+		setInfo(cursor: Te_Cursor, updates: Partial<CursorInfo>) {
+			setStore('info', cursor, (cursorInfo) => ({ ...cursorInfo, ...updates }));
+		},
+	};
 }
+
+type CursorMetadataContextValue = ReturnType<typeof createCursorMetadata>;
+
+export const CursorMetadataContext = createContext<CursorMetadataContextValue>();
+
+export function useCursorMetadata<T = CursorMetadataContextValue>() {
+    return useContext(CursorMetadataContext) as T;
+}
+
 
 type CursorMetadataProviderProps = {
 	children?: JSXElement;
 }
 
 export function CursorMetadataProvider(props:CursorMetadataProviderProps) {
-	const cursor_metadat = new CursorMetadata();
-	return <CursorMetadataContext.Provider value={cursor_metadat}>
+	const cursor_metadata = createCursorMetadata();
+	return <CursorMetadataContext.Provider value={cursor_metadata}>
 		{props.children}
 	</CursorMetadataContext.Provider>
 }
@@ -104,6 +107,19 @@ export function delete_cursor(monaco: Monaco, path: string): void {
 		model.dispose();
 	}
 }
+  
+interface ReadonlyState {
+	range : Range;
+	listeners: {
+	  on_key_down: IDisposable;
+	  on_did_change_cursor_selection: IDisposable;
+	  on_did_change_model_content: IDisposable;
+	};
+}
+
+const EDITOR_READONLY_LISTENERS: Map<
+	Te_Cursor,ReadonlyState
+> = new Map();
 
 export function setup_editor(
 	monaco: Monaco,
@@ -167,15 +183,6 @@ function is_lock(range: Range, editor: monaco_editor.IStandaloneCodeEditor) {
 	);
 }
 
-const EDITOR_READONLY_LISTENERS: Map<
-	Te_Cursor,
-	{
-		on_key_down: IDisposable;
-		on_did_change_cursor_selection: IDisposable;
-		on_did_change_model_content: IDisposable;
-	}
-> = new Map();
-
 export function to_readonly(
 	cursor: Te_Cursor,
 	until: number,
@@ -183,38 +190,9 @@ export function to_readonly(
 ) {
 	const model = editor.getModel();
 	if (!model) return;
-	const range = new Range(1, 0, until + 1, 0);
+	
+	const range = new Range(1, 1, until, until > 0 ? model.getLineMaxColumn(until) : 1);
 
-	const decoration = {
-		range: new Range(1, 0, until, 0),
-		options: {
-			isWholeLine: true,
-			className: "editor-line-readonly",
-			linesDecorationsClassName: "editor-line-readonly",
-		},
-	};
-
-	const last_line = model.getLineCount();
-	const last_line_content = model.getLineContent(last_line);
-	if (last_line <= until) {
-		model.pushEditOperations(
-			[],
-			[
-				{
-					range: new Range(
-						last_line,
-						last_line_content.length + 1,
-						last_line,
-						last_line_content.length + 1
-					),
-					text: "\n",
-				},
-			],
-			() => null
-		);
-	}
-
-	editor.createDecorationsCollection([decoration]);
 	const on_key_down = editor.onKeyDown((e) => {
 		if (is_lock(range, editor)) {
 			e.stopPropagation();
@@ -234,32 +212,16 @@ export function to_readonly(
 	);
 
 	const on_did_change_model_content = editor.onDidChangeModelContent(() => {
-		const last_line = model.getLineCount();
-		const last_line_content = model.getLineContent(last_line);
-
-		if (last_line <= until) {
-			model.pushEditOperations(
-				[],
-				[
-					{
-						range: new Range(
-							last_line,
-							last_line_content.length + 1,
-							last_line,
-							last_line_content.length + 1
-						),
-						text: "\n",
-					},
-				],
-				() => null
-			);
-		}
+		ensure_editable_line(model, until);
 	});
 
 	EDITOR_READONLY_LISTENERS.set(cursor, {
-		on_key_down,
-		on_did_change_cursor_selection,
-		on_did_change_model_content,
+		listeners : {
+			on_key_down,
+			on_did_change_cursor_selection,
+			on_did_change_model_content,
+		},
+		range,
 	});
 }
 
@@ -276,23 +238,51 @@ export function undo_readonly(
 		(decoration) => decoration.options.className === "editor-line-readonly"
 	);
 	if (readOnlyDecorations) {
-		// editor.createDecorationsCollection(readOnlyDecorations);
-
 		editor.removeDecorations(readOnlyDecorations.map((d) => d.id));
 	}
 
 	const disposables = EDITOR_READONLY_LISTENERS.get(cursor);
 	if (disposables) {
-		disposables.on_key_down.dispose();
-		disposables.on_did_change_cursor_selection.dispose();
-		disposables.on_did_change_model_content.dispose();
+		disposables.listeners.on_key_down.dispose();
+		disposables.listeners.on_did_change_cursor_selection.dispose();
+		disposables.listeners.on_did_change_model_content.dispose();
 	}
-	// editor.onDidChangeCursorSelection(_ => {});
-
-	// editor.onDidChangeModelContent(() => {});
-
+	
 	editor.updateOptions({ readOnly: false });
 }
+
+
+function ensure_editable_line(model: monaco_editor.ITextModel, until: number) {
+	const lastLine = model.getLineCount();
+	if (lastLine <= until) {
+	  model.pushEditOperations(
+		[],
+		[
+		  {
+			range: new Range(lastLine, model.getLineMaxColumn(lastLine), lastLine, model.getLineMaxColumn(lastLine)),
+			text: "\n",
+		  },
+		],
+		() => null
+	  );
+	}
+}
+
+export function add_pushed_comment(line:number, editor: monaco_editor.IStandaloneCodeEditor) {
+	const model = editor.getModel();
+	if (!model) return;
+	model.pushEditOperations(
+		[],
+		[
+		  {
+			range: new Range(line, model.getLineMaxColumn(line), line, model.getLineMaxColumn(line)),
+			text: "\n/* * * * * * * * * ^ PUSHED ^ * * * * * * * * */\n",
+		  },
+		],
+		() => null
+	  );
+}
+
 
 export function preprocess_cmd(cmd: string): string[] {
 	return cmd.trim().split(/\s+/);

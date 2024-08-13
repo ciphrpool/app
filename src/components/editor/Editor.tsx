@@ -6,7 +6,7 @@ import loader, { Monaco } from "@monaco-editor/loader";
 import { createEffect, createSignal, on, onCleanup, onMount } from "solid-js";
 import { cursor_from, Te_Cursor } from "@utils/player.type";
 import {
-	CursorMetadata,
+	add_pushed_comment,
 	model_from,
 	path_of,
 	setup_editor,
@@ -43,6 +43,59 @@ function Editor(props: EditorProps) {
 	const [get_editor, set_editor] =
 		createSignal<monaco_editor.IStandaloneCodeEditor>();
 	let cancel: () => void = () => {};
+
+	socket.on_request((request: ciphel_io.CiphelRequest) => {
+		const editor = get_editor();
+		if (!editor) return;
+		const model = editor.getModel();
+		if (!model) return;
+
+		const last_line = model.getLineCount();
+		if (!editor) return;
+		
+		switch (request.requestType) {
+			case "commited":
+				undo_readonly(cursor_metadata.current_cursor, editor);
+				to_readonly(
+					cursor_metadata.current_cursor,
+					last_line,
+					editor
+				);
+				cursor_metadata.setInfo(cursor_metadata.current_cursor, {
+					last_commited_line : last_line
+				});
+				break;
+			case "reverted":
+				undo_readonly(cursor_metadata.current_cursor, editor);
+
+				if (
+					cursor_metadata.info[
+						cursor_metadata.current_cursor
+					].last_pushed_line > 0
+				) {
+					to_readonly(
+						cursor_metadata.current_cursor,
+						cursor_metadata.info[
+							cursor_metadata.current_cursor
+						].last_pushed_line,
+						editor
+					);
+				}
+
+				cursor_metadata.setInfo(cursor_metadata.current_cursor, {
+						last_commited_line : cursor_metadata.info[cursor_metadata.current_cursor].last_pushed_line
+				});
+				break;
+			case "pushed":
+				cursor_metadata.setInfo(cursor_metadata.current_cursor, {
+					last_pushed_line : cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line
+				});
+				add_pushed_comment(cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line,editor)
+				break;
+			default:
+				break;
+		}
+	});
 
 	onMount(async_safe(async () => {
 		
@@ -99,86 +152,6 @@ function Editor(props: EditorProps) {
 			const last_line = model.getLineCount();
 			return last_line;
 		};
-		socket.on_request((request: ciphel_io.CiphelRequest) => {
-			const editor = get_editor();
-			if (!editor) return;
-			const model = editor.getModel();
-			if (!model) return;
-
-			const last_line = model.getLineCount();
-			if (!editor) return;
-
-			let cursor: Te_Cursor | undefined;
-
-			switch (request.requestType) {
-				case "commited":
-					undo_readonly(cursor_metadata.current_cursor, editor);
-					to_readonly(
-						cursor_metadata.current_cursor,
-						last_line,
-						editor
-					);
-					cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line =
-						last_line;
-						
-					break;
-				case "reverted":
-					undo_readonly(cursor_metadata.current_cursor, editor);
-
-					if (
-						cursor_metadata.info[
-							cursor_metadata.current_cursor
-						].last_pushed_line > 0
-					) {
-						to_readonly(
-							cursor_metadata.current_cursor,
-							cursor_metadata.info[
-								cursor_metadata.current_cursor
-							].last_pushed_line,
-							editor
-						);
-					}
-
-					cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line =
-						cursor_metadata.info[cursor_metadata.current_cursor].last_pushed_line;
-	
-					break;
-				case "pushed":
-
-					cursor_metadata.info[cursor_metadata.current_cursor].last_pushed_line =
-						cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line;
-
-					break;
-				case "spawnThread":
-					if (
-						!request.spawnThread ||
-						request.spawnThread?.cursor === undefined ||
-						request.spawnThread?.cursor === null
-					)
-						return;
-					cursor = cursor_from(request.spawnThread?.cursor);
-
-					if (!cursor) return;
-
-					cursor_metadata.info[cursor!].active = true;
-
-					break;
-				case "closeThread":
-					if (
-						!request.closeThread ||
-						!request.closeThread?.cursor
-					)
-						return;
-					cursor = cursor_from(request.closeThread?.cursor);
-					if (!cursor) return;
-
-					cursor_metadata.info[cursor!].active = false;
-
-					break;
-				default:
-					break;
-			}
-		});
 	}));
 
 	onCleanup(safe(() => {
@@ -212,7 +185,15 @@ function Editor(props: EditorProps) {
 					if (prev_cursor && previous_viewstate) {
 						EDITOR_VIEWSTATES.set(prev_cursor, previous_viewstate);
 					}
+					if (prev_cursor) {
+						undo_readonly(prev_cursor, editor);
+					}
 					editor.setModel(model);
+					to_readonly(
+						cursor_metadata.current_cursor,
+						cursor_metadata.info[cursor].last_commited_line,
+						editor
+					);
 					editor.restoreViewState(
 						EDITOR_VIEWSTATES.get(cursor) ?? null
 					);

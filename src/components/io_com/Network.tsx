@@ -33,6 +33,7 @@ export function Network<Session>(props:SocketComProps<Session>) {
 			}
 			
 			const session: Session = await response.json(); // TODO : validate the json ?
+
 			ws.connect(props.socket_url(session),
                 fault,
                 () => set_connected(true)

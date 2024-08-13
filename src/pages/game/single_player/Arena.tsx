@@ -5,9 +5,7 @@ import Control from "@components/editor/Control";
 import { P1 } from "@utils/player.type";
 import Console from "@components/editor/console/Console";
 import {
-	CursorMetadata,
 	CursorMetadataProvider,
-	useCursorMetadata,
 } from "@components/editor/editor.utils";
 import { createStore } from "solid-js/store";
 import Pool from "@components/canvas/Pool";
