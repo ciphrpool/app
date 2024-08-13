@@ -13,18 +13,29 @@ uniform sampler2D u_textures[NB_TEXTURES];
 
 void main(void)
 {
-    // float norm_x = (v_vertex_position.x)/100.0;
-    // float norm_x = (v_texture_position.x)/100.0;
-    // float norm_y = (v_texture_position.y)/100.0;
     int index=int(v_texture_idx);
     vec2 normalized = v_texture_position;
     if (index < 0) {
-        vec2 normalized = v_texture_position;
         if (normalized.x >= 0.95 || normalized.y <= 0.05 ) {
-            gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0);
+            gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0); // draw the cell border lines
+        } // else do nothing the cell background is the same as the canvas
+
+        if (v_micro_cell > 50.0) {
+            float micro_cell_size = mix(0.2, 0.8, clamp((v_micro_cell - 50.0) / 150.0, 0.0, 1.0));
+            vec2 cell_center = vec2(0.5, 0.5);
+            vec2 micro_cell_min = cell_center - vec2(micro_cell_size) * 0.5;
+            vec2 micro_cell_max = cell_center + vec2(micro_cell_size) * 0.5;
+            
+            if (normalized.x >= micro_cell_min.x && normalized.x <= micro_cell_max.x &&
+                normalized.y >= micro_cell_min.y && normalized.y <= micro_cell_max.y) {
+                gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0); // Blue micro cell
+            }
         }
+
     } else {
         gl_FragColor = SAMPLER_FN(index,v_texture_position);
     }
-    // vec2 coord = clamp(v_texture_position, v_frame.xy, v_frame.zw);
+
+
+
 }

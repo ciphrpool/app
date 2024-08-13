@@ -1,34 +1,8 @@
 import {
-	Assets,
-	Bounds,
 	Buffer,
 	BufferUsage,
-	Container,
-	DestroyOptions,
-	ExtensionType,
 	Geometry,
-	GlProgram,
-	GlobalUniformGroup,
-	Instruction,
-	InstructionPipe,
-	InstructionSet,
-	Matrix,
-	RenderPipe,
-	Renderer,
-	Shader,
-	State,
-	Texture,
-	UniformGroup,
-	WebGLRenderer,
-	extensions,
 } from "pixi.js";
-import cell_vertex from "@assets/shaders/cell.vert";
-import cell_fragment from "@assets/shaders/cell.frag";
-import gsap from "gsap";
-import { PanningHandler } from "../interaction/panning";
-import { Point } from "../interaction/interaction.utils";
-import { ZoomingHandler } from "../interaction/zooming";
-import { CameraHandler } from "../interaction/Camera";
 import { Te_Player } from "@utils/player.type";
 
 export type CellCoordinate = {
@@ -63,10 +37,12 @@ export type CellAttributes = {
 	frame_height: number;
 
 	texture_idx : number;
+
+    micro_cell: number;
 };
 
 export class Cell extends Geometry {
-	static STRIDE = 4 * 9;
+	static STRIDE = 4 * 10;
 	static NB_VERTICES = 6;
 	buffer: Buffer;
 	constructor(index_buffer: Buffer, nb_cells: number) {
@@ -111,13 +87,19 @@ export class Cell extends Geometry {
 					offset: (2 * 4)*4, 
 					stride: Cell.STRIDE,
 				},
+                a_micro_cell: {
+                    format: "float32",
+                    buffer: cell_buffer,
+                    offset: (2 * 4) * 4 + 4,
+                    stride: Cell.STRIDE,
+                },
 			},
 		});
 		this.buffer = cell_buffer;
 	}
 
 	offset() {
-		return 9;
+		return 10;
 	}
 
 	update(idx: number, data: CellAttributes) {
@@ -134,5 +116,7 @@ export class Cell extends Geometry {
 		this.buffer.data[idx + 7] = data.frame_height;
 		
 		this.buffer.data[idx + 8] = data.texture_idx;
+		
+        this.buffer.data[idx + 9] = data.micro_cell;
 	}
 }

@@ -1,33 +1,9 @@
 import {
-	Assets,
 	Bounds,
-	Buffer,
-	BufferUsage,
 	Container,
 	DestroyOptions,
-	ExtensionType,
-	Geometry,
-	GlProgram,
-	GlobalUniformGroup,
-	Instruction,
-	InstructionPipe,
-	InstructionSet,
-	Matrix,
-	RenderPipe,
-	Renderer,
-	Shader,
 	State,
-	Texture,
-	UniformGroup,
-	WebGLRenderer,
-	extensions,
 } from "pixi.js";
-import cell_vertex from "@assets/shaders/cell.vert";
-import cell_fragment from "@assets/shaders/cell.frag";
-import gsap from "gsap";
-import { PanningHandler } from "../interaction/panning";
-import { Point } from "../interaction/interaction.utils";
-import { ZoomingHandler } from "../interaction/zooming";
 import { CameraHandler } from "../interaction/Camera";
 import { Cell, CellAttributes, CellCoordinate, CellData, CellOptions } from "./cell";
 import { GridInstruction, GridRenderPipe } from "./pipeline";
@@ -89,6 +65,8 @@ export class Grid extends Container {
 
 					width: this.cell_width,
 					height: this.cell_width,
+
+					micro_cell : 100,
 				};
 				this.grid_bounds.addFrame(
 					x * this.cell_width,
@@ -100,7 +78,7 @@ export class Grid extends Container {
 		}
 		this.eventMode = "static";
 		this.cursor = "pointer";
-		let bind = this;
+		const bind = this;
 
 		this.hitArea = {
 			contains(x, y): boolean {
@@ -223,6 +201,8 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
+
+				micro_cell : this.cells_data[i].micro_cell,
 			});
 			this.cell_geometry.update(buffer_idx + 1 * offset, {
 				x: this.cells_data[i].x + this.cells_data[i].width,
@@ -238,6 +218,7 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
+				micro_cell : this.cells_data[i].micro_cell,
 			});
 			this.cell_geometry.update(buffer_idx + 2 * offset, {
 				x: this.cells_data[i].x + this.cells_data[i].width,
@@ -253,6 +234,7 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
+				micro_cell : this.cells_data[i].micro_cell,
 			});
 			this.cell_geometry.update(buffer_idx + 3 * offset, {
 				x: this.cells_data[i].x,
@@ -268,6 +250,7 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
+				micro_cell : this.cells_data[i].micro_cell,
 			});
 		}
 		this.cell_geometry.buffer.update();

@@ -5,6 +5,7 @@ in vec2 a_texture_position;
 in vec2 a_frame_position;
 in vec2 a_frame_size;
 in float a_texture_idx;
+in float a_micro_cell;
 
 uniform mat3 u_proj_trans;
 uniform vec4 u_texture_size[NB_TEXTURES];
@@ -15,6 +16,7 @@ out vec2 v_texture_position;
 out vec2 v_frame_position;
 out vec4 v_frame;
 out float v_texture_idx;
+out float v_micro_cell;
 
 void main(void)
 {
@@ -24,6 +26,7 @@ void main(void)
     
     v_vertex_position=a_vertex_position;
     v_texture_idx=a_texture_idx;
+    v_micro_cell=a_micro_cell;
     
     int index=int(a_texture_idx);
     if(index<0){
