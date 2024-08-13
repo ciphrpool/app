@@ -66,7 +66,7 @@ export class Grid extends Container {
 					width: this.cell_width,
 					height: this.cell_width,
 
-					micro_cell : 100,
+					corruption_level : 100,
 				};
 				this.grid_bounds.addFrame(
 					x * this.cell_width,
@@ -150,6 +150,7 @@ export class Grid extends Container {
 
         for (let idx = 0;idx < this.cells_data.length; idx++) {			
 			this.cells_data[idx].texture_idx = new_config[idx].side! - 1;
+			this.cells_data[idx].corruption_level = new_config[idx].corruptionLevel ?? 0;
 
             if (new_config[idx].texture !== -1) {
 				const [x,y] = get_texture_position(new_config[idx].texture!);
@@ -202,7 +203,7 @@ export class Grid extends Container {
 
 				texture_idx :this.cells_data[i].texture_idx,
 
-				micro_cell : this.cells_data[i].micro_cell,
+				corruption_level : this.cells_data[i].corruption_level,
 			});
 			this.cell_geometry.update(buffer_idx + 1 * offset, {
 				x: this.cells_data[i].x + this.cells_data[i].width,
@@ -218,7 +219,7 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
-				micro_cell : this.cells_data[i].micro_cell,
+				corruption_level : this.cells_data[i].corruption_level,
 			});
 			this.cell_geometry.update(buffer_idx + 2 * offset, {
 				x: this.cells_data[i].x + this.cells_data[i].width,
@@ -234,7 +235,7 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
-				micro_cell : this.cells_data[i].micro_cell,
+				corruption_level : this.cells_data[i].corruption_level,
 			});
 			this.cell_geometry.update(buffer_idx + 3 * offset, {
 				x: this.cells_data[i].x,
@@ -250,7 +251,7 @@ export class Grid extends Container {
 				frame_height :this.cells_data[i].frame_height,
 
 				texture_idx :this.cells_data[i].texture_idx,
-				micro_cell : this.cells_data[i].micro_cell,
+				corruption_level : this.cells_data[i].corruption_level,
 			});
 		}
 		this.cell_geometry.buffer.update();

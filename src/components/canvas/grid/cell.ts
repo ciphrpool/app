@@ -38,7 +38,7 @@ export type CellAttributes = {
 
 	texture_idx : number;
 
-    micro_cell: number;
+    corruption_level: number;
 };
 
 export class Cell extends Geometry {
@@ -87,7 +87,7 @@ export class Cell extends Geometry {
 					offset: (2 * 4)*4, 
 					stride: Cell.STRIDE,
 				},
-                a_micro_cell: {
+                a_corruption_level: {
                     format: "float32",
                     buffer: cell_buffer,
                     offset: (2 * 4) * 4 + 4,
@@ -117,6 +117,6 @@ export class Cell extends Geometry {
 		
 		this.buffer.data[idx + 8] = data.texture_idx;
 		
-        this.buffer.data[idx + 9] = data.micro_cell;
+        this.buffer.data[idx + 9] = data.corruption_level;
 	}
 }
