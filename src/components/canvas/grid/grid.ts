@@ -66,7 +66,7 @@ export class Grid extends Container {
 					width: this.cell_width,
 					height: this.cell_width,
 
-					corruption_level : 100,
+					corruption_level : 0,
 				};
 				this.grid_bounds.addFrame(
 					x * this.cell_width,

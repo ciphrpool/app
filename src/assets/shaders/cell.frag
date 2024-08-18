@@ -22,7 +22,7 @@ void main(void)
         } // else do nothing the cell background is the same as the canvas
 
         if (v_corruption_level > 50.0) {
-            float corruption_level_size = mix(0.2, 0.7, clamp((v_corruption_level - 50.0) / 150.0, 0.0, 1.0));
+            float corruption_level_size = mix(0.2, 0.7, clamp((v_corruption_level - 50.0) / 255.0, 0.0, 1.0));
             vec2 cell_center = vec2(0.5, 0.5);
             vec2 corruption_level_min = cell_center - vec2(corruption_level_size) * 0.5;
             vec2 corruption_level_max = cell_center + vec2(corruption_level_size) * 0.5;
