@@ -12,7 +12,7 @@ const routes = [
 	},
 	{
 		path: "/arena",
-		component: lazy(() => import("./pages/game/single_player/Arena")),
+		component: lazy(() => import("./pages/game/arena/Arena")),
 	},
 	{
 		path: "/dashboard",

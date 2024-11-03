@@ -2,7 +2,6 @@ import { Te_Player, side_of } from "@utils/player.type";
 import { Accessor, Setter, onCleanup } from "solid-js";
 import { SetStoreFunction, createStore, produce } from "solid-js/store";
 import { EditorApi } from "../Editor";
-import { preprocess_cmd } from "../editor.utils";
 import { ciphel_io } from "ts_proto_api";
 import { WebSocketCom } from "@components/io_com/ws";
 
@@ -26,9 +25,9 @@ export function setup_socket_events(
 	focus: (force?: boolean) => void
 ) {
 	if (!socket) return;
-	socket.on_request((req: ciphel_io.CiphelRequest) => {
-		switch (req.requestType) {
-			case "input":
+	socket.on_request((req: ciphel_io.API_Signal) => {
+		switch (req.SignalType) {
+			case "listenInput":
 				console.debug("request for std in");
 				set_waiting_input(true);
 				set_lines(
@@ -112,19 +111,17 @@ export function createSubmitHandler(
 	focus: (force?: boolean) => void
 ) {
 	return function handle_submit(
-		player: number,
-		cursor: number,
-		line: string,
+		pid: ciphel_io.API_PID,
+		tid: ciphel_io.API_TID,
+		command: string,
 		is_cmd: boolean
 	) {
-		if (!line) return;
+		if (!command) return;
 
 		if (is_cmd) {
-			const [cmd_id, ...args] = preprocess_cmd(line);
-			if (!cmd_id) return;
-			if (cmd_id === "clear") {
+			if ("clear" === command.trim()) {
 				set_lines([]);
-				add_command(line);
+				add_command(command);
 				return;
 			}
 			set_lines(
@@ -139,7 +136,7 @@ export function createSubmitHandler(
 						}
 					}
 					draft.push({
-						content: line,
+						content: command,
 						username: "user",
 						file: "cmd",
 						editable: false,
@@ -148,35 +145,34 @@ export function createSubmitHandler(
 					});
 				})
 			);
-			add_command(line);
+			add_command(command);
 			focus();
-			if (cmd_id === "compile" && editor_api.snapshot) {
-				const res = editor_api.snapshot();
-				if (!res) return;
-				const [src,line] = res;
+			// if (cmd_id === "compile" && editor_api.snapshot) {
+			// 	const res = editor_api.snapshot();
+			// 	if (!res) return;
+			// 	const [src,line] = res;
 				
-				socket.send({
-					command: {
-						cursor,
-						player,
-						cmd: cmd_id,
-						args,
-						src: {
-							content: src,
-							side: side_of(side),
-							lineOffset : line,
-						},
-					},
-				});
-				return;
-			}
+			// 	socket.send({
+			// 		command: {
+			// 			cursor,
+			// 			player,
+			// 			cmd: cmd_id,
+			// 			args,
+			// 			src: {
+			// 				content: src,
+			// 				side: side_of(side),
+			// 				lineOffset : line,
+			// 			},
+			// 		},
+			// 	});
+			// 	return;
+			// }
 
 			socket.send({
 				command: {
-					cursor,
-					player,
-					cmd: cmd_id,
-					args,
+					pid,
+					tid,
+					cmd: command,
 				},
 			});
 		} else {
@@ -185,13 +181,13 @@ export function createSubmitHandler(
 				produce((draft) => {
 					if (draft.length > 0 && draft[draft.length - 1].editable) {
 						draft[draft.length - 1].editable = false;
-						draft[draft.length - 1].content += line;
+						draft[draft.length - 1].content += command;
 					}
 				})
 			);
 			socket.send({
 				in: {
-					content: line,
+					content: command,
 				},
 			});
 		}

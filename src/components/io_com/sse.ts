@@ -3,7 +3,7 @@ import { ciphel_io } from "ts_proto_api";
 import { FaultTarget } from "@components/errors/fault";
 
 const {
-	ArenaFrameData,
+	FrameData,
 } = ciphel_io;
 
 export const SSEContext = createContext<SSECom>();
@@ -13,8 +13,8 @@ export function useSSE<T = SSECom>() {
 
 export class SSECom {
     event_source : EventSource | undefined;
-    latest_frame : ciphel_io.IArenaFrameData | undefined;
-    handlers : ((frame : ciphel_io.IArenaFrameData) => void)[] = []
+    latest_frame : ciphel_io.IFrameData | undefined;
+    handlers : ((frame : ciphel_io.IFrameData) => void)[] = []
 
     connect(url: string,fault:FaultTarget) {
         // this.event_source = new EventSource(url,{withCredentials: true});
@@ -32,7 +32,7 @@ export class SSECom {
                     array[i] = bin.charCodeAt(i);
                 }
 
-                const decoded_frame = ArenaFrameData.decode(array);
+                const decoded_frame = FrameData.decode(array);
                 this.latest_frame = decoded_frame;
 
                 const handlers = this.handlers;
@@ -50,7 +50,7 @@ export class SSECom {
             }
         };
     }
-    on_frame(handle:(frame:ciphel_io.IArenaFrameData)=>void) {
+    on_frame(handle:(frame:ciphel_io.IFrameData)=>void) {
         this.handlers.push(handle)
     }
 }

@@ -44,56 +44,27 @@ function Editor(props: EditorProps) {
 		createSignal<monaco_editor.IStandaloneCodeEditor>();
 	let cancel: () => void = () => {};
 
-	socket.on_request((request: ciphel_io.CiphelRequest) => {
+	socket.on_request((request: ciphel_io.API_Signal) => {
 		const editor = get_editor();
 		if (!editor) return;
 		const model = editor.getModel();
 		if (!model) return;
-
-		const last_line = model.getLineCount();
-		if (!editor) return;
 		
-		switch (request.requestType) {
-			case "commited":
-				undo_readonly(cursor_metadata.current_cursor, editor);
-				to_readonly(
-					cursor_metadata.current_cursor,
-					last_line,
-					editor
-				);
-				cursor_metadata.setInfo(cursor_metadata.current_cursor, {
-					last_commited_line : last_line
-				});
-				break;
-			case "reverted":
-				undo_readonly(cursor_metadata.current_cursor, editor);
+		if ("commitCode" === request.SignalType) {
+			undo_readonly(cursor_metadata.current_cursor, editor);
 
-				if (
-					cursor_metadata.info[
-						cursor_metadata.current_cursor
-					].last_pushed_line > 0
-				) {
-					to_readonly(
-						cursor_metadata.current_cursor,
-						cursor_metadata.info[
-							cursor_metadata.current_cursor
-						].last_pushed_line,
-						editor
-					);
-				}
+			const cursor = cursor_from(request.commitCode?.tid as number);
+			if (!cursor) return;
 
-				cursor_metadata.setInfo(cursor_metadata.current_cursor, {
-						last_commited_line : cursor_metadata.info[cursor_metadata.current_cursor].last_pushed_line
-				});
-				break;
-			case "pushed":
-				cursor_metadata.setInfo(cursor_metadata.current_cursor, {
-					last_pushed_line : cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line
-				});
-				add_pushed_comment(cursor_metadata.info[cursor_metadata.current_cursor].last_commited_line,editor)
-				break;
-			default:
-				break;
+			to_readonly(
+				cursor_metadata.current_cursor,
+				cursor_metadata.info[cursor].commited_line,
+				editor
+			);
+
+			cursor_metadata.setInfo(cursor_metadata.current_cursor, {
+				remote_barrier : cursor_metadata.info[cursor].commited_line
+			});
 		}
 	});
 
@@ -121,16 +92,18 @@ function Editor(props: EditorProps) {
 			throw new HandledError(
 				"Unable to create the editor.");
 		}
+
 		props.api.snapshot = () => {
 			const editor = get_editor();
 			if (!editor) return null;
 			const model = editor.getModel();
 			if (!model) return null;
+			
 			const last_line = model.getLineCount();
 			const last_line_content = model.getLineContent(last_line);
 			const range = new Range(
 				cursor_metadata.info[cursor_metadata.current_cursor]
-					.last_commited_line + 1,
+					.remote_barrier + 1,
 				0,
 				last_line,
 				last_line_content.length + 1
@@ -191,7 +164,7 @@ function Editor(props: EditorProps) {
 					editor.setModel(model);
 					to_readonly(
 						cursor_metadata.current_cursor,
-						cursor_metadata.info[cursor].last_commited_line,
+						cursor_metadata.info[cursor].remote_barrier,
 						editor
 					);
 					editor.restoreViewState(

@@ -7,8 +7,8 @@ import { createContext, createSignal, JSXElement, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 
 type CursorInfo = {
-	last_commited_line: number;
-	last_pushed_line: number;
+	remote_barrier: number;
+	commited_line:number;
 	active: boolean;
 };
 
@@ -24,10 +24,10 @@ type CursorMetadataStore = {
 function createCursorMetadata() {
 	const [store, setStore] = createStore<CursorMetadataStore>({
 		info: {
-		[C1]: { last_commited_line: 0, last_pushed_line: 0, active: false },
-		[C2]: { last_commited_line: 0, last_pushed_line: 0, active: false },
-		[C3]: { last_commited_line: 0, last_pushed_line: 0, active: false },
-		[C4]: { last_commited_line: 0, last_pushed_line: 0, active: false },
+		[C1]: { remote_barrier: 0, commited_line:0, active: false },
+		[C2]: { remote_barrier: 0, commited_line:0, active: false },
+		[C3]: { remote_barrier: 0, commited_line:0, active: false },
+		[C4]: { remote_barrier: 0, commited_line:0, active: false },
 		},
 	});
 	const [currentCursor, setCurrentCursor] = createSignal<Te_Cursor>(C1);
@@ -201,11 +201,11 @@ export function to_readonly(
 	});
 
 	const on_did_change_cursor_selection = editor.onDidChangeCursorSelection(
-		(_) => {
+		() => {
 			editor.updateOptions({
 				readOnly: is_lock(range, editor),
 				readOnlyMessage: {
-					value: "Cannot edit already commited lines.",
+					value: "Cannot edit already commited code.",
 				},
 			});
 		}
@@ -281,9 +281,4 @@ export function add_pushed_comment(line:number, editor: monaco_editor.IStandalon
 		],
 		() => null
 	  );
-}
-
-
-export function preprocess_cmd(cmd: string): string[] {
-	return cmd.trim().split(/\s+/);
 }

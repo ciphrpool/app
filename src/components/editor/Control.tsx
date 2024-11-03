@@ -18,27 +18,29 @@ function Control(props: ControlProps) {
 	const cursor_metadata = useCursorMetadata();
 	const fault = useFault();
 
-	socket.on_request((request: ciphel_io.CiphelRequest) => {
-		if (request.requestType === "spawnThread") {
+	socket.on_request((request: ciphel_io.API_Signal) => {
+		if (request.SignalType === "spawnThread") {
 			if (
 				!request.spawnThread ||
-				request.spawnThread?.cursor === undefined ||
-				request.spawnThread?.cursor === null
-			)
+				request.spawnThread?.tid === undefined ||
+				request.spawnThread?.tid === null
+			) {
 				return;
-			const cursor = cursor_from(request.spawnThread?.cursor);
+			} 
+			const cursor = cursor_from(request.spawnThread?.tid);
 			if (!cursor) return;
 			cursor_metadata.setInfo(cursor, { active: true });
 			
 			return;
 		}
-		if (request.requestType === "closeThread") {
+		if (request.SignalType === "closeThread") {
 			if (
 				!request.closeThread ||
-				!request.closeThread?.cursor
-			)
+				!request.closeThread?.tid
+			) {
 				return;
-			const cursor = cursor_from(request.closeThread?.cursor);
+			}
+			const cursor = cursor_from(request.closeThread?.tid);
 			if (!cursor) return;
 			cursor_metadata.setInfo(cursor, { active: false });
 			return;
