@@ -152,8 +152,8 @@ export class GridRenderPipe
 		// console.log({scene_width:this.renderer.width,scene_height:this.renderer.height});
 		this.adaptor.pipe_uniforms.uniforms.u_cell_size[0] = grid.cell_width;
 		this.adaptor.pipe_uniforms.uniforms.u_cell_size[1] = grid.cell_width;
-
-		this.adaptor.pipe_uniforms.update();
+		
+		//this.adaptor.pipe_uniforms.update();
 
 		this.adaptor.execute(this, grid);
 	}

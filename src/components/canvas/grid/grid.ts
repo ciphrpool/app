@@ -3,12 +3,13 @@ import {
 	Container,
 	DestroyOptions,
 	State,
+	UniformGroup,
 } from "pixi.js";
 import { CameraHandler } from "../interaction/Camera";
 import { Cell, CellAttributes, CellCoordinate, CellData, CellOptions } from "./cell";
 import { GridInstruction, GridRenderPipe } from "./pipeline";
 import { P1 } from "@utils/player.type";
-import { get_texture_position } from "ts_textures";
+import { get_texture_position,texture_positions } from "ts_textures";
 import { ciphel_io } from "ts_proto_api";
 
 type GridConfig = {
@@ -29,6 +30,8 @@ export class Grid extends Container {
 	public get grid_width() : number {
 		return this.cell_width * this.size
 	}
+
+	u_time : number = 0;
 
 	cell_geometry: Cell | undefined = undefined;
 
@@ -145,7 +148,6 @@ export class Grid extends Container {
 	}
 
     batch_modify_cells(new_config: ciphel_io.ICellData[]) {
-		
 		if (new_config.length != this.cells_data.length) return;
 
         for (let idx = 0;idx < this.cells_data.length; idx++) {			
@@ -153,10 +155,13 @@ export class Grid extends Container {
 			this.cells_data[idx].corruption_level = new_config[idx].corruptionLevel ?? 0;
 
             if (new_config[idx].texture !== -1) {
-				const [x,y] = get_texture_position(new_config[idx].texture!);
-				
-                this.cells_data[idx].frame_x = x/32;
-                this.cells_data[idx].frame_y = y/32;
+				const arr = get_texture_position(new_config[idx].texture!);
+				if (arr) {
+					const [x,y] = get_texture_position(new_config[idx].texture!);
+					
+					this.cells_data[idx].frame_x = x/32;
+					this.cells_data[idx].frame_y = y/32;
+				}
             }
         }
 		this.update_geometry();

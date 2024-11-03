@@ -41,6 +41,7 @@ export class SSECom {
                         handlers[i](decoded_frame);
                     }
                 } catch (err) {
+                    console.error(err);
                     fault.minor({message:"Error while handling the frame"})
                 }
                 

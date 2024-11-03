@@ -17,12 +17,16 @@ void main(void)
     int index=int(v_texture_idx);
     vec2 normalized = v_texture_position;
     if (index < 0) {
-        if (normalized.x >= 0.95 || normalized.y <= 0.05 ) {
+        if (normalized.x >= 0.96 || normalized.y <= 0.04) {
+            gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0); // draw the cell border lines
+        } // else do nothing the cell background is the same as the canvas
+
+        if (normalized.x <= 0.04 || normalized.y >= 0.96 ) {
             gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0); // draw the cell border lines
         } // else do nothing the cell background is the same as the canvas
 
         if (v_corruption_level > 50.0) {
-            float corruption_level_size = mix(0.2, 0.7, clamp((v_corruption_level - 50.0) / 255.0, 0.0, 1.0));
+            float corruption_level_size = mix(0.1, 0.7, clamp((v_corruption_level - 50.0) / 255.0, 0.0, 1.0));
             vec2 cell_center = vec2(0.5, 0.5);
             vec2 corruption_level_min = cell_center - vec2(corruption_level_size) * 0.5;
             vec2 corruption_level_max = cell_center + vec2(corruption_level_size) * 0.5;
@@ -32,7 +36,9 @@ void main(void)
             );
             if (adjusted_normalized.x >= corruption_level_min.x && adjusted_normalized.x <= corruption_level_max.x &&
                 adjusted_normalized.y >= corruption_level_min.y && adjusted_normalized.y <= corruption_level_max.y) {
-                gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);
+                float intensity = smoothstep(50.0, 255.0, v_corruption_level);
+                vec3 corruption_color = mix(vec3(0.22, 0.22, 0.22), vec3(0.3, 0.3, 0.3), intensity);
+                gl_FragColor = vec4(corruption_color, 1.0);
             }
         }
 

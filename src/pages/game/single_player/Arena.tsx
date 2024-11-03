@@ -59,7 +59,7 @@ function ArenaManager() {
 						<Game/>
 					</Pool>
 				</div>
-				<div>a</div>
+				<div></div>
 			</section>
 		</CursorMetadataProvider>
 	</Network>

@@ -5,6 +5,7 @@ import { format_time } from "@utils/time";
 import { createSignal, onMount } from "solid-js";
 import ClockIcon from "@assets/icons/clock.svg";
 import EnergyIcon from "@assets/icons/energy.svg";
+import { GridRenderPipe } from "@components/canvas/grid/pipeline";
 
 
 export type GameStateProps = {
@@ -49,25 +50,12 @@ export function Game(params:GameProps) {
     });
 
     onMount(() => {
-        // grid.modify_cell({x:16,y:16},{
-        //     player:P1,
-        //     texture_id:0,
-        // })
-        // let delay = 1000;
-        // app.ticker.add((time) => {
-        //     delay -= time.elapsedMS;
-        //     console.log(time.elapsedMS);
-            
-        //     if ( delay <= 0 ) {
-        //         delay = 1000;
-        //         grid.modify_cell({x:x,y:16},{
-        //         })
-        //         x = (x + 1) % grid.size; 
-        //         grid.modify_cell({x:x,y:16},{
-        //             player:P1,
-        //         })
-        //     }
-        // })
+        let elapsed_time = 0;
+        app.ticker.add((time) => {
+            // update time uniform in shaders
+            elapsed_time += 0.1 * time.deltaTime;
+            grid.u_time = elapsed_time;
+        })
     })
 
     return <>
