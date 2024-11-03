@@ -1,8 +1,8 @@
 import { ciphel_io } from "ts_proto_api";
 
-const { CiphelRequest, StdIO } = ciphel_io;
+const { API_Signal, API_IO } = ciphel_io;
 
-import { FaultTarget, useFault } from "@components/errors/fault";
+import { FaultTarget } from "@components/errors/fault";
 import { createContext, useContext } from "solid-js";
 
 export const SocketContext = createContext<WebSocketCom>();
@@ -15,7 +15,7 @@ export class WebSocketCom {
 	
 	on_stderr_handlers: ((msg: string) => void)[] = [];
 	on_stdout_handlers: ((msg: string) => void)[] = [];
-	on_request_handlers: ((req: ciphel_io.CiphelRequest) => void)[] = [];
+	on_signal_handlers: ((req: ciphel_io.API_Signal) => void)[] = [];
 
 	constructor() {
 	}
@@ -37,12 +37,12 @@ export class WebSocketCom {
 		};
 		this.socket.onmessage = (event) => {
 			const data = new Uint8Array(event.data);
-			const message = StdIO.decode(data);
+			const message = API_IO.decode(data);
 			let msg: string;
-			let request : ciphel_io.CiphelRequest;
+			let request : ciphel_io.API_Signal;
 			
 			let handlers;
-			switch (message.stdType) {
+			switch (message.IO_TYPE) {
 				case "err":
 					if (!message.err?.content) return;
 					msg = message.err.content;
@@ -63,9 +63,9 @@ export class WebSocketCom {
 					break;
 				case "request":
 					if (!message.request) return;
-					request = new ciphel_io.CiphelRequest(message.request);
+					request = new ciphel_io.API_Signal(message.request);
 					
-					handlers = this.on_request_handlers;
+					handlers = this.on_signal_handlers;
 					for (let i = 0, len = handlers.length; i < len; i++) {
 						handlers[i](request);
 					}
@@ -76,10 +76,10 @@ export class WebSocketCom {
 		};
 	}
 
-	send(msg: ciphel_io.IStdIO) {
+	send(msg: ciphel_io.IAPI_IO) {
 		if (!this.socket) return;
 
-		const bin_msg = StdIO.encode(msg).finish();
+		const bin_msg = API_IO.encode(msg).finish();
 		if (this.socket.readyState === WebSocket.OPEN) {
 			this.socket.send(bin_msg);
 		} else {
@@ -90,8 +90,8 @@ export class WebSocketCom {
 		}
 	}
 
-	on_request(handler: (req: ciphel_io.CiphelRequest) => void) {
-		this.on_request_handlers.push(handler);
+	on_request(handler: (req: ciphel_io.API_Signal) => void) {
+		this.on_signal_handlers.push(handler);
 	}
 	on_stderr(handler: (msg: string) => void) {
 		this.on_stderr_handlers.push(handler);
