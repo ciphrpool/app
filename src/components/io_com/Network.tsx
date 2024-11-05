@@ -38,8 +38,8 @@ export function Network<Session>(props:SocketComProps<Session>) {
                 fault,
                 () => set_connected(true)
             )
-			ws.on_request((req: ciphel_io.CiphelRequest) => {
-				if (req.requestType == "sseReady") {
+			ws.on_request((req: ciphel_io.API_Signal) => {
+				if (req.SignalType == "sseReady") {
 					sse.connect(props.sse_url(session),fault)
 				}
 			})

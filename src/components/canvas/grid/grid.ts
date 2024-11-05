@@ -150,7 +150,7 @@ export class Grid extends Container {
     batch_modify_cells(new_config: ciphel_io.ICellData[]) {
 		if (new_config.length != this.cells_data.length) return;
 
-        for (let idx = 0;idx < this.cells_data.length; idx++) {			
+        for (let idx = 0;idx < this.cells_data.length; idx++) {
 			this.cells_data[idx].texture_idx = new_config[idx].side! - 1;
 			this.cells_data[idx].corruption_level = new_config[idx].corruptionLevel ?? 0;
 

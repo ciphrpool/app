@@ -147,27 +147,7 @@ export function createSubmitHandler(
 			);
 			add_command(command);
 			focus();
-			// if (cmd_id === "compile" && editor_api.snapshot) {
-			// 	const res = editor_api.snapshot();
-			// 	if (!res) return;
-			// 	const [src,line] = res;
-				
-			// 	socket.send({
-			// 		command: {
-			// 			cursor,
-			// 			player,
-			// 			cmd: cmd_id,
-			// 			args,
-			// 			src: {
-			// 				content: src,
-			// 				side: side_of(side),
-			// 				lineOffset : line,
-			// 			},
-			// 		},
-			// 	});
-			// 	return;
-			// }
-
+			
 			socket.send({
 				command: {
 					pid,

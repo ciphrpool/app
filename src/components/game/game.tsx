@@ -16,11 +16,16 @@ type Ratio = {
     current : number,
     max : number,
 };
+type EgoCount = {
+    p1 : number,
+    p2 : number,
+};
 
 export function GameState(params:GameStateProps) {
     const [get_minute,set_minute] = createSignal<number>();
     const [get_second,set_second] = createSignal<number>();
     const [get_energy,set_energy] = createSignal<number>();
+    const [get_ego_count,set_ego_count] = createSignal<EgoCount>({p1:0,p2:0});
     const [get_corruption_data,set_corruption_data] = createSignal<Ratio>({current:0,max:0});
     const [get_emotional_data,set_emotional_data] = createSignal<Ratio>({current:0,max:0});
     const [get_logical_data,set_logical_data] = createSignal<Ratio>({current:0,max:0});
@@ -31,6 +36,7 @@ export function GameState(params:GameStateProps) {
         set_minute(frame.timeM!);
         set_second(frame.timeS!);
         set_energy(frame.energy!);
+        set_ego_count({p1:frame.egoP1!,p2:frame.egoP2!});
         set_corruption_data({current:frame.corruptedDataCurrent!,max:frame.corruptedDataMax!});
         set_emotional_data({current:frame.emotionalDataCurrent!,max:frame.emotionalDataMax!});
         set_logical_data({current:frame.logicalDataCurrent!,max:frame.logicalDataMax!});
@@ -57,6 +63,10 @@ export function GameState(params:GameStateProps) {
         <span class="flex flex-row gap-4 align-middle items-center">
             <EnergyIcon />
             {get_quantum_data().current}/{get_quantum_data().max}
+        </span>
+        <span class="flex flex-row gap-4 align-middle items-center">
+            <EnergyIcon />
+            {get_ego_count().p1}/{get_ego_count().p2}
         </span>
         <span class="flex flex-row gap-4 align-middle items-center">
             {format_time(get_minute(),get_second())}

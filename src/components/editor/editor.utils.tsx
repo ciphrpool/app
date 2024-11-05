@@ -211,6 +211,7 @@ export function to_readonly(
 		}
 	);
 
+	ensure_editable_line(model, until);
 	const on_did_change_model_content = editor.onDidChangeModelContent(() => {
 		ensure_editable_line(model, until);
 	});
@@ -254,6 +255,7 @@ export function undo_readonly(
 
 function ensure_editable_line(model: monaco_editor.ITextModel, until: number) {
 	const lastLine = model.getLineCount();
+	
 	if (lastLine <= until) {
 	  model.pushEditOperations(
 		[],

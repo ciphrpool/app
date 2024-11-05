@@ -20,8 +20,14 @@ import { produce, SetStoreFunction } from "solid-js/store";
 import { async_safe, HandledError, safe } from "@components/errors/barrier";
 import { useSocket } from "@components/io_com/ws";
 
+export type SnapshotResult = {
+	src :string,
+	first_line : number,
+	last_line : number,
+}
+
 export type EditorApi = {
-	snapshot?: () => [string,number] | null;
+	snapshot?: () => SnapshotResult | null;
 	to_readonly?: (line: number) => void;
 	get_last_edited_line_number?: () => number | undefined;
 };
@@ -53,9 +59,12 @@ function Editor(props: EditorProps) {
 		if ("commitCode" === request.SignalType) {
 			undo_readonly(cursor_metadata.current_cursor, editor);
 
-			const cursor = cursor_from(request.commitCode?.tid as number);
-			if (!cursor) return;
+			const res = cursor_from(request.commitCode?.tid as number);
+			if (!res) return;
+			const [cursor,player] = res;
 
+			console.log(cursor_metadata.info[cursor].commited_line);
+			
 			to_readonly(
 				cursor_metadata.current_cursor,
 				cursor_metadata.info[cursor].commited_line,
@@ -63,7 +72,7 @@ function Editor(props: EditorProps) {
 			);
 
 			cursor_metadata.setInfo(cursor_metadata.current_cursor, {
-				remote_barrier : cursor_metadata.info[cursor].commited_line
+				remote_barrier : cursor_metadata.info[cursor].commited_line + 1,
 			});
 		}
 	});
@@ -98,18 +107,20 @@ function Editor(props: EditorProps) {
 			if (!editor) return null;
 			const model = editor.getModel();
 			if (!model) return null;
-			
+			const first_line = cursor_metadata.info[cursor_metadata.current_cursor].remote_barrier;
 			const last_line = model.getLineCount();
 			const last_line_content = model.getLineContent(last_line);
 			const range = new Range(
-				cursor_metadata.info[cursor_metadata.current_cursor]
-					.remote_barrier + 1,
+				first_line,
 				0,
 				last_line,
 				last_line_content.length + 1
 			);
-
-			return [model.getValueInRange(range),last_line+1];
+			return {
+				first_line,
+				last_line,
+				src : model.getValueInRange(range),
+			};
 		};
 		props.api.to_readonly = (line: number) => {
 			const editor = get_editor();

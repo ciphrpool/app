@@ -13,7 +13,7 @@ import {
 } from "solid-js";
 import { useCursorMetadata } from "../editor.utils";
 import { EditorApi } from "../Editor";
-import { C1, C2, C3, C4, P1, P2, Te_Player, side_of } from "@utils/player.type";
+import { C1, C2, C3, C4, P1, P2, Te_Player, cursor_to, side_of } from "@utils/player.type";
 import { createStore, produce } from "solid-js/store";
 import {
 	In,
@@ -81,35 +81,11 @@ function Console(props: ConsoleProps) {
 			update_command_from_history
 		);
 		handle_submit = (line: string, is_cmd: boolean) => {
-			let player: number;
-			switch (props.side) {
-				case P1:
-					player = 1;
-					break;
-				case P2:
-					player = 2;
-					break;
-				default:
-					return;
-			}
-			let cursor: number;
-			switch (cursor_metadata.current_cursor) {
-				case C1:
-					cursor = 0;
-					break;
-				case C2:
-					cursor = 1;
-					break;
-				case C3:
-					cursor = 2;
-					break;
-				case C4:
-					cursor = 3;
-					break;
-				default:
-					return;
-			}
-			submit(player, cursor, line, is_cmd);
+			const res_cursor = cursor_to(props.side,cursor_metadata.current_cursor);
+			if (!res_cursor) return;
+			const [pid,tid] = res_cursor;
+
+			submit(pid, tid, line, is_cmd);
 			clear_history_idx();
 		};
 	});

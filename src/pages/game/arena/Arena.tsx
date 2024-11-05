@@ -38,7 +38,7 @@ function ArenaManager() {
 			<CursorMetadataProvider>
 		<section class="flex flex-col overflow-hidden">
 				<div class="flex w-full flex-grow max-h-100 overflow-hidden">
-					<Control/>
+					<Control editor_api={editor_api} side={P1}/>
 					<Barrier fallback={<EditorErrorFallback/>}>
 						<Editor
 							api={editor_api}
