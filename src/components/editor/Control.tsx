@@ -68,7 +68,7 @@ function Control(props: ControlProps) {
 									if (!res_cursor) return;
 									const [pid,tid] = res_cursor;
 
-									const cmd = `run -lo ${snapshot.first_line} -t ${tid} -s \`*${snapshot.src}*\``;
+									const cmd = `run -l ${snapshot.first_line} -t ${tid} -s \`*${snapshot.src}*\``;
 									console.debug({cmd:cmd});
 									socket.send({
 										command: {
