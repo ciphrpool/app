@@ -55,6 +55,7 @@ export function setup_socket_events(
 		console.debug("err >> " + msg);
 		set_lines(
 			produce((draft) => {
+				if (msg === draft[draft.length - 1].content) return;
 				if (draft.length > 0 && draft[draft.length - 1].editable) {
 					draft[draft.length - 1].editable = false;
 					if (

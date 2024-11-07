@@ -63,8 +63,6 @@ function Editor(props: EditorProps) {
 			if (!res) return;
 			const [cursor,player] = res;
 
-			console.log(cursor_metadata.info[cursor].commited_line);
-			
 			to_readonly(
 				cursor_metadata.current_cursor,
 				cursor_metadata.info[cursor].commited_line,

@@ -36,7 +36,7 @@ function ArenaManager() {
 		}}
 		>
 			<CursorMetadataProvider>
-		<section class="flex flex-col overflow-hidden">
+			<section class="flex flex-col overflow-hidden">
 				<div class="flex w-full flex-grow max-h-100 overflow-hidden">
 					<Control editor_api={editor_api} side={P1}/>
 					<Barrier fallback={<EditorErrorFallback/>}>
@@ -51,16 +51,16 @@ function ArenaManager() {
 					side={P1}
 				/>
 			</section>
-			<section class="bg-night-600 flex flex-col gap-4 justify-between items-center">
-				<GameState />
-
-				<div class="w-[512px] h-[512px] max-w-[512px] max-h-[512px]" ref={pool_container}>
-					<Pool container_ref={pool_container}>
-						<Game/>
-					</Pool>
-				</div>
-				<div></div>
+			<section class="bg-night-600  w-full h-full grid grid-cols-4 p-8">
+				<GameState>
+					<div class="w-[512px] h-[512px] max-w-[512px] max-h-[512px]" ref={pool_container}>
+						<Pool container_ref={pool_container}>
+							<Game/>
+						</Pool>
+					</div>
+				</GameState>
 			</section>
+			
 		</CursorMetadataProvider>
 	</Network>
 }

@@ -49,10 +49,13 @@ function Console(props: ConsoleProps) {
 	const [is_focus, set_focus] = createSignal<boolean>(false);
 	const [history, add_command] = createCommandHistory();
 
+	const [is_console_displayed, display_console] = createSignal<boolean>(false);
+
 	let handle_submit: (line: string, is_cmd: boolean) => void;
 	let update_command_from_history: Setter<string>;
 
 	function focus(force?: boolean) {
+		display_console(true);
 		if ((is_focus() || force) && input_ref) {
 			input_ref.focus();
 			return;
@@ -112,75 +115,80 @@ function Console(props: ConsoleProps) {
 					}
 				}}
 			>
-				<div class="h-fit w-fit p-4 bg-night-900">
+				<button class="h-fit w-fit p-4 bg-night-900" onclick={() => {
+					display_console(!is_console_displayed());
+					set_focus(!is_focus());
+				}} >
 					<TerminalIcon class="cursor-pointer" />
-				</div>
+				</button>
 				<div class="flex flex-col p-4 w-full bg-night-800">
-					<div
-						class="flex-grow overflow-y-auto"
-						ref={outputs_ref}
-						classList={{
-							"pb-4": lines.length > 0,
-						}}
-					>
-						<For
-							each={lines.flatMap((line) => {
-								const lines = line.content.split("\n") ?? [];
-								if (
-									lines.length > 1 &&
-									lines[lines.length - 1] === "" &&
-									!line.editable
-								) {
-									lines.pop();
-								}
-								return lines.map((l, idx) => {
-									return {
-										username: line.username,
-										content: l,
-										file: line.file,
-										in_out: line.in_out,
-										editable:
-											idx === lines.length - 1
-												? line.editable
-												: undefined,
-										is_error : line.is_error
-									} as LineData;
-								});
-							})}
-						>
-							{(line, _) => {
-								return (
-									<Line
-										prefix={{
-											username: line.username,
-											file: line.file,
-										}}
-										is_error={line.is_error}
-										readonly={line.content}
-										editable={line.editable}
-										on_submit={
-											line.editable !== undefined
-												? (content) =>
-														handle_submit(
-															content,
-															line.in_out === In
-														)
-												: undefined
-										}
-										ref={
-											line.editable
-												? (e) => (input_ref = e)
-												: undefined
-										}
-									/>
-								);
+					<Show when={is_console_displayed() && lines.length > 0}>
+						<div
+							class="flex-grow overflow-y-auto"
+							ref={outputs_ref}
+							classList={{
+								"pb-4": lines.length > 0,
 							}}
-						</For>
-					</div>
+						>
+							<For
+								each={lines.flatMap((line) => {
+									const lines = line.content.split("\n") ?? [];
+									if (
+										lines.length > 1 &&
+										lines[lines.length - 1] === "" &&
+										!line.editable
+									) {
+										lines.pop();
+									}
+									return lines.map((l, idx) => {
+										return {
+											username: line.username,
+											content: l,
+											file: line.file,
+											in_out: line.in_out,
+											editable:
+												idx === lines.length - 1
+													? line.editable
+													: undefined,
+											is_error : line.is_error
+										} as LineData;
+									});
+								})}
+							>
+								{(line, _) => {
+									return (
+										<Line
+											prefix={{
+												username: line.username,
+												file: line.file,
+											}}
+											is_error={line.is_error}
+											readonly={line.content}
+											editable={line.editable}
+											on_submit={
+												line.editable !== undefined
+													? (content) =>
+															handle_submit(
+																content,
+																line.in_out === In
+															)
+													: undefined
+											}
+											ref={
+												line.editable
+													? (e) => (input_ref = e)
+													: undefined
+											}
+										/>
+									);
+								}}
+							</For>
+						</div>
+					</Show>
 					<div
 						class="flex-grow"
 						classList={{
-							"pt-4 border-t border-night-600": lines.length > 0,
+							"pt-4 border-t border-night-600": is_console_displayed() && lines.length > 0,
 						}}
 					>
 						<Line
