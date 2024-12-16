@@ -8,26 +8,26 @@ import { createStore } from "solid-js/store";
 
 type CursorInfo = {
 	remote_barrier: number;
-	commited_line:number;
+	commited_line: number;
 	active: boolean;
 };
 
 type CursorMetadataStore = {
 	info: {
-	  [C1]: CursorInfo;
-	  [C2]: CursorInfo;
-	  [C3]: CursorInfo;
-	  [C4]: CursorInfo;
+		[C1]: CursorInfo;
+		[C2]: CursorInfo;
+		[C3]: CursorInfo;
+		[C4]: CursorInfo;
 	};
-  };
-  
+};
+
 function createCursorMetadata() {
 	const [store, setStore] = createStore<CursorMetadataStore>({
 		info: {
-		[C1]: { remote_barrier: 0, commited_line:0, active: false },
-		[C2]: { remote_barrier: 0, commited_line:0, active: false },
-		[C3]: { remote_barrier: 0, commited_line:0, active: false },
-		[C4]: { remote_barrier: 0, commited_line:0, active: false },
+			[C1]: { remote_barrier: 0, commited_line: 0, active: false },
+			[C2]: { remote_barrier: 0, commited_line: 0, active: false },
+			[C3]: { remote_barrier: 0, commited_line: 0, active: false },
+			[C4]: { remote_barrier: 0, commited_line: 0, active: false },
 		},
 	});
 	const [currentCursor, setCurrentCursor] = createSignal<Te_Cursor>(C1);
@@ -43,32 +43,37 @@ function createCursorMetadata() {
 			return store.info;
 		},
 		setInfo(cursor: Te_Cursor, updates: Partial<CursorInfo>) {
-			setStore('info', cursor, (cursorInfo) => ({ ...cursorInfo, ...updates }));
+			setStore("info", cursor, (cursorInfo) => ({
+				...cursorInfo,
+				...updates,
+			}));
 		},
 	};
 }
 
 type CursorMetadataContextValue = ReturnType<typeof createCursorMetadata>;
 
-export const CursorMetadataContext = createContext<CursorMetadataContextValue>();
+export const CursorMetadataContext =
+	createContext<CursorMetadataContextValue>();
 
 export function useCursorMetadata<T = CursorMetadataContextValue>() {
-    return useContext(CursorMetadataContext) as T;
+	return useContext(CursorMetadataContext) as T;
 }
-
 
 type CursorMetadataProviderProps = {
 	children?: JSXElement;
-}
+};
 
-export function CursorMetadataProvider(props:CursorMetadataProviderProps) {
+export function CursorMetadataProvider(props: CursorMetadataProviderProps) {
 	const cursor_metadata = createCursorMetadata();
-	return <CursorMetadataContext.Provider value={cursor_metadata}>
-		{props.children}
-	</CursorMetadataContext.Provider>
+	return (
+		<CursorMetadataContext.Provider value={cursor_metadata}>
+			{props.children}
+		</CursorMetadataContext.Provider>
+	);
 }
 
-const default_code = `/* 
+const DEFAULT_CODE = `/* 
  * Welcome to cipher pool arena !
  * Begin your journey by writing some code
  */ 
@@ -91,11 +96,15 @@ export function path_of(cursor: Te_Cursor) {
 	}
 }
 
-export function model_from(monaco: Monaco, path: string) {
+export function model_from(
+	monaco: Monaco,
+	path: string,
+	default_code?: string
+) {
 	const uri = monaco.Uri.parse(path);
 	return (
 		monaco.editor.getModel(uri) ??
-		monaco.editor.createModel(default_code, "ciphel", uri)
+		monaco.editor.createModel(default_code ?? DEFAULT_CODE, "ciphel", uri)
 	);
 }
 
@@ -107,19 +116,17 @@ export function delete_cursor(monaco: Monaco, path: string): void {
 		model.dispose();
 	}
 }
-  
+
 interface ReadonlyState {
-	range : Range;
+	range: Range;
 	listeners: {
-	  on_key_down: IDisposable;
-	  on_did_change_cursor_selection: IDisposable;
-	  on_did_change_model_content: IDisposable;
+		on_key_down: IDisposable;
+		on_did_change_cursor_selection: IDisposable;
+		on_did_change_model_content: IDisposable;
 	};
 }
 
-const EDITOR_READONLY_LISTENERS: Map<
-	Te_Cursor,ReadonlyState
-> = new Map();
+const EDITOR_READONLY_LISTENERS: Map<Te_Cursor, ReadonlyState> = new Map();
 
 export function setup_editor(
 	monaco: Monaco,
@@ -162,9 +169,9 @@ export function setup_editor(
 	const editor = monaco.editor.create(ref, {
 		model: model,
 		automaticLayout: true,
-		cursorBlinking: "smooth",
-		cursorSmoothCaretAnimation: "on",
-		fontFamily: "Chakra Petch",
+		// cursorBlinking: "smooth",
+		// cursorSmoothCaretAnimation: "on",
+		fontFamily: "DM Sans",
 		fontLigatures: true,
 		letterSpacing: 1.6, // 0.1em converted to pixels (approximately 1.6px)
 		theme: "ciphel",
@@ -190,8 +197,13 @@ export function to_readonly(
 ) {
 	const model = editor.getModel();
 	if (!model) return;
-	
-	const range = new Range(1, 1, until, until > 0 ? model.getLineMaxColumn(until) : 1);
+
+	const range = new Range(
+		1,
+		1,
+		until,
+		until > 0 ? model.getLineMaxColumn(until) : 1
+	);
 
 	const on_key_down = editor.onKeyDown((e) => {
 		if (is_lock(range, editor)) {
@@ -217,7 +229,7 @@ export function to_readonly(
 	});
 
 	EDITOR_READONLY_LISTENERS.set(cursor, {
-		listeners : {
+		listeners: {
 			on_key_down,
 			on_did_change_cursor_selection,
 			on_did_change_model_content,
@@ -248,39 +260,51 @@ export function undo_readonly(
 		disposables.listeners.on_did_change_cursor_selection.dispose();
 		disposables.listeners.on_did_change_model_content.dispose();
 	}
-	
+
 	editor.updateOptions({ readOnly: false });
 }
 
-
 function ensure_editable_line(model: monaco_editor.ITextModel, until: number) {
 	const lastLine = model.getLineCount();
-	
+
 	if (lastLine <= until) {
-	  model.pushEditOperations(
-		[],
-		[
-		  {
-			range: new Range(lastLine, model.getLineMaxColumn(lastLine), lastLine, model.getLineMaxColumn(lastLine)),
-			text: "\n",
-		  },
-		],
-		() => null
-	  );
+		model.pushEditOperations(
+			[],
+			[
+				{
+					range: new Range(
+						lastLine,
+						model.getLineMaxColumn(lastLine),
+						lastLine,
+						model.getLineMaxColumn(lastLine)
+					),
+					text: "\n",
+				},
+			],
+			() => null
+		);
 	}
 }
 
-export function add_pushed_comment(line:number, editor: monaco_editor.IStandaloneCodeEditor) {
+export function add_pushed_comment(
+	line: number,
+	editor: monaco_editor.IStandaloneCodeEditor
+) {
 	const model = editor.getModel();
 	if (!model) return;
 	model.pushEditOperations(
 		[],
 		[
-		  {
-			range: new Range(line, model.getLineMaxColumn(line), line, model.getLineMaxColumn(line)),
-			text: "\n/* * * * * * * * * ^ PUSHED ^ * * * * * * * * */\n",
-		  },
+			{
+				range: new Range(
+					line,
+					model.getLineMaxColumn(line),
+					line,
+					model.getLineMaxColumn(line)
+				),
+				text: "\n/* * * * * * * * * ^ PUSHED ^ * * * * * * * * */\n",
+			},
 		],
 		() => null
-	  );
+	);
 }

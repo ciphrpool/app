@@ -29,10 +29,12 @@ import { PanningHandler } from "../interaction/panning";
 import { Point } from "../interaction/interaction.utils";
 import { ZoomingHandler } from "../interaction/zooming";
 import { CameraHandler } from "../interaction/Camera";
-import { gen_textures_info_placeholders, gl_bind } from "../utils/texture_bundle_helper";
+import {
+	gen_textures_info_placeholders,
+	gl_bind,
+} from "../utils/texture_bundle_helper";
 import { Grid } from "./grid";
 import { Cell } from "./cell";
-
 
 export abstract class GridAdaptor {
 	abstract init(): void;
@@ -107,7 +109,7 @@ export class GridRenderPipe
 	addRenderable(grid: Grid, instructionSet: InstructionSet): void {
 		const batcher = this.renderer.renderPipes.batch;
 
-        this.adaptor.load(this.renderer);
+		this.adaptor.load(this.renderer);
 
 		// update grid buffers
 		grid.update_cell_width(this.renderer.width / grid.size);
@@ -147,12 +149,10 @@ export class GridRenderPipe
 			.append(u_global.uWorldTransformMatrix)
 			.append(grid.worldTransform);
 
-
-
 		// console.log({scene_width:this.renderer.width,scene_height:this.renderer.height});
 		this.adaptor.pipe_uniforms.uniforms.u_cell_size[0] = grid.cell_width;
 		this.adaptor.pipe_uniforms.uniforms.u_cell_size[1] = grid.cell_width;
-		
+
 		//this.adaptor.pipe_uniforms.update();
 
 		this.adaptor.execute(this, grid);
@@ -169,87 +169,98 @@ class Grid_WebGLAdaptor extends GridAdaptor {
 	textures: Texture[] | undefined;
 
 	init(): void {
-		const [textures_indexes,textures_sizes] = gen_textures_info_placeholders();
+		const [textures_indexes, textures_sizes] =
+			gen_textures_info_placeholders();
 		this.shader = new Shader({
 			glProgram: GlProgram.from({
 				vertex: this.insert_constants(cell_vertex),
-				fragment: this.insert_sampler(this.insert_constants(cell_fragment)),
+				fragment: this.insert_sampler(
+					this.insert_constants(cell_fragment)
+				),
 			}),
 			resources: {
 				pipe_uniforms: this.pipe_uniforms.uniformStructures,
-				texture_uniforms: new UniformGroup({
-					u_textures: {
-						value: textures_indexes,
-						type: 'i32',
-						size: textures_indexes.length
+				texture_uniforms: new UniformGroup(
+					{
+						u_textures: {
+							value: textures_indexes,
+							type: "i32",
+							size: textures_indexes.length,
+						},
+						u_texture_size: {
+							value: textures_sizes,
+							type: "vec4<f32>",
+							size: textures_sizes.length,
+						},
 					},
-					u_texture_size: {
-						value: textures_sizes,
-						type: 'vec4<f32>',
-						size: textures_sizes.length
-					}
-				}, { isStatic: true }),
+					{ isStatic: true }
+				),
 			},
 		});
 	}
 	load(renderer: Renderer) {
-        (async () => {
-            const gl_renderer = (renderer as WebGLRenderer);
-    
-            this.textures = await gl_bind();
-            this.bind(gl_renderer);
-        })();
+		(async () => {
+			const gl_renderer = renderer as WebGLRenderer;
+
+			this.textures = await gl_bind();
+			this.bind(gl_renderer);
+		})();
 	}
 
-	bind(gl_renderer:WebGLRenderer) {
+	bind(gl_renderer: WebGLRenderer) {
 		if (!this.textures) return;
 		for (let i = 0; i < this.textures.length; i++) {
-			gl_renderer.texture.bind(this.textures[i],i);
+			gl_renderer.texture.bind(this.textures[i], i);
 		}
 
 		if (this.shader) {
-			const buffer = this.shader.resources.texture_uniforms.uniforms.u_texture_size;
+			const buffer =
+				this.shader.resources.texture_uniforms.uniforms.u_texture_size;
 
 			for (let i = 0; i < this.textures.length; i++) {
-				buffer[(i *4 ) + 0] = this.textures[i].width;
-				buffer[(i *4 ) + 1] = this.textures[i].height;
-				buffer[(i *4 ) + 2] = 1.0 / (this.textures[i].width);
-				buffer[(i *4 ) + 3] = 1.0 / this.textures[i].height;
+				buffer[i * 4 + 0] = this.textures[i].width;
+				buffer[i * 4 + 1] = this.textures[i].height;
+				buffer[i * 4 + 2] = 1.0 / this.textures[i].width;
+				buffer[i * 4 + 3] = 1.0 / this.textures[i].height;
 			}
-			
+
 			this.shader.resources.texture_uniforms.update();
 		}
 	}
 
-	insert_constants(src_shader:string) {
+	insert_constants(src_shader: string) {
 		const regex = new RegExp(`#define\\s+NB_TEXTURES\\s+\n`);
-		const placeholders = gen_textures_info_placeholders()
-		
+		const placeholders = gen_textures_info_placeholders();
+
 		const nb_textures = placeholders[0].length;
-		
-		return src_shader.replace(regex, `#define NB_TEXTURES ${nb_textures}\n\n`);
+
+		return src_shader.replace(
+			regex,
+			`#define NB_TEXTURES ${nb_textures}\n\n`
+		);
 	}
 
-
-	insert_sampler(src_shader:string) {
+	insert_sampler(src_shader: string) {
 		const regex = new RegExp(`#define\\s+SAMPLER_FN\\s+\n`);
-		const placeholders = gen_textures_info_placeholders()
-		
+		const placeholders = gen_textures_info_placeholders();
+
 		const nb_textures = placeholders[0].length;
-		
-        const src: string[] = [];
 
-        for (let i = 0; i < nb_textures; i++)
-        {
-            src.push(`if(idx == ${i}) return texture(u_textures[${i}],uv);`);
-        }
+		const src: string[] = [];
 
-		return src_shader.replace(regex, `
+		for (let i = 0; i < nb_textures; i++) {
+			src.push(`if(idx == ${i}) return texture(u_textures[${i}],uv);`);
+		}
+
+		return src_shader.replace(
+			regex,
+			`
 		vec4 SAMPLER_FN(int idx,vec2 uv) {
 			${src.join("\n")}
 			return texture(u_textures[0],uv);
 		}
-		`);
+		`
+		);
 	}
 
 	destroy(): void {

@@ -3,7 +3,7 @@ import { Accessor, Setter, onCleanup } from "solid-js";
 import { SetStoreFunction, createStore, produce } from "solid-js/store";
 import { EditorApi } from "../Editor";
 import { ciphel_io } from "ts_proto_api";
-import { WebSocketCom } from "@components/io_com/ws";
+import { WebSocketCom } from "@components/network/ws";
 
 export const In = Symbol("In");
 export const Out = Symbol("Out");
@@ -70,7 +70,7 @@ export function setup_socket_events(
 					username: "user",
 					editable: false,
 					in_out: Out,
-					is_error:true,
+					is_error: true,
 				});
 			})
 		);
@@ -94,7 +94,7 @@ export function setup_socket_events(
 					username: "user",
 					editable: false,
 					in_out: Out,
-					is_error:false,
+					is_error: false,
 				});
 			})
 		);
@@ -142,13 +142,13 @@ export function createSubmitHandler(
 						file: "cmd",
 						editable: false,
 						in_out: In,
-						is_error:false,
+						is_error: false,
 					});
 				})
 			);
 			add_command(command);
 			focus();
-			
+
 			socket.send({
 				command: {
 					pid,

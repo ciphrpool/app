@@ -14,12 +14,10 @@ export function useContainer<T = Container>() {
 	return useContext(ContainerContext) as T;
 }
 
-
 export const CameraContext = createContext<CameraHandler>();
 export function useCamera<T = CameraHandler>() {
 	return useContext(CameraContext) as T;
 }
-
 
 export const GridContext = createContext<Grid>();
 export function useGrid<T = Grid>() {

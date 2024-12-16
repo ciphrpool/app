@@ -50,18 +50,18 @@ function Scene(props: SceneProps) {
 	const [get_app] = createResource([others], async ([config]) => {
 		const app = new Application();
 		init_grid_render_pipeline();
-		
+
 		await app.init({ ...DEFAULT_CONFIG, ...config });
-		await Assets.init({manifest: manifest});
-		Assets.backgroundLoadBundle(['cursors']);
+		await Assets.init({ manifest: manifest });
+		Assets.backgroundLoadBundle(["cursors"]);
 		return app;
 	});
 
-	onMount(()=> {
+	onMount(() => {
 		const app = get_app();
 		if (!app) return;
-		app.resize()
-	})
+		app.resize();
+	});
 
 	createEffect(() => {
 		const app = get_app();

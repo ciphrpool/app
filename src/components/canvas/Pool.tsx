@@ -4,18 +4,15 @@ import Scene from "./Scene";
 import Wireframe from "./Wireframe";
 
 type PoolProps = {
-	container_ref : HTMLDivElement
+	container_ref: HTMLDivElement;
 	children?: JSXElement;
 };
 
 function Pool(props: PoolProps) {
-
 	return (
 		<Scene resizeTo={props.container_ref}>
 			<Camera>
-				<Wireframe>
-					{props.children}
-				</Wireframe>
+				<Wireframe>{props.children}</Wireframe>
 			</Camera>
 		</Scene>
 	);

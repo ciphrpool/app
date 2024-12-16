@@ -12,17 +12,16 @@ export function useSocket<T = WebSocketCom>() {
 
 export class WebSocketCom {
 	socket: WebSocket | undefined;
-	
+
 	on_stderr_handlers: ((msg: string) => void)[] = [];
 	on_stdout_handlers: ((msg: string) => void)[] = [];
 	on_signal_handlers: ((req: ciphel_io.API_Signal) => void)[] = [];
 
-	constructor() {
-	}
+	constructor() {}
 
-	connect(path:string,fault:FaultTarget,callback:()=>void) {
+	connect(path: string, fault: FaultTarget, callback: () => void) {
 		this.socket = new WebSocket(path);
-	
+
 		this.socket.binaryType = "arraybuffer";
 
 		this.socket.onopen = () => {
@@ -30,17 +29,23 @@ export class WebSocketCom {
 			callback();
 		};
 		this.socket.onerror = () => {
-			fault.major({message:"Communication with the cipherpool server had an unexpected error"})
+			fault.major({
+				message:
+					"Communication with the cipherpool server had an unexpected error",
+			});
 		};
 		this.socket.onclose = () => {
-			fault.info({message:"Communication with the cipherpool server is now closed"})
+			fault.info({
+				message:
+					"Communication with the cipherpool server is now closed",
+			});
 		};
 		this.socket.onmessage = (event) => {
 			const data = new Uint8Array(event.data);
 			const message = API_IO.decode(data);
 			let msg: string;
-			let request : ciphel_io.API_Signal;
-			
+			let request: ciphel_io.API_Signal;
+
 			let handlers;
 			switch (message.IO_TYPE) {
 				case "err":
@@ -64,7 +69,7 @@ export class WebSocketCom {
 				case "request":
 					if (!message.request) return;
 					request = new ciphel_io.API_Signal(message.request);
-					
+
 					handlers = this.on_signal_handlers;
 					for (let i = 0, len = handlers.length; i < len; i++) {
 						handlers[i](request);
@@ -99,5 +104,4 @@ export class WebSocketCom {
 	on_stdout(handler: (msg: string) => void) {
 		this.on_stdout_handlers.push(handler);
 	}
-};
-
+}

@@ -1,8 +1,4 @@
-import {
-	Buffer,
-	BufferUsage,
-	Geometry,
-} from "pixi.js";
+import { Buffer, BufferUsage, Geometry } from "pixi.js";
 import { Te_Player } from "@utils/player.type";
 
 export type CellCoordinate = {
@@ -11,17 +7,16 @@ export type CellCoordinate = {
 };
 
 export type CellOptions = {
-    player : Te_Player,
-    texture_id : number,
+	player: Te_Player;
+	texture_id: number;
 };
 
 export type CellData = {
-    texture_idx : number;
+	texture_idx: number;
 
 	width: number;
 	height: number;
 };
-
 
 export type CellAttributes = {
 	x: number;
@@ -36,9 +31,9 @@ export type CellAttributes = {
 	frame_width: number;
 	frame_height: number;
 
-	texture_idx : number;
+	texture_idx: number;
 
-    corruption_level: number;
+	corruption_level: number;
 };
 
 export class Cell extends Geometry {
@@ -72,27 +67,27 @@ export class Cell extends Geometry {
 				a_frame_position: {
 					format: "float32x2",
 					buffer: cell_buffer,
-					offset: (2 * 4)*2 , // sizeof(float32x2)
+					offset: 2 * 4 * 2, // sizeof(float32x2)
 					stride: Cell.STRIDE,
 				},
 				a_frame_size: {
 					format: "float32x2",
 					buffer: cell_buffer,
-					offset: (2 * 4)*3 , // sizeof(float32x2)
+					offset: 2 * 4 * 3, // sizeof(float32x2)
 					stride: Cell.STRIDE,
 				},
 				a_texture_idx: {
 					format: "float32",
 					buffer: cell_buffer,
-					offset: (2 * 4)*4, 
+					offset: 2 * 4 * 4,
 					stride: Cell.STRIDE,
 				},
-                a_corruption_level: {
-                    format: "float32",
-                    buffer: cell_buffer,
-                    offset: (2 * 4) * 4 + 4,
-                    stride: Cell.STRIDE,
-                },
+				a_corruption_level: {
+					format: "float32",
+					buffer: cell_buffer,
+					offset: 2 * 4 * 4 + 4,
+					stride: Cell.STRIDE,
+				},
 			},
 		});
 		this.buffer = cell_buffer;
@@ -105,7 +100,7 @@ export class Cell extends Geometry {
 	update(idx: number, data: CellAttributes) {
 		this.buffer.data[idx + 0] = data.x;
 		this.buffer.data[idx + 1] = data.y;
-		
+
 		this.buffer.data[idx + 2] = data.u;
 		this.buffer.data[idx + 3] = data.v;
 
@@ -114,9 +109,9 @@ export class Cell extends Geometry {
 
 		this.buffer.data[idx + 6] = data.frame_width;
 		this.buffer.data[idx + 7] = data.frame_height;
-		
+
 		this.buffer.data[idx + 8] = data.texture_idx;
-		
-        this.buffer.data[idx + 9] = data.corruption_level;
+
+		this.buffer.data[idx + 9] = data.corruption_level;
 	}
 }

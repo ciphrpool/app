@@ -1,7 +1,4 @@
-import {
-	editor as monaco_editor,
-	Range,
-} from "monaco-editor";
+import { editor as monaco_editor, Range } from "monaco-editor";
 import loader, { Monaco } from "@monaco-editor/loader";
 import { createEffect, createSignal, on, onCleanup, onMount } from "solid-js";
 import { cursor_from, Te_Cursor } from "@utils/player.type";
@@ -18,13 +15,13 @@ import { ciphel_io } from "ts_proto_api";
 
 import { produce, SetStoreFunction } from "solid-js/store";
 import { async_safe, HandledError, safe } from "@components/errors/barrier";
-import { useSocket } from "@components/io_com/ws";
+import { useSocket } from "@components/network/ws";
 
 export type SnapshotResult = {
-	src :string,
-	first_line : number,
-	last_line : number,
-}
+	src: string;
+	first_line: number;
+	last_line: number;
+};
 
 export type EditorApi = {
 	snapshot?: () => SnapshotResult | null;
@@ -40,7 +37,6 @@ const EDITOR_VIEWSTATES: Map<Te_Cursor, monaco_editor.ICodeEditorViewState> =
 	new Map();
 
 function Editor(props: EditorProps) {
-	
 	const socket = useSocket();
 	const cursor_metadata = useCursorMetadata();
 
@@ -55,13 +51,13 @@ function Editor(props: EditorProps) {
 		if (!editor) return;
 		const model = editor.getModel();
 		if (!model) return;
-		
+
 		if ("commitCode" === request.SignalType) {
 			undo_readonly(cursor_metadata.current_cursor, editor);
 
 			const res = cursor_from(request.commitCode?.tid as number);
 			if (!res) return;
-			const [cursor,player] = res;
+			const [cursor, player] = res;
 
 			to_readonly(
 				cursor_metadata.current_cursor,
@@ -70,82 +66,86 @@ function Editor(props: EditorProps) {
 			);
 
 			cursor_metadata.setInfo(cursor_metadata.current_cursor, {
-				remote_barrier : cursor_metadata.info[cursor].commited_line + 1,
+				remote_barrier: cursor_metadata.info[cursor].commited_line + 1,
 			});
 		}
 	});
 
-	onMount(async_safe(async () => {
-		
-		const load_monaco = loader.init();
-		cancel = load_monaco.cancel;
-		
-		try {
-			const monaco = await load_monaco;
-			const model = model_from(
-				monaco,
-				path_of(cursor_metadata.current_cursor)
-			);
-			const editor = setup_editor(monaco, model, container_ref);
+	onMount(
+		async_safe(async () => {
+			const load_monaco = loader.init();
+			cancel = load_monaco.cancel;
 
-			set_editor(editor);
-			set_monaco(monaco);
-			to_readonly(cursor_metadata.current_cursor, 4, editor);
-		} catch (err) {
-			const editor = get_editor();
-			editor?.getModel()?.dispose();
-			editor?.dispose();
-			
-			throw new HandledError(
-				"Unable to create the editor.");
-		}
+			try {
+				const monaco = await load_monaco;
+				const model = model_from(
+					monaco,
+					path_of(cursor_metadata.current_cursor)
+				);
+				const editor = setup_editor(monaco, model, container_ref);
 
-		props.api.snapshot = () => {
-			const editor = get_editor();
-			if (!editor) return null;
-			const model = editor.getModel();
-			if (!model) return null;
-			const first_line = cursor_metadata.info[cursor_metadata.current_cursor].remote_barrier;
-			const last_line = model.getLineCount();
-			const last_line_content = model.getLineContent(last_line);
-			const range = new Range(
-				first_line,
-				0,
-				last_line,
-				last_line_content.length + 1
-			);
-			return {
-				first_line,
-				last_line,
-				src : model.getValueInRange(range),
+				set_editor(editor);
+				set_monaco(monaco);
+				to_readonly(cursor_metadata.current_cursor, 4, editor);
+			} catch (err) {
+				const editor = get_editor();
+				editor?.getModel()?.dispose();
+				editor?.dispose();
+
+				throw new HandledError("Unable to create the editor.");
+			}
+
+			props.api.snapshot = () => {
+				const editor = get_editor();
+				if (!editor) return null;
+				const model = editor.getModel();
+				if (!model) return null;
+				const first_line =
+					cursor_metadata.info[cursor_metadata.current_cursor]
+						.remote_barrier;
+				const last_line = model.getLineCount();
+				const last_line_content = model.getLineContent(last_line);
+				const range = new Range(
+					first_line,
+					0,
+					last_line,
+					last_line_content.length + 1
+				);
+				return {
+					first_line,
+					last_line,
+					src: model.getValueInRange(range),
+				};
 			};
-		};
-		props.api.to_readonly = (line: number) => {
-			const editor = get_editor();
-			if (!editor) return;
-			to_readonly(cursor_metadata.current_cursor, line, editor);
-		};
-		props.api.get_last_edited_line_number = () => {
-			const editor = get_editor();
-			if (!editor) return;
-			const model = editor.getModel();
-			if (!model) return;
+			props.api.to_readonly = (line: number) => {
+				const editor = get_editor();
+				if (!editor) return;
+				to_readonly(cursor_metadata.current_cursor, line, editor);
+			};
+			props.api.get_last_edited_line_number = () => {
+				const editor = get_editor();
+				if (!editor) return;
+				const model = editor.getModel();
+				if (!model) return;
 
-			const last_line = model.getLineCount();
-			return last_line;
-		};
-	}));
+				const last_line = model.getLineCount();
+				return last_line;
+			};
+		})
+	);
 
-	onCleanup(safe(() => {
-		const editor = get_editor();
-		if (!editor) {
-			cancel();
-		} else {
-			/* Dispose model and editor*/
-			editor.getModel()?.dispose();
-			editor.dispose();
-		}
-	}));
+	onCleanup(
+		safe(() => {
+			const editor = get_editor();
+			if (!editor) {
+				cancel();
+			} else {
+				/* Dispose model and editor*/
+				editor.getModel()?.dispose();
+				editor.dispose();
+			}
+		})
+	);
 
 	/* Change model base on the provided cursor */
 	createEffect(
@@ -192,12 +192,16 @@ function Editor(props: EditorProps) {
 }
 
 export function EditorErrorFallback() {
-	return <section class="w-full h-ful flex justify-center 
+	return (
+		<section
+			class="w-full h-full flex justify-center 
 		items-center select-none cursor-default 
 		bg-night-800 opacity-70 font-semibold 
-		text-l text-center text-moon small-caps">
-		This editor is disabled
-	</section>;
+		text-l text-center text-moon small-caps"
+		>
+			This editor is disabled
+		</section>
+	);
 }
 
 export default Editor;

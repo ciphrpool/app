@@ -6,17 +6,23 @@ import {
 	UniformGroup,
 } from "pixi.js";
 import { CameraHandler } from "../interaction/Camera";
-import { Cell, CellAttributes, CellCoordinate, CellData, CellOptions } from "./cell";
+import {
+	Cell,
+	CellAttributes,
+	CellCoordinate,
+	CellData,
+	CellOptions,
+} from "./cell";
 import { GridInstruction, GridRenderPipe } from "./pipeline";
 import { P1 } from "@utils/player.type";
-import { get_texture_position,texture_positions } from "ts_textures";
+import { get_texture_position, texture_positions } from "ts_textures";
 import { ciphel_io } from "ts_proto_api";
 
 type GridConfig = {
 	size?: number;
 	cell_width?: number;
 	frame_width?: number;
-	camera ?: CameraHandler;
+	camera?: CameraHandler;
 };
 
 export class Grid extends Container {
@@ -26,12 +32,12 @@ export class Grid extends Container {
 	size: number = 32;
 	cell_width: number = 32;
 	frame_width: number = 32;
-	
-	public get grid_width() : number {
-		return this.cell_width * this.size
+
+	public get grid_width(): number {
+		return this.cell_width * this.size;
 	}
 
-	u_time : number = 0;
+	u_time: number = 0;
 
 	cell_geometry: Cell | undefined = undefined;
 
@@ -45,7 +51,7 @@ export class Grid extends Container {
 		if (config.cell_width) this.cell_width = config.cell_width;
 		if (config.frame_width) this.frame_width = config.frame_width;
 
-		if(config.camera) {
+		if (config.camera) {
 			config.camera.pin(this);
 		}
 
@@ -58,18 +64,18 @@ export class Grid extends Container {
 					u: 0,
 					v: 0,
 
-					frame_x :0,
-					frame_y :0,
+					frame_x: 0,
+					frame_y: 0,
 
 					frame_width: this.frame_width,
 					frame_height: this.frame_width,
 
-					texture_idx : -1,
+					texture_idx: -1,
 
 					width: this.cell_width,
 					height: this.cell_width,
 
-					corruption_level : 0,
+					corruption_level: 0,
 				};
 				this.grid_bounds.addFrame(
 					x * this.cell_width,
@@ -132,48 +138,49 @@ export class Grid extends Container {
 		const idx = y * this.size + x;
 		if (idx >= this.cells_data.length || idx < 0) return;
 
-        if (new_config.player !== undefined) {
-            this.cells_data[idx].texture_idx = new_config.player === P1 ? 0 : 1;
-        } else {
-            this.cells_data[idx].texture_idx = -1;
-        }
+		if (new_config.player !== undefined) {
+			this.cells_data[idx].texture_idx = new_config.player === P1 ? 0 : 1;
+		} else {
+			this.cells_data[idx].texture_idx = -1;
+		}
 
-
-        if (new_config.texture_id) {
-            const [x,y] = get_texture_position(new_config.texture_id);
-            this.cells_data[idx].frame_x = x;
-            this.cells_data[idx].frame_y = y;
-        }
+		if (new_config.texture_id) {
+			const [x, y] = get_texture_position(new_config.texture_id);
+			this.cells_data[idx].frame_x = x;
+			this.cells_data[idx].frame_y = y;
+		}
 		this.update_geometry();
 	}
 
-    batch_modify_cells(new_config: ciphel_io.ICellData[]) {
+	batch_modify_cells(new_config: ciphel_io.ICellData[]) {
 		if (new_config.length != this.cells_data.length) return;
 
-        for (let idx = 0;idx < this.cells_data.length; idx++) {
+		for (let idx = 0; idx < this.cells_data.length; idx++) {
 			this.cells_data[idx].texture_idx = new_config[idx].side! - 1;
-			this.cells_data[idx].corruption_level = new_config[idx].corruptionLevel ?? 0;
+			this.cells_data[idx].corruption_level =
+				new_config[idx].corruptionLevel ?? 0;
 
-            if (new_config[idx].texture !== -1) {
+			if (new_config[idx].texture !== -1) {
 				const arr = get_texture_position(new_config[idx].texture!);
 				if (arr) {
-					const [x,y] = get_texture_position(new_config[idx].texture!);
-					
-					this.cells_data[idx].frame_x = x/32;
-					this.cells_data[idx].frame_y = y/32;
+					const [x, y] = get_texture_position(
+						new_config[idx].texture!
+					);
+
+					this.cells_data[idx].frame_x = x / 32;
+					this.cells_data[idx].frame_y = y / 32;
 				}
-            }
-        }
+			}
+		}
 		this.update_geometry();
 	}
 
 	clear() {
-		for (let idx = 0;idx < this.cells_data.length; idx++) {
-			this.cells_data[idx].texture_idx = -1
-        }
+		for (let idx = 0; idx < this.cells_data.length; idx++) {
+			this.cells_data[idx].texture_idx = -1;
+		}
 		this.update_geometry();
 	}
-
 
 	update(pipeline: GridRenderPipe) {
 		if (!this.cell_geometry) {
@@ -199,16 +206,16 @@ export class Grid extends Container {
 
 				u: 0,
 				v: 0,
-				
-				frame_x :this.cells_data[i].frame_x * this.frame_width,
-				frame_y :this.cells_data[i].frame_y * this.frame_width,
 
-				frame_width :this.cells_data[i].frame_width,
-				frame_height :this.cells_data[i].frame_height,
+				frame_x: this.cells_data[i].frame_x * this.frame_width,
+				frame_y: this.cells_data[i].frame_y * this.frame_width,
 
-				texture_idx :this.cells_data[i].texture_idx,
+				frame_width: this.cells_data[i].frame_width,
+				frame_height: this.cells_data[i].frame_height,
 
-				corruption_level : this.cells_data[i].corruption_level,
+				texture_idx: this.cells_data[i].texture_idx,
+
+				corruption_level: this.cells_data[i].corruption_level,
 			});
 			this.cell_geometry.update(buffer_idx + 1 * offset, {
 				x: this.cells_data[i].x + this.cells_data[i].width,
@@ -216,15 +223,15 @@ export class Grid extends Container {
 
 				u: this.frame_width,
 				v: 0,
-				
-				frame_x :this.cells_data[i].frame_x * this.frame_width,
-				frame_y :this.cells_data[i].frame_y * this.frame_width,
 
-				frame_width :this.cells_data[i].frame_width,
-				frame_height :this.cells_data[i].frame_height,
+				frame_x: this.cells_data[i].frame_x * this.frame_width,
+				frame_y: this.cells_data[i].frame_y * this.frame_width,
 
-				texture_idx :this.cells_data[i].texture_idx,
-				corruption_level : this.cells_data[i].corruption_level,
+				frame_width: this.cells_data[i].frame_width,
+				frame_height: this.cells_data[i].frame_height,
+
+				texture_idx: this.cells_data[i].texture_idx,
+				corruption_level: this.cells_data[i].corruption_level,
 			});
 			this.cell_geometry.update(buffer_idx + 2 * offset, {
 				x: this.cells_data[i].x + this.cells_data[i].width,
@@ -232,15 +239,15 @@ export class Grid extends Container {
 
 				u: this.frame_width,
 				v: this.frame_width,
-				
-				frame_x :this.cells_data[i].frame_x * this.frame_width,
-				frame_y :this.cells_data[i].frame_y * this.frame_width,
 
-				frame_width :this.cells_data[i].frame_width,
-				frame_height :this.cells_data[i].frame_height,
+				frame_x: this.cells_data[i].frame_x * this.frame_width,
+				frame_y: this.cells_data[i].frame_y * this.frame_width,
 
-				texture_idx :this.cells_data[i].texture_idx,
-				corruption_level : this.cells_data[i].corruption_level,
+				frame_width: this.cells_data[i].frame_width,
+				frame_height: this.cells_data[i].frame_height,
+
+				texture_idx: this.cells_data[i].texture_idx,
+				corruption_level: this.cells_data[i].corruption_level,
 			});
 			this.cell_geometry.update(buffer_idx + 3 * offset, {
 				x: this.cells_data[i].x,
@@ -248,15 +255,15 @@ export class Grid extends Container {
 
 				u: 0,
 				v: this.frame_width,
-				
-				frame_x :this.cells_data[i].frame_x * this.frame_width,
-				frame_y :this.cells_data[i].frame_y * this.frame_width,
 
-				frame_width :this.cells_data[i].frame_width,
-				frame_height :this.cells_data[i].frame_height,
+				frame_x: this.cells_data[i].frame_x * this.frame_width,
+				frame_y: this.cells_data[i].frame_y * this.frame_width,
 
-				texture_idx :this.cells_data[i].texture_idx,
-				corruption_level : this.cells_data[i].corruption_level,
+				frame_width: this.cells_data[i].frame_width,
+				frame_height: this.cells_data[i].frame_height,
+
+				texture_idx: this.cells_data[i].texture_idx,
+				corruption_level: this.cells_data[i].corruption_level,
 			});
 		}
 		this.cell_geometry.buffer.update();

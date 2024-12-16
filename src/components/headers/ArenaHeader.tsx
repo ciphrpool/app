@@ -10,7 +10,7 @@ type InfoProps = {
 function Info(props: InfoProps) {
 	return (
 		<div class={props.class}>
-			<h2>Cipherpool Arena</h2>
+			<h2 class="tracking-[0.5rem] dm-sans-400">Cipherpool</h2>
 		</div>
 	);
 }
@@ -20,12 +20,6 @@ function ArenaHeader() {
 		<header class="w-full grid grid-flow-row grid-cols-3">
 			<Info class="col-span-2 p-4 bg-night-700 px-8" />
 			<nav class="col-span-1 bg-moon p-4 flex justify-end gap-8 px-8">
-				<A href="/dashboard">
-					<UserIcon />
-				</A>
-				<A href="/setting">
-					<SettingsIcon />
-				</A>
 				<A href="/">
 					<HomeIcon />
 				</A>

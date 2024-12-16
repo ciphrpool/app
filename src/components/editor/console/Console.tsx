@@ -13,7 +13,17 @@ import {
 } from "solid-js";
 import { useCursorMetadata } from "../editor.utils";
 import { EditorApi } from "../Editor";
-import { C1, C2, C3, C4, P1, P2, Te_Player, cursor_to, side_of } from "@utils/player.type";
+import {
+	C1,
+	C2,
+	C3,
+	C4,
+	P1,
+	P2,
+	Te_Player,
+	cursor_to,
+	side_of,
+} from "@utils/player.type";
 import { createStore, produce } from "solid-js/store";
 import {
 	In,
@@ -25,7 +35,7 @@ import {
 	setup_socket_events,
 } from "./console.utils";
 import { Line } from "./Line";
-import { useSocket } from "@components/io_com/ws";
+import { useSocket } from "@components/network/ws";
 
 // choco <3
 type ConsoleProps = {
@@ -43,13 +53,14 @@ function Console(props: ConsoleProps) {
 
 	const socket = useSocket();
 	const cursor_metadata = useCursorMetadata();
-	
+
 	const [lines, set_lines] = createStore<LineData[]>([]);
 	const [is_waiting_input, set_waiting_input] = createSignal(false);
 	const [is_focus, set_focus] = createSignal<boolean>(false);
 	const [history, add_command] = createCommandHistory();
 
-	const [is_console_displayed, display_console] = createSignal<boolean>(false);
+	const [is_console_displayed, display_console] =
+		createSignal<boolean>(false);
 
 	let handle_submit: (line: string, is_cmd: boolean) => void;
 	let update_command_from_history: Setter<string>;
@@ -84,9 +95,12 @@ function Console(props: ConsoleProps) {
 			update_command_from_history
 		);
 		handle_submit = (line: string, is_cmd: boolean) => {
-			const res_cursor = cursor_to(props.side,cursor_metadata.current_cursor);
+			const res_cursor = cursor_to(
+				props.side,
+				cursor_metadata.current_cursor
+			);
 			if (!res_cursor) return;
-			const [pid,tid] = res_cursor;
+			const [pid, tid] = res_cursor;
 
 			submit(pid, tid, line, is_cmd);
 			clear_history_idx();
@@ -115,10 +129,14 @@ function Console(props: ConsoleProps) {
 					}
 				}}
 			>
-				<button class="h-fit w-fit p-4 bg-night-900" onclick={() => {
-					display_console(!is_console_displayed());
-					set_focus(!is_focus());
-				}} >
+				<button
+					title="Open the terminal"
+					class="h-fit w-fit p-4 bg-night-900"
+					onclick={() => {
+						display_console(!is_console_displayed());
+						set_focus(!is_focus());
+					}}
+				>
 					<TerminalIcon class="cursor-pointer" />
 				</button>
 				<div class="flex flex-col p-4 w-full bg-night-800">
@@ -132,7 +150,8 @@ function Console(props: ConsoleProps) {
 						>
 							<For
 								each={lines.flatMap((line) => {
-									const lines = line.content.split("\n") ?? [];
+									const lines =
+										line.content.split("\n") ?? [];
 									if (
 										lines.length > 1 &&
 										lines[lines.length - 1] === "" &&
@@ -150,7 +169,7 @@ function Console(props: ConsoleProps) {
 												idx === lines.length - 1
 													? line.editable
 													: undefined,
-											is_error : line.is_error
+											is_error: line.is_error,
 										} as LineData;
 									});
 								})}
@@ -170,7 +189,8 @@ function Console(props: ConsoleProps) {
 													? (content) =>
 															handle_submit(
 																content,
-																line.in_out === In
+																line.in_out ===
+																	In
 															)
 													: undefined
 											}
@@ -188,7 +208,8 @@ function Console(props: ConsoleProps) {
 					<div
 						class="flex-grow"
 						classList={{
-							"pt-4 border-t border-night-600": is_console_displayed() && lines.length > 0,
+							"pt-4 border-t border-night-600":
+								is_console_displayed() && lines.length > 0,
 						}}
 					>
 						<Line

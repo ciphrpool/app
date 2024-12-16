@@ -1,5 +1,10 @@
 import { JSXElement, onCleanup, onMount } from "solid-js";
-import { GridContext, useCamera, useCanva, useContainer } from "./utils/context";
+import {
+	GridContext,
+	useCamera,
+	useCanva,
+	useContainer,
+} from "./utils/context";
 import { PanningHandler } from "./interaction/panning";
 import { ZoomingHandler } from "./interaction/zooming";
 import { Grid } from "./grid/grid";
@@ -12,10 +17,9 @@ function Wireframe(props: WireframeProps) {
 	const parent = useContainer();
 	const camera = useCamera();
 
-
 	const grid = new Grid({
 		size: 32,
-		frame_width :32,
+		frame_width: 32,
 		camera,
 	});
 
@@ -29,10 +33,11 @@ function Wireframe(props: WireframeProps) {
 		parent?.removeChild();
 	});
 
-
-	return <GridContext.Provider value={grid}>
-		{props.children}
-    </GridContext.Provider>;
+	return (
+		<GridContext.Provider value={grid}>
+			{props.children}
+		</GridContext.Provider>
+	);
 }
 
 export default Wireframe;

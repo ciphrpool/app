@@ -16,9 +16,14 @@ function Prefix(props: PrefixProps) {
 			</Show>
 			<Show
 				when={props.file}
-				fallback={<span class="text-night-300 select-none mx-1"> $ </span>}
+				fallback={
+					<span class="text-night-300 select-none mx-1"> $ </span>
+				}
 			>
-				<span class="text-night-300 mx-1 select-none"> : {props.file}$</span>
+				<span class="text-night-300 mx-1 select-none">
+					{" "}
+					: {props.file}$
+				</span>
 			</Show>
 		</>
 	);
@@ -28,7 +33,7 @@ type LineProps = {
 	prefix: PrefixProps;
 	readonly: string;
 	editable: boolean;
-	is_error : boolean;
+	is_error: boolean;
 	ref?: (ref: HTMLInputElement) => void;
 	on_submit?: (line: string) => void;
 	set_msg_ref?: (set_msg: Setter<string>) => void;
@@ -45,7 +50,9 @@ export function Line(props: LineProps) {
 				username={props.prefix!.username}
 				file={props.prefix!.file}
 			/>
-			<span classList={{"text-red-500":props.is_error}}>{props.readonly}</span>
+			<span classList={{ "text-red-500": props.is_error }}>
+				{props.readonly}
+			</span>
 			<Show when={props.editable}>
 				<form
 					class="flex-grow"

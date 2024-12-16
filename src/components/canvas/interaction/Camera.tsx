@@ -1,28 +1,33 @@
 import { JSXElement, onCleanup, onMount, splitProps } from "solid-js";
-import { CameraContext, ContainerContext, useCanva, useContainer } from "../utils/context";
+import {
+	CameraContext,
+	ContainerContext,
+	useCanva,
+	useContainer,
+} from "../utils/context";
 import { PanningHandler } from "./panning";
 import { ZoomingHandler } from "./zooming";
 import { Container } from "pixi.js";
 import { Grid } from "../grid/grid";
 export class CameraHandler {
-    panning_handler:PanningHandler;
-    zooming_handler:ZoomingHandler;
+	panning_handler: PanningHandler;
+	zooming_handler: ZoomingHandler;
 
-    constructor(camera:Container) {
-        this.panning_handler = new PanningHandler();
-        this.zooming_handler = new ZoomingHandler();
-        this.zooming_handler.restrain(this.panning_handler);
-        this.zooming_handler.subscribe(camera,{
-            on_start : (zoom,position) => {
-                this.panning_handler.focus(position,zoom);
-            }
-        });
-        this.panning_handler.subscribe(camera);
-    }
-    pin(grid:Grid) {
-        this.panning_handler.pin(grid);
-        this.zooming_handler.pin(grid);
-    }
+	constructor(camera: Container) {
+		this.panning_handler = new PanningHandler();
+		this.zooming_handler = new ZoomingHandler();
+		this.zooming_handler.restrain(this.panning_handler);
+		this.zooming_handler.subscribe(camera, {
+			on_start: (zoom, position) => {
+				this.panning_handler.focus(position, zoom);
+			},
+		});
+		this.panning_handler.subscribe(camera);
+	}
+	pin(grid: Grid) {
+		this.panning_handler.pin(grid);
+		this.zooming_handler.pin(grid);
+	}
 }
 
 type CameraProps = {
@@ -32,17 +37,17 @@ type CameraProps = {
 function Camera(props: CameraProps) {
 	const parent = useContainer();
 	const app = useCanva();
-    const camera = new Container();
-    
-    camera.eventMode = "static";
-    
-    camera.width = app.screen.width;
-    camera.height = app.screen.height;
-    camera.x = 0;
-    camera.y = 0;
-    
-    const camera_handler = new CameraHandler(camera);
-    
+	const camera = new Container();
+
+	camera.eventMode = "static";
+
+	camera.width = app.screen.width;
+	camera.height = app.screen.height;
+	camera.x = 0;
+	camera.y = 0;
+
+	const camera_handler = new CameraHandler(camera);
+
 	onMount(() => {
 		if (!parent) return;
 		parent.addChild(camera);
@@ -52,11 +57,13 @@ function Camera(props: CameraProps) {
 		parent?.removeChild();
 	});
 
-	return <ContainerContext.Provider value={camera}>
-        <CameraContext.Provider value={camera_handler}>
-            {props.children}
-        </CameraContext.Provider>
-    </ContainerContext.Provider>;
+	return (
+		<ContainerContext.Provider value={camera}>
+			<CameraContext.Provider value={camera_handler}>
+				{props.children}
+			</CameraContext.Provider>
+		</ContainerContext.Provider>
+	);
 }
 
 export default Camera;

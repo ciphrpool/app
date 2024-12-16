@@ -15,6 +15,7 @@ export default {
 					600: "#835221",
 				},
 				ego: "#FFAFCC",
+				"ego-dark": "#794457",
 				moon: "#F8F4E3",
 				night: {
 					100: "#ADADAD",
