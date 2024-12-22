@@ -9,10 +9,12 @@ import {
 	Switch,
 	useContext,
 } from "solid-js";
-import { UserSummaryData } from "./side.view";
 import { debounce } from "@utils/time";
 import { useFault } from "@components/errors/fault";
 import UserIcon from "@assets/icons/user.svg?component-solid";
+import { GetUsersSummaryResult, UserSummaryData } from "@utils/api.type";
+import { api } from "@utils/auth/auth";
+import Avatar from "@components/utils/avatar";
 
 const ByUsername = Symbol("ByUsername");
 const ByTag = Symbol("ByTag");
@@ -42,22 +44,38 @@ function SearchView(props: SearchViewProps) {
 	const [search_input, update_search_input] = createSignal("");
 	const fault = useFault();
 
+	const [found_users, set_found_users] = createSignal<GetUsersSummaryResult>(
+		[]
+	);
+
 	const debounced_call = debounce(
 		async (value: string, filter_type: Te_FilterType) => {
 			// Validation
 			if (ByUsername === filter_type) {
 				// check valid user
 			} else if (ByTag === filter_type) {
-				// check valid user
+				// check valid tag
+				if (value.length != 8) return;
 			}
-			console.log({ value, filter_type });
-		},
-		1000
-	);
 
-	const found_users: UserSummaryData[] = Array.from({ length: 10 }, () => {
-		return { elo: 1520, username: "Test", tag: "87ABN33A" };
-	});
+			try {
+				if (ByUsername === filter_type) {
+					const res = await api.get("/users/public/search", {
+						params: { username: value, detailed: false },
+					});
+					const found_users: GetUsersSummaryResult = res.data.users;
+					set_found_users(found_users);
+				} else if (ByTag === filter_type) {
+					const res = await api.get("/users/public/tag", {
+						params: { tag: value, detailed: false },
+					});
+					const found_user: UserSummaryData = res.data.user;
+					set_found_users([found_user]);
+				}
+			} catch (error) {}
+		},
+		500
+	);
 
 	return (
 		<section class="flex flex-col gap-4 h-full">
@@ -123,7 +141,7 @@ function SearchView(props: SearchViewProps) {
 					{found_users.length > 1 ? "s" : ""}
 				</p>
 				<div class="flex flex-col gap-4 h-full overflow-y-auto">
-					<For each={found_users}>
+					<For each={found_users()}>
 						{(user) => {
 							return (
 								<button
@@ -136,24 +154,18 @@ function SearchView(props: SearchViewProps) {
 										set_found_user_summary(user);
 									}}
 								>
-									<Show
-										when={user.avatar}
-										fallback={<UserIcon class="w-8" />}
-									>
-										{(url) => (
-											<img src={url().toString()} />
-										)}
-									</Show>
-									<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
-										{user.username}
-										<span class="text-night-100 uppercase">
-											#{user.tag}
-										</span>
-									</h3>
-									<span class="select-none">|</span>
-									<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
-										{user.elo}
-									</h3>
+									<Avatar class="min-w-8 w-8" />
+									<div class="overflow-x-clip flex flex-col items-start">
+										<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
+											{user.username}
+											<span class="text-night-100 uppercase">
+												#{user.tag}
+											</span>
+										</h3>
+										<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
+											elo : {user.elo}
+										</h3>
+									</div>
 								</button>
 							);
 						}}

@@ -257,13 +257,17 @@ function Graph(props: GraphProps) {
 		});
 
 		if (container_ref) {
-			resize_observer.observe(container_ref);
+			if (resize_observer) {
+				resize_observer.observe(container_ref);
+			}
 		}
 	});
 
 	onCleanup(() => {
 		if (container_ref) {
-			resize_observer.unobserve(container_ref);
+			if (resize_observer) {
+				resize_observer.unobserve(container_ref);
+			}
 		}
 		if (resize_timeout) {
 			window.clearTimeout(resize_timeout);

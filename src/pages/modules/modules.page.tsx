@@ -34,17 +34,20 @@ function ModulesPage() {
 	const params = useParams();
 	const fault = useFault();
 	const db = useDatabase();
-	const [module_file] = createResource<Module | undefined>(async () => {
-		console.debug("About to get module");
+	const [module_file] = createResource(
+		params.module,
+		async (module_name: string) => {
+			console.debug("About to get module");
 
-		try {
-			const module_file = await DB_MODULES.get(db, params.module);
-			return module_file;
-		} catch (err) {
-			fault.major({ message: (err as ModuleNotFoundError).message });
-			throw err;
+			try {
+				const module_file = await DB_MODULES.get(db, module_name);
+				return module_file;
+			} catch (err) {
+				fault.major({ message: (err as ModuleNotFoundError).message });
+				throw err;
+			}
 		}
-	});
+	);
 
 	const [is_name_editable, set_name_editable] = createSignal<boolean>(false);
 	const [module_name, set_module_name] = createSignal<string>(params.module);

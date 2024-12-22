@@ -1,7 +1,18 @@
-import { children, createSignal, For, JSX, Show } from "solid-js";
+import {
+	children,
+	createResource,
+	createSignal,
+	For,
+	JSX,
+	Show,
+} from "solid-js";
 import UserIcon from "@assets/icons/user.svg?component-solid";
 import AddIcon from "@assets/icons/add.svg?component-solid";
 import { A } from "@solidjs/router";
+import { api } from "@utils/auth/auth";
+import { GetAllFriendsResult } from "@utils/api.type";
+import { useFault } from "@components/errors/fault";
+import Avatar from "./avatar";
 
 interface FriendsDetailsProps {}
 
@@ -13,9 +24,19 @@ export type FriendSummaryData = {
 };
 
 function FriendsDetails(props: FriendsDetailsProps) {
-	const friends: FriendSummaryData[] = Array.from({ length: 5 }, () => {
-		return { elo: 1520, username: "Test", tag: "87ABN33A" };
+	const fault = useFault();
+	const [friends, { mutate, refetch }] = createResource(async () => {
+		try {
+			const res = await api.get("/relationship/all_friends");
+			const friends: GetAllFriendsResult = res.data.friends;
+			return friends;
+		} catch (error) {
+			fault.minor({ message: "Failed to get all your friends" });
+			return [];
+		}
+		return [];
 	});
+
 	return (
 		<details class="cursor-pointer [&[open]>summary]:text-moon group overflow-hidden">
 			<summary
@@ -44,37 +65,24 @@ function FriendsDetails(props: FriendsDetailsProps) {
 					<div class="bg-moon w-1 h-1"></div>
 				</div>
 				<ul class="py-4 flex flex-col max-h-64 overflow-y-auto">
-					<For each={friends}>
+					<For each={friends()}>
 						{(friend) => {
 							return (
 								<li class="pl-8 py-4 show w-full h-full hover:bg-night-500  transition-colors ease-in-out duration-200">
 									<A href={`/users/${friend.tag}`}>
 										<div class="w-full h-full flex gap-4 items-center pr-4">
-											<Show
-												when={friend.avatar}
-												fallback={
-													<UserIcon class="w-8" />
-												}
-											>
-												{(url) => (
-													<img
-														src={url().toString()}
-													/>
-												)}
-											</Show>
-											<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
-												{friend.username}
-												<span class="text-night-100 uppercase">
-													#{friend.tag}
-												</span>
-											</h3>
-											<span class="select-none">|</span>
-											<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
-												{friend.elo}
-											</h3>
-
-											{/* If the player selected to friendly duel */}
-											<div class="bg-pl2-400 w-2 h-2 ml-auto"></div>
+											<Avatar class="min-w-8 h-8" />
+											<div class="overflow-x-clip flex flex-col">
+												<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
+													{friend.username}
+													<span class="text-night-100 uppercase">
+														#{friend.tag}
+													</span>
+												</h3>
+												<h3 class="hover:text-pl1-200 transition-colors ease-in-out duration-200">
+													elo : {friend.elo}
+												</h3>
+											</div>
 										</div>
 									</A>
 								</li>

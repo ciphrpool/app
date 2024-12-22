@@ -8,17 +8,33 @@ export interface Module {
 	last_modified_at: Date;
 }
 
+export type NotificationType =
+	| "redirect"
+	| "message"
+	| "ping"
+	| "alert"
+	| "connected";
+export type NotificationPriority = 1 /* LOW */ | 2 /* MEDIUM */ | 3; /* HIGH */
+
 export interface Notification {
-	id?: number;
+	id: string;
+	type: NotificationType;
+	key: string;
+	content: any;
+	created_at: string;
+	priority: NotificationPriority;
+	metadata: any;
 }
 
 export class AppDatabase extends Dexie {
 	modules!: Table<Module, number>;
+	notifications!: Table<Notification, string>;
 
 	constructor() {
 		super("AppDatabase");
 		this.version(1).stores({
 			modules: "++id, name",
+			notifications: "id, type, created_at",
 		});
 
 		// Add hooks for automatic date handling

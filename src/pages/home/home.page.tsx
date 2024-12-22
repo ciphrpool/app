@@ -6,8 +6,17 @@ import CalendarView from "@components/views/calendar.view";
 import HistoryView from "@components/views/history.view";
 import BinariesView from "@components/views/binaries.view";
 import StartView from "@components/views/start.view";
+import Protected from "@components/auth/protected";
+import { useFault } from "@components/errors/fault";
+import { createEffect, onMount } from "solid-js";
 
 function HomePage() {
+	const fault = useFault();
+	onMount(() => {
+		console.log("Hello World");
+
+		fault.info({ message: "Hello World" });
+	});
 	return (
 		<div class="flex flex-col h-screen max-h-screen bg-night-600">
 			<HomeHeader />

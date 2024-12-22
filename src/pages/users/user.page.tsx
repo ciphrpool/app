@@ -1,6 +1,6 @@
 import HomeHeader from "../../components/headers/HomeHeader";
 import Footer from "@components/footers/DefaultFooter";
-import SideView, { UserSummaryData } from "@components/views/side.view";
+import SideView from "@components/views/side.view";
 import GraphView from "@components/views/graph.view";
 import CalendarView from "@components/views/calendar.view";
 import HistoryView from "@components/views/history.view";
@@ -9,17 +9,33 @@ import { useParams } from "@solidjs/router";
 import UserView from "@components/views/user.view";
 import StatisticsSummaryView from "@components/views/statistics_summary.view";
 import BackButton from "@components/utils/back.button";
+import { UserSummaryData } from "@utils/api.type";
+import { createResource, Show, Suspense } from "solid-js";
+import { api } from "@utils/auth/auth";
+import { useFault } from "@components/errors/fault";
 
 function UserPage() {
 	const params = useParams();
+	const fault = useFault();
 
-	const user: UserSummaryData = {
-		description:
-			"Lorem ipsum dolor sit amet consectetur, adipisicing elit.Reprehenderit nobis voluptate soluta rem vero ducimusblanditiis, ipsum aperiam nostrum dolores deleniti, quaeratmodi perspiciatis ipsam. Eum ab beatae unde ex ea mollitia,facere veniam pariatur ut vero exercitationem praesentium magni quis dolor.",
-		elo: 1690,
-		tag: "#89PO22WN",
-		username: "TestFriend",
-	};
+	const [user_summary_data, { mutate, refetch }] = createResource(
+		params.tag,
+		async (tag: string) => {
+			try {
+				const res = await api.get("/users/public/tag", {
+					params: { tag, detailed: false },
+				});
+				const user: UserSummaryData = res.data.user;
+				console.log(user);
+
+				return user;
+			} catch (error) {
+				fault.minor({ message: `${tag} was not found` });
+				return undefined;
+			}
+		}
+	);
+
 	return (
 		<div class="flex flex-col h-screen max-h-screen bg-night-600">
 			<HomeHeader />
@@ -31,7 +47,7 @@ function UserPage() {
 						<div class=" h-full col-span-2  flex flex-col gap-4  overflow-hidden ">
 							{/* Dashboard */}
 							<BackButton />
-							<UserView />
+							<UserView get_tag={() => params.tag} />
 							<StatisticsSummaryView />
 							<CalendarView />
 							<GraphView />
@@ -39,14 +55,24 @@ function UserPage() {
 						<div class=" h-full flex flex-col gap-4 overflow-hidden">
 							<HistoryView />
 							{/* Game */}
-							<StartView
-								duel_preview={{
-									duel_type: Friendly,
-									opponent_elo: user.elo,
-									opponent_tag: user.tag,
-									opponent_username: user.username,
-								}}
-							/>
+							<Show
+								when={user_summary_data()}
+								fallback={"loading"}
+							>
+								{(user_summary_data) => (
+									<StartView
+										duel_preview={{
+											duel_type: Friendly,
+											opponent_elo:
+												user_summary_data().elo,
+											opponent_tag:
+												user_summary_data().tag,
+											opponent_username:
+												user_summary_data().username,
+										}}
+									/>
+								)}
+							</Show>
 						</div>
 					</section>
 				</div>

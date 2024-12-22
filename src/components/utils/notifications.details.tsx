@@ -1,19 +1,42 @@
-import { For } from "solid-js";
+import { createEffect, createResource, For, onMount, Show } from "solid-js";
 import CloseIcon from "@assets/icons/close.svg?component-solid";
+import { useNotifications } from "./notifications.context";
+import { Notification } from "@utils/DB/db";
+import { DB_NOTIFICATIONS } from "@utils/DB/notification.db";
+import { useDatabase } from "@utils/DB/db.context";
+import { useFault } from "@components/errors/fault";
+import NotificationCard, { parseNotification } from "./notification";
 
 interface NotificationDetailsProps {}
 
-export type NotificationSummaryData = {
-	msg: string;
-};
-
 function NotificationDetails(props: NotificationDetailsProps) {
-	const notifications: NotificationSummaryData[] = Array.from(
-		{ length: 1 },
-		() => {
-			return { msg: "Test2 has accepted your friend request !" };
+	const notifications_channel = useNotifications();
+	const db = useDatabase();
+	const fault = useFault();
+
+	const [notifications, { mutate, refetch }] = createResource(async () => {
+		try {
+			const notifications = await DB_NOTIFICATIONS.all(db);
+			return notifications;
+		} catch (err) {
+			console.log(err);
+
+			fault.major({
+				message: "Cannot retrieve all stored notifications",
+			});
 		}
-	);
+	});
+
+	onMount(() => {
+		notifications_channel.on_notification((notification: Notification) => {
+			if (notification.type === "message") {
+				mutate([...(notifications() ?? []), notification]);
+			} else if (notification.type === "alert") {
+				fault.info({ message: parseNotification(notification) });
+			}
+		});
+	});
+
 	return (
 		<details class="cursor-pointer [&[open]>summary]:text-moon group overflow-hidden">
 			<summary
@@ -26,30 +49,62 @@ function NotificationDetails(props: NotificationDetailsProps) {
 				"
 			>
 				<span>&gt&gt Notifications</span>
-				<div class="border-4 border-pl1-400 w-8 h-8 flex items-center justify-center text-center text-pl1-400 bg-night-700">
-					{notifications.length}
-				</div>
+				<Show when={(notifications() ?? []).length > 0}>
+					<div class="border-4 border-pl1-400 w-8 h-8 flex items-center justify-center text-center text-pl1-400 bg-night-700">
+						{(notifications() ?? []).length}
+					</div>
+				</Show>
 			</summary>
 			<div class="h-full overflow-hidden flex flex-col gap-4">
 				<div class="w-full flex gap-5 mt-2 justify-end">
-					<button
-						title="Clear all notifications"
-						class="hover:underline hover:underline-offset-4"
+					<Show
+						when={(notifications() ?? []).length > 0}
+						fallback={"No notifications"}
 					>
-						clear all
-					</button>
+						<button
+							title="Clear all notifications"
+							class="hover:underline hover:underline-offset-4"
+							onclick={(e: MouseEvent) => {
+								if (!e.isTrusted) return;
+								mutate([]);
+								DB_NOTIFICATIONS.clear(db);
+							}}
+						>
+							clear all
+						</button>
+					</Show>
 				</div>
-				<ul class="py-4 flex flex-col max-h-64 overflow-y-auto">
-					<For each={notifications}>
-						{(module) => {
+				<ul class="py-4 flex flex-col max-h-64 overflow-y-auto gap-4">
+					<For each={notifications()}>
+						{(notification) => {
 							return (
-								<li class="pl-8 pr-4 py-4 show w-full h-full border-4 border-night-300 bg-night-800 transition-colors ease-in-out duration-200">
-									<div class="w-full h-full flex items-center">
-										<h3 class="text-moon">{module.msg}</h3>
-										<button title="Remove this notification">
+								<li>
+									<NotificationCard
+										notification={notification}
+									>
+										<button
+											title="Remove this notification"
+											onclick={(e: MouseEvent) => {
+												if (!e.isTrusted) return;
+
+												DB_NOTIFICATIONS.delete(
+													db,
+													notification.id
+												);
+												mutate([
+													...(
+														notifications() ?? []
+													).filter(
+														(n) =>
+															n.id !==
+															notification.id
+													),
+												]);
+											}}
+										>
 											<CloseIcon class="grow [&_path]:fill-night-300  [&_path]:hover:fill-ego [&_path]:hover:transition-all [&_path]:hover:duration-200 [&_path]:hover:ease-in-out" />
 										</button>
-									</div>
+									</NotificationCard>
 								</li>
 							);
 						}}

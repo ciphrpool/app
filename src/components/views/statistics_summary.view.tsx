@@ -1,5 +1,4 @@
 import { Show } from "solid-js";
-import { UserSummaryData } from "./side.view";
 import UserIcon from "@assets/icons/user.svg?component-solid";
 
 export type StatiticsSummaryData = {

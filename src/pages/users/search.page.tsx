@@ -1,6 +1,6 @@
 import HomeHeader from "../../components/headers/HomeHeader";
 import Footer from "@components/footers/DefaultFooter";
-import SideView, { UserSummaryData } from "@components/views/side.view";
+import SideView from "@components/views/side.view";
 import GraphView from "@components/views/graph.view";
 import CalendarView from "@components/views/calendar.view";
 import HistoryView from "@components/views/history.view";
@@ -18,6 +18,7 @@ import {
 	useContext,
 } from "solid-js";
 import FoundView from "@components/views/found.view";
+import { UserSummaryData } from "@utils/api.type";
 
 interface UserSectionFallbackProps {}
 

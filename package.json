@@ -15,6 +15,7 @@
 		"@solidjs/router": "^0.13.3",
 		"@xterm/addon-fit": "^0.10.0",
 		"@xterm/xterm": "^5.5.0",
+		"axios": "^1.7.9",
 		"d3": "^7.9.0",
 		"dexie": "^4.0.10",
 		"eslint": "^8.57.0",

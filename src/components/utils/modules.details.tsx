@@ -1,6 +1,9 @@
-import { For } from "solid-js";
+import { createResource, For } from "solid-js";
 import AddIcon from "@assets/icons/add.svg?component-solid";
 import { A } from "@solidjs/router";
+import { api } from "@utils/auth/auth";
+import { GetAllModulesSummaryResult } from "@utils/api.type";
+import { useFault } from "@components/errors/fault";
 
 interface ModulesDetailsProps {}
 
@@ -9,8 +12,18 @@ export type ModuleSummaryData = {
 };
 
 function ModulesDetails(props: ModulesDetailsProps) {
-	const modules: ModuleSummaryData[] = Array.from({ length: 1 }, () => {
-		return { name: "my_module.cl" };
+	const fault = useFault();
+	const [modules, { mutate, refetch }] = createResource(async () => {
+		try {
+			const res = await api.get("/modules/summary/all");
+
+			const modules: GetAllModulesSummaryResult = res.data.modules;
+			return modules;
+		} catch (error) {
+			fault.minor({ message: "Failed to get all your modules" });
+			return [];
+		}
+		return [];
 	});
 	return (
 		<details class="cursor-pointer [&[open]>summary]:text-moon group overflow-hidden">
@@ -43,7 +56,7 @@ function ModulesDetails(props: ModulesDetailsProps) {
 					<div class="bg-moon w-1 h-1"></div>
 				</div>
 				<ul class="py-4 flex flex-col max-h-64 overflow-y-auto">
-					<For each={modules}>
+					<For each={modules()}>
 						{(module) => {
 							return (
 								<li class="pl-8 py-4 show w-full h-full hover:bg-night-500  transition-colors ease-in-out duration-200">
