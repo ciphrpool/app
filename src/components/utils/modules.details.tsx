@@ -40,9 +40,14 @@ function ModulesDetails(props: ModulesDetailsProps) {
 				<button
 					title="Create a new module"
 					class="hidden group-open:block"
-					onClick={(e) => {
+					onClick={async (e) => {
 						e.preventDefault();
-						console.log("Add friend button");
+						try {
+							await api.post('/modules/create',{name:`untitled_${modules()?.length ?? 0}.cl`});
+							refetch()
+						} catch (error) {
+							fault.major({message:"Cannot create the module"});
+						}
 					}}
 				>
 					<AddIcon class="[&_path]:fill-night-300  [&_path]:hover:fill-pl1-200 [&_path]:hover:transition-all [&_path]:hover:duration-200 [&_path]:hover:ease-in-out" />

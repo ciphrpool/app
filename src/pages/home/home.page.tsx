@@ -11,12 +11,6 @@ import { useFault } from "@components/errors/fault";
 import { createEffect, onMount } from "solid-js";
 
 function HomePage() {
-	const fault = useFault();
-	onMount(() => {
-		console.log("Hello World");
-
-		fault.info({ message: "Hello World" });
-	});
 	return (
 		<div class="flex flex-col h-screen max-h-screen bg-night-600">
 			<HomeHeader />

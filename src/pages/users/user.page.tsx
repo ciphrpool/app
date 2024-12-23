@@ -19,8 +19,10 @@ function UserPage() {
 	const fault = useFault();
 
 	const [user_summary_data, { mutate, refetch }] = createResource(
-		params.tag,
+		() => params.tag,
 		async (tag: string) => {
+			console.debug("About to get summary");
+			console.debug(tag);
 			try {
 				const res = await api.get("/users/public/tag", {
 					params: { tag, detailed: false },

@@ -11,7 +11,7 @@ export const DB_MODULES = {
 	async upsert(
 		db: AppDatabase,
 		name: string,
-		updates: { name?: string; file?: string }
+		updates: { name?: string; file?: string; hmac?: string  }
 	): Promise<Module> {
 		const existing = await db.modules.where("name").equals(name).first();
 
@@ -38,6 +38,7 @@ export const DB_MODULES = {
 			const id = await db.modules.add({
 				name: updates.name || name,
 				file: updates.file || "",
+				hmac: updates.hmac || "",
 				created_at: new Date(),
 				last_modified_at: new Date(),
 			});

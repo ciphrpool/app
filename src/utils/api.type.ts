@@ -46,3 +46,19 @@ export type GetRelationshipResult = {
 		fromUser1: boolean;
 	};
 };
+
+export type FetchModuleResult = {
+	name: string;
+	description: string;
+	code: string;
+	visibility: Visibility;
+	createdAt: string;
+	lastModified: string;
+};
+
+export type PrepareCompilationResult = {
+	encrypted_user_id : string
+}
+export type CompilationResult = {
+	hmac : string
+}

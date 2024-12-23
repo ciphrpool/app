@@ -6,6 +6,7 @@ export interface Module {
 	file: string;
 	created_at: Date;
 	last_modified_at: Date;
+	hmac : string;
 }
 
 export type NotificationType =

@@ -9,7 +9,7 @@ import StartView from "@components/views/start.view";
 import EditorModule, {
 	EditorErrorFallback,
 } from "@components/editor/editor.module";
-import { useParams } from "@solidjs/router";
+import { useNavigate, useParams } from "@solidjs/router";
 import { async_safe, Barrier, HandledError } from "@components/errors/barrier";
 import BackButton from "@components/utils/back.button";
 import SettingIcon from "@assets/icons/settings.svg?component-solid";
@@ -29,35 +29,26 @@ import { useFault } from "@components/errors/fault";
 import { useDatabase } from "@utils/DB/db.context";
 import { DB_MODULES, ModuleNotFoundError } from "@utils/DB/module.db";
 import { Module } from "@utils/DB/db";
+import { api, nexuspool } from "@utils/auth/auth";
+import { CompilationResult, FetchModuleResult, PrepareCompilationResult } from "@utils/api.type";
 
 function ModulesPage() {
 	const params = useParams();
+	const navigate = useNavigate();
 	const fault = useFault();
 	const db = useDatabase();
-	const [module_file] = createResource(
-		params.module,
-		async (module_name: string) => {
-			console.debug("About to get module");
-
-			try {
-				const module_file = await DB_MODULES.get(db, module_name);
-				return module_file;
-			} catch (err) {
-				fault.major({ message: (err as ModuleNotFoundError).message });
-				throw err;
-			}
-		}
-	);
 
 	const [is_name_editable, set_name_editable] = createSignal<boolean>(false);
 	const [module_name, set_module_name] = createSignal<string>(params.module);
+	const [fetch_signal, set_fetch_signal] = createSignal<FetchModuleResult|undefined>();
+
 	return (
 		<div class="flex flex-col h-screen max-h-screen bg-night-600">
 			<HomeHeader />
 			<main class=" h-full justify-items-center p-4 dm-mono-medium flex-grow grid overflow-hidden">
 				<div class="w-3/4 h-full grid grid-cols-3 gap-4  overflow-hidden ">
 					<SideView default_open_index={1} />
-					<section class=" h-full col-span-2 p-4 gap-4 bg-night-700 overflow-hidden ">
+					<section class="flex flex-col justify-center h-full col-span-2 p-4 bg-night-700 overflow-hidden ">
 						<div class="pb-4 flex flex-row justify-between">
 							<BackButton />
 							{/* Menu */}
@@ -69,7 +60,7 @@ function ModulesPage() {
 									<button
 										title="Save the changes"
 										class="text-pl1-400 text-xl dm-sans-800 hover:text-pl1-200 transition-colors duration-200 ease-in-out"
-										onclick={(e) => {
+										onclick={async (e) => {
 											if (!e.isTrusted) return;
 											e.preventDefault();
 											// Validate the module name
@@ -84,6 +75,19 @@ function ModulesPage() {
 												return;
 											}
 											// push the change
+											try {
+												await api.post("/modules/rename", {
+													prev_name : params.module,
+													new_name : module_name()
+												});
+												await DB_MODULES.upsert(db,params.module,{name:module_name()});
+												set_name_editable(false);
+												navigate(`/module/${module_name()}`)
+											} catch (error) {
+												console.log(error);
+												
+												fault.major({message:"Failed to rename this module"});
+											}
 										}}
 									>
 										↑
@@ -135,54 +139,111 @@ function ModulesPage() {
 							</h3>
 							<div class="flex flex-row gap-4 items-end">
 								{/* Controls */}
-								{/* Fetch */}
-								<button title="Fetch and update the remote version of this module">
-									<FetchIcon />
+								{/* Push */}
+								<button 
+									title="Push this module to remote"
+									class="
+									border-4 border-night-900 px-4 h-8
+									bg-moon text-night-900 dm-sans-800 hover:bg-pl1-200
+									transition-all duration-200 ease-in-out
+									"
+									onclick={async () => {
+										try {
+											const module_data = await DB_MODULES.get(db, params.module);
+											if (!module_data) return;
+
+											await api.post('/modules/push', {
+												name : params.module,
+												code : module_data.file,
+												hmac : module_data.hmac,
+											});
+										} catch (error) {
+											fault.major({message:(error as Error).message})
+										}
+									}}
+								>
+									PUSH
 								</button>
-								<Switch>
-									<Match when={true}>
-										{/* The code is compiled */}
-										{/* Push */}
-										<button title="Push this module to remote">
-											<PushIcon
-												class="[&_path]:fill-night-200 [&_path]:hover:fill-ego
-												[&_path]:transition-all [&_path]:duration-200 [&_path]:ease-in-out"
-											/>
-										</button>
-									</Match>
-									<Match when={false}>
-										{/* The is not compiled */}
-										{/* Compile */}
-										{""}
-									</Match>
-								</Switch>
+								{/* Compile */}
+								<button 
+									title="Push this module to remote"
+									class="
+									border-4 border-night-900 px-4 h-8
+									bg-moon text-night-900 dm-sans-800 hover:bg-pl1-200
+									transition-all duration-200 ease-in-out
+									"
+									onclick={async () => {
+										try {
+											const module_data = await DB_MODULES.get(db, params.module);
+											if (!module_data) return;
+
+											const res = await api.get('/modules/prepare_compilation');
+											const data : PrepareCompilationResult = res.data;
+											const encrypted_user_id = data.encrypted_user_id;
+
+
+											const compile_res = await nexuspool.post('/common/compile', {
+												encrypted_user_id,
+												name : params.module,
+												code : module_data.file,
+											});
+											const compile_data : CompilationResult = compile_res.data;
+
+											await DB_MODULES.upsert(db,params.module,{
+												hmac : compile_data.hmac,
+											});
+										} catch (error) {
+											fault.major({message:(error as Error).message})
+										}
+									}}
+								>
+									COMPILE
+								</button>
+								{/* Fetch */}
+								<button
+									title="Fetch and update the remote version of this module"
+									onclick={async () => {
+										const res = await api.get(
+											"/modules/fetch",
+											{ params: { name: params.module } }
+										);
+										const module: FetchModuleResult =
+											res.data.module;
+										set_fetch_signal(module);
+										const module_file =
+											await DB_MODULES.upsert(
+												db,
+												module.name,
+												{
+													file: module.code,
+												}
+											);
+									}}
+								>
+									<FetchIcon class="[&_path]:fill-pl2-200 [&_path]:hover:fill-ego [&_path]:transition-all [&_path]:duration-200 [&_path]:ease-in-out" />
+								</button>
 							</div>
 						</div>
 						<Show when={is_name_editable()}>
 							<button
 								title="Delete the module, this action is irreversible"
-								class="w-full text-center text-night-400 underline underline-offset-4 pb-4"
-								onclick={() => {}}
+								class="text-center text-night-400 underline underline-offset-4 pb-4"
+								onclick={async () => {
+									try {
+										await api.post("/modules/delete", {
+											name : params.module,
+										});
+									} catch (error) {
+										fault.major({message:"Failed to delete this module"});
+									}
+								}}
 							>
 								Delete this module
 							</button>
 						</Show>
-						<Suspense fallback="loading">
-							<Show when={module_file()}>
-								{(module) => {
-									return (
-										<Barrier
-											fallback={<EditorErrorFallback />}
-										>
-											<EditorModule
-												module_path={params.module}
-												init_file={module().file}
-											/>
-										</Barrier>
-									);
-								}}
-							</Show>
-						</Suspense>
+						<Barrier fallback={<EditorErrorFallback />}>
+							<EditorModule module_path={params.module} fetch_signal={fetch_signal}/>
+						</Barrier>
 					</section>
 				</div>
 			</main>

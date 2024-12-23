@@ -28,6 +28,11 @@ export const api = axios.create({
 	adapter: "fetch",
 });
 
+export const nexuspool = axios.create({
+	baseURL: import.meta.env.NEXUSPOOL ?? "http://localhost:8080",
+	adapter: "fetch",
+});
+
 api.interceptors.request.use((config) => {
 	const csrfToken = getCSRFToken();
 	if (csrfToken) {
@@ -135,8 +140,8 @@ export class ProtectedData {
 	async init(): Promise<boolean> {
 		try {
 			const res = await api.get("/auth/refresh/session");
-			console.log(res);
 		} catch (err) {
+			console.error(err);
 			this.set_authenticated(false);
 			return false;
 		}
@@ -146,6 +151,7 @@ export class ProtectedData {
 			this.set_authenticated(true);
 			return true;
 		} catch (err) {
+			console.error(err);
 			this.set_authenticated(false);
 		}
 		return false;

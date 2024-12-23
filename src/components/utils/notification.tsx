@@ -8,6 +8,8 @@ interface NotificationCardProps {
 
 export function parseNotification(notification: Notification): string {
 	switch (notification.key) {
+		case "relationship:request":
+			return notification.content.msg;
 		case "relationship:acceptance":
 			return notification.content.msg;
 		case "duel:challenge_notification":

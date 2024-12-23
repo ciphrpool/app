@@ -3,6 +3,7 @@ import {
 	createEffect,
 	createResource,
 	JSXElement,
+	onMount,
 	Resource,
 	Show,
 	Suspense,
@@ -21,7 +22,7 @@ interface ProtectedProviderProps {
 
 export function ProtectedProvider(props: ProtectedProviderProps) {
 	const protected_data = new ProtectedData();
-	createEffect(async () => {
+	onMount(async () => {
 		const is_authenticated = await protected_data.init();
 		if (is_authenticated) {
 			console.debug("start periodic refresh");
@@ -43,7 +44,7 @@ export function useUserData<T = Resource<UserData | null>>() {
 interface UserProviderFallbackProps {}
 
 function UserProviderFallback(props: UserProviderFallbackProps) {
-	return <section class="">Loading</section>;
+	return <section class="">Loading for user</section>;
 }
 
 interface UserProviderProps {
@@ -52,24 +53,32 @@ interface UserProviderProps {
 
 export function UserProvider(props: UserProviderProps) {
 	const protected_data = useProtectedData();
-	const [user_data, { mutate, refetch }] = createResource(async () => {
-		try {
-			if (protected_data.is_authenticated()) {
-				const res = await api.get("/users/private/me");
-				const user: UserData = res.data.user;
-				return user;
-			} else {
+	const [user_data, { mutate, refetch }] = createResource(
+		protected_data.is_authenticated,
+		async () => {
+			console.log({
+				protected_data,
+				is_authenticated: protected_data.is_authenticated(),
+			});
+
+			try {
+				if (protected_data.is_authenticated()) {
+					const res = await api.get("/users/private/me");
+					const user: UserData = res.data.user;
+					console.log({ user });
+					return user;
+				} else {
+					return null;
+				}
+			} catch (err) {
+				console.log({ err });
 				return null;
 			}
-		} catch (err) {
-			return null;
 		}
-	});
+	);
 	return (
 		<UserContext.Provider value={user_data}>
-			<Show when={user_data()} fallback={<UserProviderFallback />}>
-				{props.children}
-			</Show>
+			{props.children}
 		</UserContext.Provider>
 	);
 }

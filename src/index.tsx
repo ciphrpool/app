@@ -48,99 +48,83 @@ render(
 	() => (
 		<FaultContext.Provider value={fault}>
 			<ProtectedProvider>
-				<Router>
-					{/* Protected route */}
-					<Route
-						path="/"
-						component={() => (
-							<Protected fallback={LandingPage}>
-								<Providers>
+				<Providers>
+					<Router>
+						{/* Protected route */}
+						<Route
+							path="/"
+							component={() => (
+								<Protected fallback={LandingPage}>
 									<HomePage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/arena"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/arena"
+							component={() => (
+								<Protected redirect="/">
 									<ArenaPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/duel"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/duel"
+							component={() => (
+								<Protected redirect="/">
 									<DuelPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/statistics"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/statistics"
+							component={() => (
+								<Protected redirect="/">
 									<StatisticsPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/preferences"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/preferences"
+							component={() => (
+								<Protected redirect="/">
 									<PreferencesPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/account"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/account"
+							component={() => (
+								<Protected redirect="/">
 									<AccountPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/users/search"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/users/search"
+							component={() => (
+								<Protected redirect="/">
 									<SearchPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/users/:tag"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/users/:tag"
+							component={() => (
+								<Protected redirect="/">
 									<UserPage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-					<Route
-						path="/module/:module"
-						component={() => (
-							<Protected redirect="/">
-								<Providers>
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/module/:module"
+							component={() => (
+								<Protected redirect="/">
 									<ModulePage />
-								</Providers>
-							</Protected>
-						)}
-					/>
-				</Router>
+								</Protected>
+							)}
+						/>
+					</Router>
+				</Providers>
 			</ProtectedProvider>
 
 			<FaultHandler />

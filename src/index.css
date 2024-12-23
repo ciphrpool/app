@@ -71,6 +71,9 @@
 		}
 	}
 
+	.h-p95 {
+		height: 95%;
+	}
 	.max-h-p95 {
 		max-height: 95%;
 	}

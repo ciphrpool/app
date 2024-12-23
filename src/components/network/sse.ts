@@ -93,7 +93,9 @@ export class SSE_NotificationsChannel {
 
 			while (true) {
 				const { value, done } = await reader.read();
-				if (done) break;
+				if (done) {
+					break;
+				}
 
 				// Split the chunk into individual SSE messages
 				const messages = value
@@ -114,6 +116,7 @@ export class SSE_NotificationsChannel {
 							delete (notification as { user_id?: string })
 								.user_id;
 							if (notification.type === "connected") continue;
+							console.debug(notification);
 
 							// Call all handlers
 							const handlers = this.handlers;
@@ -141,15 +144,12 @@ export class SSE_NotificationsChannel {
 			}
 		} catch (err) {
 			if ((err as Error).name === "AbortError") {
-				console.debug("SSE connection closed");
-			} else {
-				console.error("SSE connection error:", err);
-				fault.minor({ message: "SSE connection error" });
-				try {
-					await api.post("/notify/close");
-				} catch (error) {
-					fault.major({ message: "Cannot close the notifiactions" });
-				}
+				console.warn("SSE connection closed");
+			}
+			try {
+				await api.post("/notify/close");
+			} catch (error) {
+				fault.major({ message: "Cannot close the notifiactions" });
 			}
 		} finally {
 			try {

@@ -43,6 +43,18 @@ export function NotificationProvider(props: NotificationProviderProps) {
 		);
 
 		channel.connect(fault);
+
+		// setTimeout(async () => {
+		// 	try {
+		// 		console.log("PING");
+
+		// 		await api.get("/notify/ping");
+		// 	} catch (error) {
+		// 		fault.major({
+		// 			message: "Cannot refresh the notifications",
+		// 		});
+		// 	}
+		// }, 5 * 1000);
 	});
 
 	onCleanup(async () => {
