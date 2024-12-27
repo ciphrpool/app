@@ -2,7 +2,7 @@ import { useCanva, useGrid } from "@components/canvas/utils/context";
 import { useSSE_Frame } from "@components/network/sse";
 import { P1, P2 } from "@utils/player.type";
 import { format_time } from "@utils/time";
-import { createSignal, JSXElement, onMount } from "solid-js";
+import { createSignal, JSXElement, onCleanup, onMount } from "solid-js";
 import ClockIcon from "@assets/icons/clock.svg";
 import EnergyIcon from "@assets/icons/energy.svg";
 import EgoIcon from "@assets/icons/ego";
@@ -51,7 +51,7 @@ export function GameState(props: GameStateProps) {
 	});
 
 	const sse = useSSE_Frame();
-	sse.on_frame((frame) => {
+	const on_frame_cleanup = sse.on_frame((frame) => {
 		set_minute(frame.timeM!);
 		set_second(frame.timeS!);
 		set_energy(frame.energy!);
@@ -73,6 +73,10 @@ export function GameState(props: GameStateProps) {
 			max: frame.quantumDataMax!,
 		});
 	});
+
+	onCleanup(() => {
+		on_frame_cleanup();
+	})
 
 	return (
 		<>
@@ -136,7 +140,7 @@ export function Game(params: GameProps) {
 	const app = useCanva();
 	const grid = useGrid();
 	const sse = useSSE_Frame();
-	sse.on_frame((frame) => {
+	const on_frame_cleanup = sse.on_frame((frame) => {
 		if (!frame.grid) return;
 		grid.clear();
 		grid.batch_modify_cells(frame.grid);
@@ -150,6 +154,10 @@ export function Game(params: GameProps) {
 			grid.u_time = elapsed_time;
 		});
 	});
+
+	onCleanup(() => {
+		on_frame_cleanup();
+	})
 
 	return <></>;
 }

@@ -35,10 +35,10 @@ export class WebSocketCom {
 			});
 		};
 		this.socket.onclose = () => {
-			fault.info({
-				message:
-					"Communication with the cipherpool server is now closed",
-			});
+			// fault.info({
+			// 	message:
+			// 		"Communication with the cipherpool server is now closed",
+			// });
 		};
 		this.socket.onmessage = (event) => {
 			const data = new Uint8Array(event.data);
@@ -79,6 +79,10 @@ export class WebSocketCom {
 					break;
 			}
 		};
+	}
+
+	disconnect() {
+		this.socket?.close()
 	}
 
 	send(msg: ciphel_io.IAPI_IO) {

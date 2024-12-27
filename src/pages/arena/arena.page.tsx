@@ -16,7 +16,7 @@ import { Network } from "@components/network/Network";
 type ArenaSession = {
 	ws_url: string;
 	sse_url: string;
-	session_id: string;
+	encrypted_session_context: string;
 };
 
 function ArenaManager() {
@@ -26,12 +26,12 @@ function ArenaManager() {
 
 	return (
 		<Network
-			connexion_url={"http://127.0.0.1:3000/arena/unregistered"}
+			connexion_url={"/arena/prepare"}
 			socket_url={(session: ArenaSession) => {
-				return `${session?.ws_url}?session_id=${session?.session_id}`;
+				return `${session?.ws_url}?encrypted_session_context=${session?.encrypted_session_context}`;
 			}}
 			sse_url={(session: ArenaSession) => {
-				return `${session?.sse_url}?session_id=${session?.session_id}`;
+				return `${session?.sse_url}?encrypted_session_context=${session?.encrypted_session_context}`;
 			}}
 		>
 			<CursorMetadataProvider>

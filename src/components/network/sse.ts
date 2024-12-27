@@ -50,8 +50,22 @@ export class SSE_FrameChannel {
 			}
 		};
 	}
+
+	disconnect() {
+		console.log("DISCONNECTING SSE FRAME");
+		
+		this.event_source?.close()
+		this.handlers.length = 0;
+	}
+
 	on_frame(handle: (frame: ciphel_io.IFrameData) => void) {
 		this.handlers.push(handle);
+		return () => {
+			const index = this.handlers.indexOf(handle);
+			if (index > -1) {
+				this.handlers.splice(index, 1);
+			}
+		};
 	}
 }
 
