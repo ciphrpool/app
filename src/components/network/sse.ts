@@ -3,6 +3,7 @@ import { ciphel_io } from "ts_proto_api";
 import { FaultTarget } from "@components/errors/fault";
 import { Notification } from "@utils/DB/db";
 import { api } from "@utils/auth/auth";
+import { Navigator } from "@solidjs/router";
 
 const { FrameData } = ciphel_io;
 
@@ -53,8 +54,8 @@ export class SSE_FrameChannel {
 
 	disconnect() {
 		console.log("DISCONNECTING SSE FRAME");
-		
-		this.event_source?.close()
+
+		this.event_source?.close();
 		this.handlers.length = 0;
 	}
 
@@ -73,6 +74,12 @@ export class SSE_NotificationsChannel {
 	handlers: ((notification: Notification) => void)[] = [];
 	private abortController: AbortController | undefined;
 
+	navigator: Navigator | undefined;
+
+	set_navigator(navigate: Navigator) {
+		this.navigator = navigate;
+	}
+
 	async connect(fault: FaultTarget) {
 		try {
 			this.abortController = new AbortController();
@@ -85,6 +92,7 @@ export class SSE_NotificationsChannel {
 				responseType: "stream",
 				signal: this.abortController.signal,
 			});
+			console.log("start notify session");
 
 			const stream = response.data;
 			const reader = stream
@@ -130,7 +138,10 @@ export class SSE_NotificationsChannel {
 							delete (notification as { user_id?: string })
 								.user_id;
 							if (notification.type === "connected") continue;
-							console.debug(notification);
+							console.debug(
+								"Receive unhandled yet notification",
+								{ notification }
+							);
 
 							// Call all handlers
 							const handlers = this.handlers;
@@ -142,6 +153,7 @@ export class SSE_NotificationsChannel {
 								try {
 									handlers[i](notification);
 								} catch (err) {
+									console.error(err);
 									fault.minor({
 										message:
 											"Error in notification handler",
@@ -160,22 +172,15 @@ export class SSE_NotificationsChannel {
 			if ((err as Error).name === "AbortError") {
 				console.warn("SSE connection closed");
 			}
-			try {
-				await api.post("/notify/close");
-			} catch (error) {
-				fault.major({ message: "Cannot close the notifiactions" });
-			}
+			this.disconnect(fault);
 		} finally {
-			try {
-				await api.post("/notify/close");
-			} catch (error) {
-				fault.major({ message: "Cannot close the notifiactions" });
-			}
+			this.disconnect(fault);
 		}
 	}
 
 	async disconnect(fault: FaultTarget) {
 		try {
+			console.log("end notify session");
 			await api.post("/notify/close");
 		} catch (error) {
 			fault.major({ message: "Cannot close the notifiactions" });

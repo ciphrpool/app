@@ -30,7 +30,11 @@ import { useDatabase } from "@utils/DB/db.context";
 import { DB_MODULES, ModuleNotFoundError } from "@utils/DB/module.db";
 import { Module } from "@utils/DB/db";
 import { api, nexuspool } from "@utils/auth/auth";
-import { CompilationResult, FetchModuleResult, PrepareCompilationResult } from "@utils/api.type";
+import {
+	CompilationResult,
+	FetchModuleResult,
+	PrepareCompilationResult,
+} from "@utils/api.type";
 
 function ModulesPage() {
 	const params = useParams();
@@ -40,7 +44,9 @@ function ModulesPage() {
 
 	const [is_name_editable, set_name_editable] = createSignal<boolean>(false);
 	const [module_name, set_module_name] = createSignal<string>(params.module);
-	const [fetch_signal, set_fetch_signal] = createSignal<FetchModuleResult|undefined>();
+	const [fetch_signal, set_fetch_signal] = createSignal<
+		FetchModuleResult | undefined
+	>();
 
 	return (
 		<div class="flex flex-col h-screen max-h-screen bg-night-600">
@@ -76,17 +82,28 @@ function ModulesPage() {
 											}
 											// push the change
 											try {
-												await api.post("/modules/rename", {
-													prev_name : params.module,
-													new_name : module_name()
-												});
-												await DB_MODULES.upsert(db,params.module,{name:module_name()});
+												await api.post(
+													"/modules/rename",
+													{
+														prev_name:
+															params.module,
+														new_name: module_name(),
+													}
+												);
+												await DB_MODULES.upsert(
+													db,
+													params.module,
+													{ name: module_name() }
+												);
 												set_name_editable(false);
-												navigate(`/module/${module_name()}`)
+												navigate(
+													`/module/${module_name()}`
+												);
 											} catch (error) {
-												console.log(error);
-												
-												fault.major({message:"Failed to rename this module"});
+												fault.major({
+													message:
+														"Failed to rename this module",
+												});
 											}
 										}}
 									>
@@ -140,7 +157,7 @@ function ModulesPage() {
 							<div class="flex flex-row gap-4 items-end">
 								{/* Controls */}
 								{/* Push */}
-								<button 
+								<button
 									title="Push this module to remote"
 									class="
 									border-4 border-night-900 px-4 h-8
@@ -149,23 +166,30 @@ function ModulesPage() {
 									"
 									onclick={async () => {
 										try {
-											const module_data = await DB_MODULES.get(db, params.module);
+											const module_data =
+												await DB_MODULES.get(
+													db,
+													params.module
+												);
 											if (!module_data) return;
 
-											await api.post('/modules/push', {
-												name : params.module,
-												code : module_data.file,
-												hmac : module_data.hmac,
+											await api.post("/modules/push", {
+												name: params.module,
+												code: module_data.file,
+												hmac: module_data.hmac,
 											});
 										} catch (error) {
-											fault.major({message:(error as Error).message})
+											fault.major({
+												message: (error as Error)
+													.message,
+											});
 										}
 									}}
 								>
 									PUSH
 								</button>
 								{/* Compile */}
-								<button 
+								<button
 									title="Push this module to remote"
 									class="
 									border-4 border-night-900 px-4 h-8
@@ -174,26 +198,45 @@ function ModulesPage() {
 									"
 									onclick={async () => {
 										try {
-											const module_data = await DB_MODULES.get(db, params.module);
+											const module_data =
+												await DB_MODULES.get(
+													db,
+													params.module
+												);
 											if (!module_data) return;
 
-											const res = await api.get('/modules/prepare_compilation');
-											const data : PrepareCompilationResult = res.data;
-											const encrypted_user_id = data.encrypted_user_id;
+											const res = await api.get(
+												"/modules/prepare_compilation"
+											);
+											const data: PrepareCompilationResult =
+												res.data;
+											const encrypted_user_id =
+												data.encrypted_user_id;
 
+											const compile_res =
+												await nexuspool.post(
+													"/common/compile",
+													{
+														encrypted_user_id,
+														name: params.module,
+														code: module_data.file,
+													}
+												);
+											const compile_data: CompilationResult =
+												compile_res.data;
 
-											const compile_res = await nexuspool.post('/common/compile', {
-												encrypted_user_id,
-												name : params.module,
-												code : module_data.file,
-											});
-											const compile_data : CompilationResult = compile_res.data;
-
-											await DB_MODULES.upsert(db,params.module,{
-												hmac : compile_data.hmac,
-											});
+											await DB_MODULES.upsert(
+												db,
+												params.module,
+												{
+													hmac: compile_data.hmac,
+												}
+											);
 										} catch (error) {
-											fault.major({message:(error as Error).message})
+											fault.major({
+												message: (error as Error)
+													.message,
+											});
 										}
 									}}
 								>
@@ -231,10 +274,13 @@ function ModulesPage() {
 								onclick={async () => {
 									try {
 										await api.post("/modules/delete", {
-											name : params.module,
+											name: params.module,
 										});
 									} catch (error) {
-										fault.major({message:"Failed to delete this module"});
+										fault.major({
+											message:
+												"Failed to delete this module",
+										});
 									}
 								}}
 							>
@@ -242,7 +288,10 @@ function ModulesPage() {
 							</button>
 						</Show>
 						<Barrier fallback={<EditorErrorFallback />}>
-							<EditorModule module_path={params.module} fetch_signal={fetch_signal}/>
+							<EditorModule
+								module_path={params.module}
+								fetch_signal={fetch_signal}
+							/>
 						</Barrier>
 					</section>
 				</div>

@@ -25,10 +25,10 @@ export function ProtectedProvider(props: ProtectedProviderProps) {
 	onMount(async () => {
 		const is_authenticated = await protected_data.init();
 		if (is_authenticated) {
-			console.debug("start periodic refresh");
 			start_periodic_refresh();
 		}
 	});
+
 	return (
 		<ProtectedContext.Provider value={protected_data}>
 			{props.children}
@@ -56,7 +56,7 @@ export function UserProvider(props: UserProviderProps) {
 	const [user_data, { mutate, refetch }] = createResource(
 		protected_data.is_authenticated,
 		async () => {
-			console.log({
+			console.log("User Provider Create Resource", {
 				protected_data,
 				is_authenticated: protected_data.is_authenticated(),
 			});
@@ -65,13 +65,12 @@ export function UserProvider(props: UserProviderProps) {
 				if (protected_data.is_authenticated()) {
 					const res = await api.get("/users/private/me");
 					const user: UserData = res.data.user;
-					console.log({ user });
+					console.log("User Provider Create Resource ", { user });
 					return user;
 				} else {
 					return null;
 				}
 			} catch (err) {
-				console.log({ err });
 				return null;
 			}
 		}

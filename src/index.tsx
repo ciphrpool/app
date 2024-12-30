@@ -12,11 +12,12 @@ import { DatabaseProvider } from "@utils/DB/db.context";
 import Protected from "@components/auth/protected";
 import { ProtectedData } from "@utils/auth/auth";
 import { ProtectedProvider, UserProvider } from "@utils/auth/auth.context";
-import { NotificationProvider } from "@components/utils/notifications.context";
+import { NotificationProvider } from "@components/notifications/notifications.context";
 
 const HomePage = lazy(() => import("./pages/home/home.page"));
 const ArenaPage = lazy(() => import("./pages/arena/arena.page"));
 const DuelPage = lazy(() => import("./pages/duel/duel.page"));
+const WaitingPage = lazy(() => import("./pages/duel/waiting.page"));
 const StatisticsPage = lazy(() => import("./pages/statistics/statistics.page"));
 const PreferencesPage = lazy(
 	() => import("./pages/preferences/preferences.page")
@@ -68,7 +69,15 @@ render(
 							)}
 						/>
 						<Route
-							path="/duel"
+							path="/duel/waiting/:waiting_room_id"
+							component={() => (
+								<Protected redirect="/">
+									<WaitingPage />
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/duel/:duel_type/:duel_session_id"
 							component={() => (
 								<Protected redirect="/">
 									<DuelPage />

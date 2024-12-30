@@ -22,8 +22,8 @@ import { FetchModuleResult } from "@utils/api.type";
 import { api } from "@utils/auth/auth";
 
 const MODULE_EDITOR_VIEWSTATES: Map<
-string,
-monaco_editor.ICodeEditorViewState
+	string,
+	monaco_editor.ICodeEditorViewState
 > = new Map();
 
 async function GetOrFetchModule(
@@ -31,20 +31,17 @@ async function GetOrFetchModule(
 	db: AppDatabase,
 	fault: FaultTarget
 ) {
-	console.debug("About to get module");
-	console.debug(module_name);
-	
 	try {
 		let module_file = await DB_MODULES.get(db, module_name);
 		console.log("FROM DB ", { module_file });
-		
+
 		if (!module_file) {
 			// Try to fetch remote
 			const res = await api.get("/modules/fetch", {
 				params: { name: module_name },
 			});
 			const module: FetchModuleResult = res.data.module;
-			
+
 			module_file = await DB_MODULES.upsert(db, module.name, {
 				file: module.code,
 			});
@@ -59,7 +56,7 @@ async function GetOrFetchModule(
 
 type EditorModuleProps = {
 	module_path: string;
-	fetch_signal : Accessor<FetchModuleResult | undefined>
+	fetch_signal: Accessor<FetchModuleResult | undefined>;
 };
 
 function EditorModule(props: EditorModuleProps) {
@@ -113,8 +110,6 @@ function EditorModule(props: EditorModuleProps) {
 
 				const disposable = model.onDidChangeContent(() => {
 					const content = model.getValue();
-					console.debug("ABOUT TO SAVE", { content });
-
 					periodic_save(content);
 				});
 				editor.onDidDispose(() => {
@@ -201,20 +196,20 @@ function EditorModule(props: EditorModuleProps) {
 		)
 	);
 
-	createEffect(on(props.fetch_signal,
-		(module)=> {
+	createEffect(
+		on(props.fetch_signal, (module) => {
 			if (!module) return;
 			const monaco = get_monaco();
 			if (!monaco) return;
 			const editor = get_editor();
 			if (!editor) return;
-			
+
 			const model = editor.getModel();
 			if (model) {
 				model.setValue(module.code);
 			}
-		}
-	))
+		})
+	);
 
 	return (
 		<section class="w-full h-p95 max-h-p95 pb-4 overflow-hidden">

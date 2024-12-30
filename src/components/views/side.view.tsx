@@ -2,7 +2,7 @@ import Avatar from "@components/utils/avatar";
 import CarouselDetails from "@components/utils/carousel.details";
 import FriendsDetails from "@components/utils/friends.details";
 import ModulesDetails from "@components/utils/modules.details";
-import NotificationDetails from "@components/utils/notifications.details";
+import NotificationDetails from "@components/notifications/notifications.details";
 import { A } from "@solidjs/router";
 import { useUserData } from "@utils/auth/auth.context";
 import { Show } from "solid-js";

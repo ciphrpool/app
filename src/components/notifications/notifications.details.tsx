@@ -1,11 +1,18 @@
-import { createEffect, createResource, For, onMount, Show } from "solid-js";
+import {
+	createEffect,
+	createResource,
+	For,
+	onCleanup,
+	onMount,
+	Show,
+} from "solid-js";
 import CloseIcon from "@assets/icons/close.svg?component-solid";
 import { useNotifications } from "./notifications.context";
 import { Notification } from "@utils/DB/db";
 import { DB_NOTIFICATIONS } from "@utils/DB/notification.db";
 import { useDatabase } from "@utils/DB/db.context";
 import { useFault } from "@components/errors/fault";
-import NotificationCard, { parseNotification } from "./notification";
+import NotificationCard from "./notification";
 
 interface NotificationDetailsProps {}
 
@@ -19,22 +26,23 @@ function NotificationDetails(props: NotificationDetailsProps) {
 			const notifications = await DB_NOTIFICATIONS.all(db);
 			return notifications;
 		} catch (err) {
-			console.log(err);
-
 			fault.major({
 				message: "Cannot retrieve all stored notifications",
 			});
 		}
 	});
-
+	let on_notification_clean_up: () => void | undefined;
 	onMount(() => {
-		notifications_channel.on_notification((notification: Notification) => {
-			if (notification.type === "message") {
+		on_notification_clean_up = notifications_channel.on_notification(
+			(notification: Notification) => {
+				if (notification.type === "ping") return;
 				mutate([...(notifications() ?? []), notification]);
-			} else if (notification.type === "alert") {
-				fault.info({ message: parseNotification(notification) });
 			}
-		});
+		);
+	});
+
+	onCleanup(() => {
+		on_notification_clean_up?.();
 	});
 
 	return (
@@ -51,6 +59,10 @@ function NotificationDetails(props: NotificationDetailsProps) {
 				<span>&gt&gt Notifications</span>
 				<Show when={(notifications() ?? []).length > 0}>
 					<div class="border-4 border-pl1-400 w-8 h-8 flex items-center justify-center text-center text-pl1-400 bg-night-700">
+						{(() => {
+							console.log(notifications());
+							return null;
+						})()}
 						{(notifications() ?? []).length}
 					</div>
 				</Show>
@@ -64,10 +76,10 @@ function NotificationDetails(props: NotificationDetailsProps) {
 						<button
 							title="Clear all notifications"
 							class="hover:underline hover:underline-offset-4"
-							onclick={(e: MouseEvent) => {
+							onclick={async (e: MouseEvent) => {
 								if (!e.isTrusted) return;
 								mutate([]);
-								DB_NOTIFICATIONS.clear(db);
+								await DB_NOTIFICATIONS.clear(db);
 							}}
 						>
 							clear all
@@ -78,34 +90,22 @@ function NotificationDetails(props: NotificationDetailsProps) {
 					<For each={notifications()}>
 						{(notification) => {
 							return (
-								<li>
-									<NotificationCard
-										notification={notification}
-									>
-										<button
-											title="Remove this notification"
-											onclick={(e: MouseEvent) => {
-												if (!e.isTrusted) return;
-
-												DB_NOTIFICATIONS.delete(
-													db,
-													notification.id
-												);
-												mutate([
-													...(
-														notifications() ?? []
-													).filter(
-														(n) =>
-															n.id !==
-															notification.id
-													),
-												]);
-											}}
-										>
-											<CloseIcon class="grow [&_path]:fill-night-300  [&_path]:hover:fill-ego [&_path]:hover:transition-all [&_path]:hover:duration-200 [&_path]:hover:ease-in-out" />
-										</button>
-									</NotificationCard>
-								</li>
+								<NotificationCard
+									notification={notification}
+									defer_delete={async (
+										notification: Notification
+									) => {
+										await DB_NOTIFICATIONS.delete(
+											db,
+											notification.id
+										);
+										mutate([
+											...(notifications() ?? []).filter(
+												(n) => n.id !== notification.id
+											),
+										]);
+									}}
+								></NotificationCard>
 							);
 						}}
 					</For>

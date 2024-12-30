@@ -11,7 +11,7 @@ export const DB_MODULES = {
 	async upsert(
 		db: AppDatabase,
 		name: string,
-		updates: { name?: string; file?: string; hmac?: string  }
+		updates: { name?: string; file?: string; hmac?: string }
 	): Promise<Module> {
 		const existing = await db.modules.where("name").equals(name).first();
 

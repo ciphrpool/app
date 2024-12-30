@@ -76,7 +76,7 @@ export function GameState(props: GameStateProps) {
 
 	onCleanup(() => {
 		on_frame_cleanup();
-	})
+	});
 
 	return (
 		<>
@@ -157,7 +157,7 @@ export function Game(params: GameProps) {
 
 	onCleanup(() => {
 		on_frame_cleanup();
-	})
+	});
 
 	return <></>;
 }

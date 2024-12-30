@@ -39,9 +39,9 @@ export function Network<Session>(props: SocketComProps<Session>) {
 	});
 
 	onCleanup(() => {
-		ws.disconnect()
-		sse.disconnect()
-	})
+		ws.disconnect();
+		sse.disconnect();
+	});
 
 	return (
 		<SocketContext.Provider value={ws}>

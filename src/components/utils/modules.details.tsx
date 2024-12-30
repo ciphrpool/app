@@ -43,10 +43,14 @@ function ModulesDetails(props: ModulesDetailsProps) {
 					onClick={async (e) => {
 						e.preventDefault();
 						try {
-							await api.post('/modules/create',{name:`untitled_${modules()?.length ?? 0}.cl`});
-							refetch()
+							await api.post("/modules/create", {
+								name: `untitled_${modules()?.length ?? 0}.cl`,
+							});
+							refetch();
 						} catch (error) {
-							fault.major({message:"Cannot create the module"});
+							fault.major({
+								message: "Cannot create the module",
+							});
 						}
 					}}
 				>

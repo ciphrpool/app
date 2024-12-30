@@ -57,8 +57,8 @@ export type FetchModuleResult = {
 };
 
 export type PrepareCompilationResult = {
-	encrypted_user_id : string
-}
+	encrypted_user_id: string;
+};
 export type CompilationResult = {
-	hmac : string
-}
+	hmac: string;
+};

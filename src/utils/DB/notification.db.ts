@@ -10,11 +10,15 @@ export const DB_NOTIFICATIONS = {
 	},
 
 	async insert(db: AppDatabase, notification: Notification): Promise<void> {
-		await db.notifications.add(notification);
+		console.log("Notification : Inserted", { notification });
+
+		await db.notifications.add(notification, notification.id);
 	},
 
 	async delete(db: AppDatabase, id: string): Promise<void> {
-		const count = await db.modules.where("id").equals(id).delete();
+		const count = await db.notifications.where("id").equals(id).delete();
+		console.log("Notification : Deleted ", { id, count });
+
 		if (count === 0) return;
 	},
 

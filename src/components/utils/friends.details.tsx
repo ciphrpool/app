@@ -8,7 +8,7 @@ import {
 } from "solid-js";
 import UserIcon from "@assets/icons/user.svg?component-solid";
 import AddIcon from "@assets/icons/add.svg?component-solid";
-import { A } from "@solidjs/router";
+import { A, createAsync,query } from "@solidjs/router";
 import { api } from "@utils/auth/auth";
 import { GetAllFriendsResult } from "@utils/api.type";
 import { useFault } from "@components/errors/fault";
@@ -25,7 +25,8 @@ export type FriendSummaryData = {
 
 function FriendsDetails(props: FriendsDetailsProps) {
 	const fault = useFault();
-	const [friends, { mutate, refetch }] = createResource(async () => {
+
+	const friends = createAsync(async () => {
 		try {
 			const res = await api.get("/relationship/all_friends");
 			const friends: GetAllFriendsResult = res.data.friends;

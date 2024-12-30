@@ -47,7 +47,7 @@ api.interceptors.request.use((config) => {
 });
 
 export function start_periodic_refresh() {
-	const REFRESH_INTERVAL = 14 * 60 * 1000; // 14 minutes
+	const REFRESH_INTERVAL = 10 * 60 * 1000; // 10 minutes
 	let isRefreshing = false;
 
 	async function refreshToken() {
@@ -56,6 +56,7 @@ export function start_periodic_refresh() {
 		isRefreshing = true;
 		try {
 			const response = await api.get("/auth/refresh/access");
+			console.log("Refreshed access token");
 
 			if (response.data.access_token) {
 				localStorage.setItem(
@@ -72,6 +73,7 @@ export function start_periodic_refresh() {
 	}
 
 	// Set up periodic refresh
+	console.debug("start periodic refresh");
 	setInterval(refreshToken, REFRESH_INTERVAL);
 
 	// Set up 401 interceptor

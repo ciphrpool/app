@@ -82,7 +82,7 @@ export class WebSocketCom {
 	}
 
 	disconnect() {
-		this.socket?.close()
+		this.socket?.close();
 	}
 
 	send(msg: ciphel_io.IAPI_IO) {

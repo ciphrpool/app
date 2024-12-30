@@ -1,5 +1,7 @@
+import { useFault } from "@components/errors/fault";
 import CarouselDetails from "@components/utils/carousel.details";
 import { A } from "@solidjs/router";
+import { api } from "@utils/auth/auth";
 import { Match, Show, Switch } from "solid-js";
 
 export const Friendly = Symbol("Friendly");
@@ -46,6 +48,8 @@ interface StartViewProps {
 }
 
 function StartView(props: StartViewProps) {
+	const fault = useFault();
+
 	return (
 		<section class="grow h-1/3 max-h-1/2 bg-moon text-night-800 p-4">
 			{/* Duel */}
@@ -74,6 +78,31 @@ function StartView(props: StartViewProps) {
 								<button
 									title="Start a duel"
 									class="bg-pl2-600 self-center-center text-moon py-2 px-16"
+									onclick={async () => {
+										switch (props.duel_preview?.duel_type) {
+											case Friendly:
+												try {
+													await api.post(
+														"/duel/friendly/challenge",
+														{
+															opponent_tag:
+																props
+																	.duel_preview
+																	.opponent_tag,
+														}
+													);
+												} catch (error) {
+													fault.major({
+														message: `Error while challenging ${props.duel_preview.opponent_username} to a friendly duel`,
+													});
+												}
+												break;
+											case Ranked:
+												break;
+											default:
+												break;
+										}
+									}}
 								>
 									RUN
 								</button>

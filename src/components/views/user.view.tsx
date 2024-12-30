@@ -34,8 +34,6 @@ function RelationshipButtons(props: RelationshipButtonsProps) {
 					params: { user_tag: tag },
 				});
 				const relationship: GetRelationshipResult = res.data;
-				console.log(relationship);
-
 				return relationship;
 			} catch (error) {
 				fault.minor({ message: `${tag} was not found` });

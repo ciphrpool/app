@@ -1,3 +1,4 @@
+import { useNavigate } from "@solidjs/router";
 import {
 	For,
 	JSXElement,
@@ -25,10 +26,13 @@ export type Te_fault_severity =
 
 export type ErrorMsg = {
 	message: JSXElement;
+	timeout?: number;
+	on_close?: () => void;
 };
 class FaultEvent extends Event {
 	detail: ErrorMsg;
 	severity: Te_fault_severity;
+	timeout?: number;
 
 	private constructor(
 		type: fault_type,
@@ -38,6 +42,7 @@ class FaultEvent extends Event {
 		super(type);
 		this.detail = detail;
 		this.severity = severity;
+		this.timeout = detail.timeout;
 	}
 	static INFO(detail?: ErrorMsg) {
 		return new FaultEvent("info_fault", INFO, detail ?? { message: null });
@@ -95,6 +100,7 @@ export function useFault<T = FaultTarget>() {
 type FaultProps = {
 	children: JSXElement;
 	severity: Te_fault_severity;
+	timeout?: number;
 	remove: () => void;
 };
 
@@ -113,7 +119,7 @@ function FaultPopup(props: FaultProps) {
 				ref.onanimationend = () => {
 					props.remove();
 				};
-			}, 10000);
+			}, props.timeout ?? 10000);
 		}
 	});
 	return (
@@ -180,7 +186,10 @@ export function FaultHandler(props: FaultHandlerProps) {
 					{({ event: fault, id: own_id }) => (
 						<FaultPopup
 							severity={fault.severity}
+							timeout={fault.timeout}
 							remove={() => {
+								fault.detail.on_close?.();
+
 								const faults = get_faults() ?? [];
 								set_faults(
 									faults.filter(({ id }) => id !== own_id)
