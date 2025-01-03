@@ -225,6 +225,8 @@ function HandleNotificationDuelAcceptance(
 	navigate: Navigator,
 	cfg: HandleNotificationConfig
 ): HandleNotificationResult {
+	console.log("DUEL ACCEPTANCE RECEIVED", navigate);
+	
 	if (notification.key === "duel:acceptance:rejection") {
 		const url = `/`;
 		if ( cfg.is_info_enabled) {
@@ -232,9 +234,12 @@ function HandleNotificationDuelAcceptance(
 		}
 		if (notification.type === "redirect") navigate(url);
 	} else {
+		
 		const duel_session_id = notification.metadata.duel_session_id;
 		const duel_type = notification.metadata.duel_type;
 		const url = `/duel/${duel_type}/${duel_session_id}`;
+		localStorage.setItem('duel_url', url);
+		console.log("DUEL ACCEPTANCE, WILL GET REDIRECTED",url);
 		if (notification.type === "redirect") navigate(url);
 	}
 	return {
@@ -307,7 +312,7 @@ export function HandleNotification(
 	navigate: Navigator,
 	cfg: HandleNotificationConfig
 ): HandleNotificationResult {
-	if (notification.key.startsWith("relationship:request")) {
+	if (notification.key.startsWith("relationship")) {
 		return HandleNotificationRelationship(
 			notification,
 			fault,

@@ -31,6 +31,8 @@ function Control(props: ControlProps) {
 	const fault = useFault();
 
 	socket.on_request((request: ciphel_io.API_Signal) => {
+		console.log(request);
+		
 		if (request.SignalType === "spawnThread") {
 			if (
 				!request.spawnThread ||
@@ -122,7 +124,7 @@ function Control(props: ControlProps) {
 										cursor_metadata.current_cursor !==
 										cursor,
 								}}
-								e_player={P1}
+								e_player={props.side}
 								e_cursor={cursor}
 							/>
 						</Show>

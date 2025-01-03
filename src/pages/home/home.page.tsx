@@ -23,7 +23,7 @@ function HomePage() {
 							{/* Dashboard */}
 							<GraphView />
 							<CalendarView />
-							<HistoryView />
+							<HistoryView full/>
 						</div>
 						<div class=" h-full flex flex-col gap-4 overflow-hidden">
 							{/* Game */}

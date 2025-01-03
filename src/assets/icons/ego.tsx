@@ -6,6 +6,7 @@ type EgoCount = {
 };
 type EgoIconProps = {
 	get_ego_count?: () => EgoCount;
+	forced_color ?: Te_Player;
 };
 
 function EgoIcon(props: EgoIconProps) {
@@ -20,7 +21,7 @@ function EgoIcon(props: EgoIconProps) {
 	};
 
 	const get_color = () => {
-		const player = get_player();
+		const player = props.forced_color ?? get_player();
 		if (player === P1) return "#B6D6E2";
 		if (player === P2) return "#E6AC73";
 		return "#FFAFCC";

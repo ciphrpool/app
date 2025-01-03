@@ -2,6 +2,7 @@ import {
 	createContext,
 	createEffect,
 	createResource,
+	createSignal,
 	JSXElement,
 	onMount,
 	Resource,
@@ -9,10 +10,10 @@ import {
 	Suspense,
 	useContext,
 } from "solid-js";
-import { api, ProtectedData, start_periodic_refresh, UserData } from "./auth";
+import { api, start_periodic_refresh, UserData } from "./auth";
 
-export const ProtectedContext = createContext<ProtectedData>();
-export function useProtectedData<T = ProtectedData>() {
+export const ProtectedContext = createContext<Resource<boolean>>();
+export function useProtectedData<T = Resource<boolean>>() {
 	return useContext(ProtectedContext) as T;
 }
 
@@ -21,16 +22,26 @@ interface ProtectedProviderProps {
 }
 
 export function ProtectedProvider(props: ProtectedProviderProps) {
-	const protected_data = new ProtectedData();
-	onMount(async () => {
-		const is_authenticated = await protected_data.init();
-		if (is_authenticated) {
-			start_periodic_refresh();
+	const [is_authenticated] = createResource(	async () => {
+		try {
+			const res = await api.get("/auth/refresh/session");
+		} catch (err) {
+			console.error(err);
+			return false;
 		}
+
+		try {
+			const res = await api.get("/auth/check");
+			start_periodic_refresh();
+			return true;
+		} catch (err) {
+			console.error(err);
+		}
+		return false;
 	});
 
 	return (
-		<ProtectedContext.Provider value={protected_data}>
+		<ProtectedContext.Provider value={is_authenticated}>
 			{props.children}
 		</ProtectedContext.Provider>
 	);
@@ -52,17 +63,12 @@ interface UserProviderProps {
 }
 
 export function UserProvider(props: UserProviderProps) {
-	const protected_data = useProtectedData();
+	const is_authenticated = useProtectedData();
 	const [user_data, { mutate, refetch }] = createResource(
-		protected_data.is_authenticated,
-		async () => {
-			console.log("User Provider Create Resource", {
-				protected_data,
-				is_authenticated: protected_data.is_authenticated(),
-			});
-
+		is_authenticated,
+		async (is_authenticated) => {
 			try {
-				if (protected_data.is_authenticated()) {
+				if (is_authenticated) {
 					const res = await api.get("/users/private/me");
 					const user: UserData = res.data.user;
 					console.log("User Provider Create Resource ", { user });

@@ -10,13 +10,13 @@ import {
 } from "@components/errors/fault";
 import { DatabaseProvider } from "@utils/DB/db.context";
 import Protected from "@components/auth/protected";
-import { ProtectedData } from "@utils/auth/auth";
 import { ProtectedProvider, UserProvider } from "@utils/auth/auth.context";
 import { NotificationProvider } from "@components/notifications/notifications.context";
 
 const HomePage = lazy(() => import("./pages/home/home.page"));
 const ArenaPage = lazy(() => import("./pages/arena/arena.page"));
 const DuelPage = lazy(() => import("./pages/duel/duel.page"));
+const DuelResultPage = lazy(() => import("./pages/duel/duel_result.page"));
 const WaitingPage = lazy(() => import("./pages/duel/waiting.page"));
 const StatisticsPage = lazy(() => import("./pages/statistics/statistics.page"));
 const PreferencesPage = lazy(
@@ -53,9 +53,15 @@ render(
 					<Router>
 						{/* Protected route */}
 						<Route
+							path="/welcolm"
+							component={() => (
+								<LandingPage/>
+							)}
+						/>
+						<Route
 							path="/"
 							component={() => (
-								<Protected fallback={LandingPage}>
+								<Protected fallback={<LandingPage/>}>
 									<HomePage />
 								</Protected>
 							)}
@@ -63,15 +69,23 @@ render(
 						<Route
 							path="/arena"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<ArenaPage />
+								</Protected>
+							)}
+						/>
+						<Route
+							path="/duel/history/:duel_session_id"
+							component={() => (
+								<Protected redirect="/welcolm">
+									<DuelResultPage />
 								</Protected>
 							)}
 						/>
 						<Route
 							path="/duel/waiting/:waiting_room_id"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<WaitingPage />
 								</Protected>
 							)}
@@ -79,7 +93,7 @@ render(
 						<Route
 							path="/duel/:duel_type/:duel_session_id"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<DuelPage />
 								</Protected>
 							)}
@@ -87,7 +101,7 @@ render(
 						<Route
 							path="/statistics"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<StatisticsPage />
 								</Protected>
 							)}
@@ -95,7 +109,7 @@ render(
 						<Route
 							path="/preferences"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<PreferencesPage />
 								</Protected>
 							)}
@@ -103,7 +117,7 @@ render(
 						<Route
 							path="/account"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<AccountPage />
 								</Protected>
 							)}
@@ -111,7 +125,7 @@ render(
 						<Route
 							path="/users/search"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<SearchPage />
 								</Protected>
 							)}
@@ -119,7 +133,7 @@ render(
 						<Route
 							path="/users/:tag"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<UserPage />
 								</Protected>
 							)}
@@ -127,7 +141,7 @@ render(
 						<Route
 							path="/module/:module"
 							component={() => (
-								<Protected redirect="/">
+								<Protected redirect="/welcolm">
 									<ModulePage />
 								</Protected>
 							)}

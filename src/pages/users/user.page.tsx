@@ -53,24 +53,29 @@ function UserPage() {
 							<GraphView />
 						</div>
 						<div class=" h-full flex flex-col gap-4 overflow-hidden">
-							<HistoryView />
 							{/* Game */}
 							<Show
 								when={user_summary_data()}
 								fallback={"loading"}
 							>
 								{(user_summary_data) => (
-									<StartView
-										duel_preview={{
-											duel_type: Friendly,
-											opponent_elo:
-												user_summary_data().elo,
-											opponent_tag:
-												user_summary_data().tag,
-											opponent_username:
-												user_summary_data().username,
-										}}
-									/>
+									<>
+										<HistoryView against={{
+											tag:user_summary_data().tag,
+											username :user_summary_data().username
+										}}/>
+										<StartView
+											duel_preview={{
+												duel_type: Friendly,
+												opponent_elo:
+													user_summary_data().elo,
+												opponent_tag:
+													user_summary_data().tag,
+												opponent_username:
+													user_summary_data().username,
+											}}
+										/>
+									</>
 								)}
 							</Show>
 						</div>

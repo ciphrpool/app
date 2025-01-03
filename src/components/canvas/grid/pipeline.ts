@@ -77,6 +77,9 @@ export class GridRenderPipe
 			data: new Uint16Array(32 * 32 * Cell.NB_VERTICES),
 		});
 	}
+	validateRenderable(renderable: Grid) : boolean {
+		return true // TBC
+	}
 
 	build_cell(nb_cells: number): Cell {
 		return new Cell(this.grid_index_buffer, nb_cells);

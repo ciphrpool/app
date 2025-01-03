@@ -36,6 +36,7 @@ import {
 } from "./console.utils";
 import { Line } from "./Line";
 import { useSocket } from "@components/network/ws";
+import { DuelPlayerSummaryData } from "@utils/api.type";
 
 // choco <3
 type ConsoleProps = {
@@ -44,8 +45,10 @@ type ConsoleProps = {
 		[k: string]: boolean | undefined;
 	};
 	editor_api: EditorApi;
+	user_data : (pid:Te_Player) => DuelPlayerSummaryData,
 	side: Te_Player;
 };
+
 function Console(props: ConsoleProps) {
 	let input_ref!: HTMLInputElement;
 	let default_input_ref!: HTMLInputElement;
@@ -87,7 +90,7 @@ function Console(props: ConsoleProps) {
 			add_command,
 			focus
 		);
-		setup_socket_events(socket, set_lines, set_waiting_input, focus);
+		setup_socket_events(socket, set_lines, set_waiting_input, focus, props.user_data);
 		const clear_history_idx = setup_history_events(
 			default_input_ref,
 			is_focus,
@@ -214,7 +217,7 @@ function Console(props: ConsoleProps) {
 					>
 						<Line
 							is_error={false}
-							prefix={{ username: "user", file: "cmd" }}
+							prefix={{ username: props.user_data(props.side).username, file: "cmd" }}
 							readonly={""}
 							editable={true}
 							on_submit={(content) =>

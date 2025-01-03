@@ -1,9 +1,10 @@
-import { Te_Player, side_of } from "@utils/player.type";
+import { Te_Player, side_from_api, side_of } from "@utils/player.type";
 import { Accessor, Setter, onCleanup } from "solid-js";
 import { SetStoreFunction, createStore, produce } from "solid-js/store";
 import { EditorApi } from "../Editor";
 import { ciphel_io } from "ts_proto_api";
 import { WebSocketCom } from "@components/network/ws";
+import { DuelPlayerSummaryData } from "@utils/api.type";
 
 export const In = Symbol("In");
 export const Out = Symbol("Out");
@@ -22,7 +23,8 @@ export function setup_socket_events(
 	socket: WebSocketCom,
 	set_lines: SetStoreFunction<LineData[]>,
 	set_waiting_input: Setter<boolean>,
-	focus: (force?: boolean) => void
+	focus: (force?: boolean) => void,
+	user_data : (pid:Te_Player) => DuelPlayerSummaryData,
 ) {
 	if (!socket) return;
 	socket.on_request((req: ciphel_io.API_Signal) => {
@@ -76,8 +78,9 @@ export function setup_socket_events(
 		);
 		focus();
 	});
-	socket.on_stdout((msg: string) => {
-		console.debug("out >> " + msg);
+	socket.on_stdout((msg: string,pid:ciphel_io.API_PID) => {
+		console.debug("out >> " + msg, pid);
+
 		set_lines(
 			produce((draft) => {
 				if (draft.length > 0 && draft[draft.length - 1].editable) {
@@ -91,7 +94,7 @@ export function setup_socket_events(
 				}
 				draft.push({
 					content: msg,
-					username: "user",
+					username: user_data(side_from_api(pid)).username,
 					editable: false,
 					in_out: Out,
 					is_error: false,

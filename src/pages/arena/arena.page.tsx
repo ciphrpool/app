@@ -2,7 +2,7 @@ import Header from "@components/headers/ArenaHeader";
 import Footer from "@components/footers/DefaultFooter";
 import Editor, { EditorErrorFallback } from "@components/editor/Editor";
 import Control from "@components/editor/Control";
-import { P1 } from "@utils/player.type";
+import { P1, Te_Player } from "@utils/player.type";
 import Console from "@components/editor/console/Console";
 import { CursorMetadataProvider } from "@components/editor/editor.utils";
 import { createStore } from "solid-js/store";
@@ -12,6 +12,7 @@ import { Barrier } from "@components/errors/barrier";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { useFault } from "@components/errors/fault";
 import { Network } from "@components/network/Network";
+import { useUserData } from "@utils/auth/auth.context";
 
 type ArenaSession = {
 	ws_url: string;
@@ -21,7 +22,7 @@ type ArenaSession = {
 
 function ArenaManager() {
 	let pool_container!: HTMLDivElement;
-
+	const user = useUserData();
 	const editor_api = {};
 
 	return (
@@ -43,6 +44,13 @@ function ArenaManager() {
 						</Barrier>
 					</div>
 					<Console
+						user_data={(pid: Te_Player)=> {
+							return {
+								elo : user()?.elo!,
+								tag : user()?.tag!,
+								username : user()?.username!,
+							}
+						}}
 						class="flex-grow-0 max-h-[50%] overflow-hidden"
 						editor_api={editor_api}
 						side={P1}

@@ -22,6 +22,7 @@ function getCSRFToken(): string | null {
 	return null;
 }
 
+
 export const api = axios.create({
 	baseURL: import.meta.env.API ?? "http://localhost:3000",
 	withCredentials: true,
@@ -111,7 +112,8 @@ export async function signIn() {
 				withCredentials: true,
 			});
 			localStorage.setItem("ACCESS_TOKEN", res.data.access_token);
-			window.location.reload();
+			// window.location.reload();
+			window.location.href = "/";
 		}
 	} catch (error) {
 		console.error(error);
@@ -126,36 +128,3 @@ export type UserData = {
 	bio: string;
 	elo: number;
 };
-
-export class ProtectedData {
-	is_authenticated: Accessor<boolean>;
-	private set_authenticated: Setter<boolean>;
-
-	constructor() {
-		const [is_authenticated, set_authenticated] =
-			createSignal<boolean>(false);
-
-		this.is_authenticated = is_authenticated;
-		this.set_authenticated = set_authenticated;
-	}
-
-	async init(): Promise<boolean> {
-		try {
-			const res = await api.get("/auth/refresh/session");
-		} catch (err) {
-			console.error(err);
-			this.set_authenticated(false);
-			return false;
-		}
-
-		try {
-			const res = await api.get("/auth/check");
-			this.set_authenticated(true);
-			return true;
-		} catch (err) {
-			console.error(err);
-			this.set_authenticated(false);
-		}
-		return false;
-	}
-}

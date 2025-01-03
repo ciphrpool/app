@@ -172,7 +172,7 @@ export class SSE_NotificationsChannel {
 			if ((err as Error).name === "AbortError") {
 				console.warn("SSE connection closed");
 			}
-			this.disconnect(fault);
+			console.error(err);
 		} finally {
 			this.disconnect(fault);
 		}

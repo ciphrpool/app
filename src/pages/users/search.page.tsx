@@ -7,7 +7,6 @@ import HistoryView from "@components/views/history.view";
 import BinariesView from "@components/views/binaries.view";
 import StartView from "@components/views/start.view";
 import SearchView, { SearchedUserContext } from "@components/views/search.view";
-import UserView from "@components/views/user.view";
 import BackButton from "@components/utils/back.button";
 import {
 	Accessor,

@@ -4,6 +4,28 @@ export const P1 = Symbol("P1");
 export const P2 = Symbol("P2");
 export type Te_Player = typeof P1 | typeof P2;
 
+export function side_from_number(player: number): Te_Player | undefined {
+	switch (player) {
+		case 1:
+			return P1;
+		case 2:
+			return P2;
+		default:
+			return undefined;
+	}
+}
+
+export function side_from_api(player: ciphel_io.API_PID): Te_Player{
+	switch (player) {
+		case ciphel_io.API_PID.P1:
+			return P1;
+		case ciphel_io.API_PID.P2:
+			return P2;
+		default:
+			return P1;
+	}
+}
+
 export function side_of(player: Te_Player): ciphel_io.API_PID {
 	switch (player) {
 		case P1:
