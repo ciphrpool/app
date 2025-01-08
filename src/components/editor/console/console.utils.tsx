@@ -24,7 +24,7 @@ export function setup_socket_events(
 	set_lines: SetStoreFunction<LineData[]>,
 	set_waiting_input: Setter<boolean>,
 	focus: (force?: boolean) => void,
-	user_data : (pid:Te_Player) => DuelPlayerSummaryData,
+	user_data: (pid: Te_Player) => DuelPlayerSummaryData
 ) {
 	if (!socket) return;
 	socket.on_request((req: ciphel_io.API_Signal) => {
@@ -57,7 +57,8 @@ export function setup_socket_events(
 		console.debug("err >> " + msg);
 		set_lines(
 			produce((draft) => {
-				if (msg === draft[draft.length - 1].content) return;
+				if (draft.length > 1 && msg === draft[draft.length - 1].content)
+					return;
 				if (draft.length > 0 && draft[draft.length - 1].editable) {
 					draft[draft.length - 1].editable = false;
 					if (
@@ -78,7 +79,7 @@ export function setup_socket_events(
 		);
 		focus();
 	});
-	socket.on_stdout((msg: string,pid:ciphel_io.API_PID) => {
+	socket.on_stdout((msg: string, pid: ciphel_io.API_PID) => {
 		console.debug("out >> " + msg, pid);
 
 		set_lines(

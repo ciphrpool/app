@@ -44,12 +44,12 @@ function ArenaManager() {
 						</Barrier>
 					</div>
 					<Console
-						user_data={(pid: Te_Player)=> {
+						user_data={(pid: Te_Player) => {
 							return {
-								elo : user()?.elo!,
-								tag : user()?.tag!,
-								username : user()?.username!,
-							}
+								elo: user()?.elo!,
+								tag: user()?.tag!,
+								username: user()?.username!,
+							};
 						}}
 						class="flex-grow-0 max-h-[50%] overflow-hidden"
 						editor_api={editor_api}

@@ -1,26 +1,36 @@
 import { ciphel_io } from "ts_proto_api";
 
 import { useFault } from "@components/errors/fault";
-import { createSignal, JSXElement, Match, onCleanup, onMount, Show, Switch } from "solid-js";
+import {
+	createSignal,
+	JSXElement,
+	Match,
+	onCleanup,
+	onMount,
+	Show,
+	Switch,
+} from "solid-js";
 import { SocketContext, WebSocketCom } from "./ws";
 import { SSE_FrameChannel, SSE_FrameContext } from "./sse";
 import { api } from "@utils/auth/auth";
 
 type SocketComProps<S> = {
 	children?: JSXElement;
-	after?: (stage : Te_GameStage) => JSXElement;
+	after?: (stage: Te_GameStage) => JSXElement;
 	connexion_url: string;
 	socket_url: (session: S) => string;
 	sse_url: (session: S) => string;
 };
 
-
 export const STAGE_PREPARATION = Symbol("STAGE_PREPARATION");
 export const STAGE_DUEL = Symbol("STAGE_PREPARATION");
 export const STAGE_NORMAL_END = Symbol("STAGE_PREPARATION");
 export const STAGE_UNEXPECTED_END = Symbol("STAGE_PREPARATION");
-export type Te_GameStage = typeof STAGE_PREPARATION | typeof STAGE_DUEL | typeof STAGE_NORMAL_END | typeof STAGE_UNEXPECTED_END;
-
+export type Te_GameStage =
+	| typeof STAGE_PREPARATION
+	| typeof STAGE_DUEL
+	| typeof STAGE_NORMAL_END
+	| typeof STAGE_UNEXPECTED_END;
 
 export function Network<Session>(props: SocketComProps<Session>) {
 	const fault = useFault();
@@ -40,20 +50,25 @@ export function Network<Session>(props: SocketComProps<Session>) {
 			);
 			ws.on_request((req: ciphel_io.API_Signal) => {
 				console.log(req);
-				
+
 				if (req.SignalType === "sseReady") {
 					sse.connect(props.sse_url(session), fault);
 					set_stage(STAGE_DUEL);
 					return;
 				}
 				if (req.SignalType === "exit") {
-					if (req.exit?.exitDuel?.exitType === ciphel_io.API_DUEL_EXIT_TYPE.NORMAL_EXIT) {
+					if (
+						req.exit?.exitDuel?.exitType ===
+						ciphel_io.API_DUEL_EXIT_TYPE.NORMAL_EXIT
+					) {
 						console.log("NORMAL EXIT received");
 						ws.disconnect();
 						sse.disconnect();
 						set_stage(STAGE_NORMAL_END);
-					}
-					else if (req.exit?.exitDuel?.exitType === ciphel_io.API_DUEL_EXIT_TYPE.UNEXPECTED_EXIT) {
+					} else if (
+						req.exit?.exitDuel?.exitType ===
+						ciphel_io.API_DUEL_EXIT_TYPE.UNEXPECTED_EXIT
+					) {
 						console.warn("UNEXPECTED EXIT received");
 						set_stage(STAGE_UNEXPECTED_END);
 					}

@@ -6,7 +6,7 @@ type EgoCount = {
 };
 type EgoIconProps = {
 	get_ego_count?: () => EgoCount;
-	forced_color ?: Te_Player;
+	forced_color?: Te_Player;
 };
 
 function EgoIcon(props: EgoIconProps) {

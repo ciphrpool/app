@@ -1,5 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import {
+	Component,
 	For,
 	JSXElement,
 	createContext,
@@ -25,7 +26,8 @@ export type Te_fault_severity =
 	| typeof CRITICAL;
 
 export type ErrorMsg = {
-	message: JSXElement;
+	message?: string;
+	element?: (close: () => void) => JSXElement;
 	timeout?: number;
 	on_close?: () => void;
 };
@@ -45,27 +47,19 @@ class FaultEvent extends Event {
 		this.timeout = detail.timeout;
 	}
 	static INFO(detail?: ErrorMsg) {
-		return new FaultEvent("info_fault", INFO, detail ?? { message: null });
+		return new FaultEvent("info_fault", INFO, detail ?? { message: "" });
 	}
 	static MINOR(detail?: ErrorMsg) {
-		return new FaultEvent(
-			"minor_fault",
-			MINOR,
-			detail ?? { message: null }
-		);
+		return new FaultEvent("minor_fault", MINOR, detail ?? { message: "" });
 	}
 	static MAJOR(detail?: ErrorMsg) {
-		return new FaultEvent(
-			"major_fault",
-			MAJOR,
-			detail ?? { message: null }
-		);
+		return new FaultEvent("major_fault", MAJOR, detail ?? { message: "" });
 	}
 	static CRITICAL(detail?: ErrorMsg) {
 		return new FaultEvent(
 			"critical_fault",
 			CRITICAL,
-			detail ?? { message: null }
+			detail ?? { message: "" }
 		);
 	}
 }
@@ -183,22 +177,56 @@ export function FaultHandler(props: FaultHandlerProps) {
 		<Portal>
 			<div class="z-50 absolute bottom-0 my-8 left-1/2 -translate-x-1/2 h-fit w-[min(600px,90%)] flex flex-col gap-4">
 				<For each={get_faults()}>
-					{({ event: fault, id: own_id }) => (
-						<FaultPopup
-							severity={fault.severity}
-							timeout={fault.timeout}
-							remove={() => {
-								fault.detail.on_close?.();
+					{({ event: fault, id: own_id }) => {
+						if (fault.detail.element) {
+							return (
+								<FaultPopup
+									severity={fault.severity}
+									timeout={fault.timeout}
+									remove={() => {
+										fault.detail.on_close?.();
 
-								const faults = get_faults() ?? [];
-								set_faults(
-									faults.filter(({ id }) => id !== own_id)
-								);
-							}}
-						>
-							{fault.detail.message}
-						</FaultPopup>
-					)}
+										const faults = get_faults() ?? [];
+										set_faults(
+											faults.filter(
+												({ id }) => id !== own_id
+											)
+										);
+									}}
+								>
+									{fault.detail.element(() => {
+										fault.detail.on_close?.();
+
+										const faults = get_faults() ?? [];
+										set_faults(
+											faults.filter(
+												({ id }) => id !== own_id
+											)
+										);
+									})}
+								</FaultPopup>
+							);
+						} else {
+							return (
+								<FaultPopup
+									severity={fault.severity}
+									timeout={fault.timeout}
+									remove={() => {
+										fault.detail.on_close?.();
+
+										const faults = get_faults() ?? [];
+										set_faults(
+											faults.filter(
+												({ id }) => id !== own_id
+											)
+										);
+									}}
+								>
+									{fault.detail.message}
+								</FaultPopup>
+							);
+						}
+					}}
 				</For>
 			</div>
 		</Portal>

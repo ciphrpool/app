@@ -22,7 +22,6 @@ function getCSRFToken(): string | null {
 	return null;
 }
 
-
 export const api = axios.create({
 	baseURL: import.meta.env.API ?? "http://localhost:3000",
 	withCredentials: true,

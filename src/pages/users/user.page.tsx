@@ -60,10 +60,14 @@ function UserPage() {
 							>
 								{(user_summary_data) => (
 									<>
-										<HistoryView against={{
-											tag:user_summary_data().tag,
-											username :user_summary_data().username
-										}}/>
+										<HistoryView
+											against={{
+												tag: user_summary_data().tag,
+												username:
+													user_summary_data()
+														.username,
+											}}
+										/>
 										<StartView
 											duel_preview={{
 												duel_type: Friendly,
@@ -72,7 +76,8 @@ function UserPage() {
 												opponent_tag:
 													user_summary_data().tag,
 												opponent_username:
-													user_summary_data().username,
+													user_summary_data()
+														.username,
 											}}
 										/>
 									</>

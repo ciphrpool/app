@@ -8,7 +8,7 @@ import {
 } from "solid-js";
 import UserIcon from "@assets/icons/user.svg?component-solid";
 import AddIcon from "@assets/icons/add.svg?component-solid";
-import { A, createAsync,query } from "@solidjs/router";
+import { A, createAsync, query } from "@solidjs/router";
 import { api } from "@utils/auth/auth";
 import { GetAllFriendsResult } from "@utils/api.type";
 import { useFault } from "@components/errors/fault";

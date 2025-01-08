@@ -54,14 +54,12 @@ render(
 						{/* Protected route */}
 						<Route
 							path="/welcolm"
-							component={() => (
-								<LandingPage/>
-							)}
+							component={() => <LandingPage />}
 						/>
 						<Route
 							path="/"
 							component={() => (
-								<Protected fallback={<LandingPage/>}>
+								<Protected fallback={<LandingPage />}>
 									<HomePage />
 								</Protected>
 							)}

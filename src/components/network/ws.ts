@@ -14,7 +14,7 @@ export class WebSocketCom {
 	socket: WebSocket | undefined;
 
 	on_stderr_handlers: ((msg: string) => void)[] = [];
-	on_stdout_handlers: ((msg: string, pid : ciphel_io.API_PID) => void)[] = [];
+	on_stdout_handlers: ((msg: string, pid: ciphel_io.API_PID) => void)[] = [];
 	on_signal_handlers: ((req: ciphel_io.API_Signal) => void)[] = [];
 
 	constructor() {}
@@ -66,7 +66,7 @@ export class WebSocketCom {
 
 					handlers = this.on_stdout_handlers;
 					for (let i = 0, len = handlers.length; i < len; i++) {
-						handlers[i](msg,pid);
+						handlers[i](msg, pid);
 					}
 					break;
 				case "request":
@@ -108,7 +108,7 @@ export class WebSocketCom {
 	on_stderr(handler: (msg: string) => void) {
 		this.on_stderr_handlers.push(handler);
 	}
-	on_stdout(handler: (msg: string, pid : ciphel_io.API_PID) => void) {
+	on_stdout(handler: (msg: string, pid: ciphel_io.API_PID) => void) {
 		this.on_stdout_handlers.push(handler);
 	}
 }

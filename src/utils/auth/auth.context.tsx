@@ -22,7 +22,7 @@ interface ProtectedProviderProps {
 }
 
 export function ProtectedProvider(props: ProtectedProviderProps) {
-	const [is_authenticated] = createResource(	async () => {
+	const [is_authenticated] = createResource(async () => {
 		try {
 			const res = await api.get("/auth/refresh/session");
 		} catch (err) {

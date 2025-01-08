@@ -32,7 +32,7 @@ function Control(props: ControlProps) {
 
 	socket.on_request((request: ciphel_io.API_Signal) => {
 		console.log(request);
-		
+
 		if (request.SignalType === "spawnThread") {
 			if (
 				!request.spawnThread ||

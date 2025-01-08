@@ -15,7 +15,7 @@ export function side_from_number(player: number): Te_Player | undefined {
 	}
 }
 
-export function side_from_api(player: ciphel_io.API_PID): Te_Player{
+export function side_from_api(player: ciphel_io.API_PID): Te_Player {
 	switch (player) {
 		case ciphel_io.API_PID.P1:
 			return P1;

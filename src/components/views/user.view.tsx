@@ -160,7 +160,7 @@ function RelationshipButtons(props: RelationshipButtonsProps) {
 							title={`Your are friend since ${new Date(relationship()!.relationship!.createdAt).toDateString()}`}
 							class="cursor-pointer select-none"
 						>
-							followed
+							friend
 						</span>
 
 						<button

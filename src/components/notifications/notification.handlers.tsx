@@ -86,49 +86,51 @@ function HandleNotificationDuelChallengeRequest(
 		cfg.defer_delete?.(notification);
 		return { context: { persistent: false } };
 	}
-	const dismiss_function = async () => {
-		try {
-			await api.post("/duel/friendly/response", {
-				opponent_tag,
-				waiting_room_id,
-				response: false,
-			});
-			cfg.defer_delete?.(notification);
-		} catch (error) {
-			fault.minor({
-				message: "Could not reject this duel challenge",
-			});
-		}
-	};
-	const accept_function = async () => {
-		try {
-			await api.post("/duel/friendly/response", {
-				opponent_tag,
-				waiting_room_id,
-				response: true,
-			});
-			cfg.defer_delete?.(notification);
-			navigate(url);
-		} catch (error) {
-			fault.minor({
-				message: "Could not accept this duel challenge",
-			});
-		}
-	};
 
 	if (cfg.is_info_enabled) {
 		fault.info({
 			timeout: 1 * 60 * 1000, // 1 minute
-			message: (
+			element: (close) => (
 				<div class="flex flex-col gap-4">
 					{msg}
 					<ResponsePanel
 						accept_title="Click to accept this duel"
 						accept_class="px-4 py-2 bg-moon text-night-800"
-						accept={accept_function}
+						accept={async () => {
+							try {
+								await api.post("/duel/friendly/response", {
+									opponent_tag,
+									waiting_room_id,
+									response: true,
+								});
+								close();
+								cfg.defer_delete?.(notification);
+								navigate(url);
+							} catch (error) {
+								fault.minor({
+									message:
+										"Could not accept this duel challenge",
+								});
+							}
+						}}
 						reject_title="Click to dismiss this duel"
 						reject_class="px-4 py-2 border-4 border-night-900 text-night-900 hover:bg-pl1-200"
-						reject={dismiss_function}
+						reject={async () => {
+							try {
+								await api.post("/duel/friendly/response", {
+									opponent_tag,
+									waiting_room_id,
+									response: false,
+								});
+								cfg.defer_delete?.(notification);
+								close();
+							} catch (error) {
+								fault.minor({
+									message:
+										"Could not reject this duel challenge",
+								});
+							}
+						}}
 					/>
 				</div>
 			),
@@ -141,10 +143,37 @@ function HandleNotificationDuelChallengeRequest(
 			<ResponsePanel
 				accept_title="Click to accept this duel"
 				accept_class="px-4 py-2 bg-moon text-night-800"
-				accept={accept_function}
+				accept={async () => {
+					try {
+						await api.post("/duel/friendly/response", {
+							opponent_tag,
+							waiting_room_id,
+							response: true,
+						});
+						cfg.defer_delete?.(notification);
+						navigate(url);
+					} catch (error) {
+						fault.minor({
+							message: "Could not accept this duel challenge",
+						});
+					}
+				}}
 				reject_title="Click to dismiss this duel"
 				reject_class="px-4 py-2 border-4 border-pl2-400 text-pl2-400"
-				reject={dismiss_function}
+				reject={async () => {
+					try {
+						await api.post("/duel/friendly/response", {
+							opponent_tag,
+							waiting_room_id,
+							response: false,
+						});
+						cfg.defer_delete?.(notification);
+					} catch (error) {
+						fault.minor({
+							message: "Could not reject this duel challenge",
+						});
+					}
+				}}
 			/>
 		),
 	};
@@ -168,25 +197,41 @@ function HandleNotificationDuelChallengeCreation(
 		return { context: { persistent: false } };
 	}
 
-	const link = (
-		<p
-			title="Click to go to the duel !"
-			onclick={async (e: MouseEvent) => {
-				e.preventDefault();
-				navigate(url);
-			}}
-			class="cursor-pointer"
-		>
-			{msg}
-		</p>
-	);
 	if (cfg.is_info_enabled) {
 		fault.info({
 			timeout: 20 * 1000, // 20 seconds
-			message: link,
+			element: (close) => {
+				return (
+					<p
+						title="Click to go to the duel !"
+						onclick={async (e: MouseEvent) => {
+							e.preventDefault();
+							close();
+							navigate(url);
+						}}
+						class="cursor-pointer"
+					>
+						{msg}
+					</p>
+				);
+			},
 		});
 	}
-	return { context: { persistent: false }, content: link };
+	return {
+		context: { persistent: false },
+		content: (
+			<p
+				title="Click to go to the duel !"
+				onclick={async (e: MouseEvent) => {
+					e.preventDefault();
+					navigate(url);
+				}}
+				class="cursor-pointer"
+			>
+				{msg}
+			</p>
+		),
+	};
 }
 
 function HandleNotificationDuelChallenge(
@@ -226,20 +271,19 @@ function HandleNotificationDuelAcceptance(
 	cfg: HandleNotificationConfig
 ): HandleNotificationResult {
 	console.log("DUEL ACCEPTANCE RECEIVED", navigate);
-	
+
 	if (notification.key === "duel:acceptance:rejection") {
 		const url = `/`;
-		if ( cfg.is_info_enabled) {
+		if (cfg.is_info_enabled) {
 			fault.info({ message: "Friendly duel has been rejected" });
 		}
 		if (notification.type === "redirect") navigate(url);
 	} else {
-		
 		const duel_session_id = notification.metadata.duel_session_id;
 		const duel_type = notification.metadata.duel_type;
 		const url = `/duel/${duel_type}/${duel_session_id}`;
-		localStorage.setItem('duel_url', url);
-		console.log("DUEL ACCEPTANCE, WILL GET REDIRECTED",url);
+		localStorage.setItem("duel_url", url);
+		console.log("DUEL ACCEPTANCE, WILL GET REDIRECTED", url);
 		if (notification.type === "redirect") navigate(url);
 	}
 	return {
@@ -261,7 +305,9 @@ function HandleNotificationRelationship(
 			context: {
 				persistent: true,
 			},
-			content: <h3 class="text-moon">{parseNotification(notification)}</h3>,
+			content: (
+				<h3 class="text-moon">{parseNotification(notification)}</h3>
+			),
 			extra: (
 				<ResponsePanel
 					accept_title="Click to accept this friend request"

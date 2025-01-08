@@ -8,21 +8,21 @@ function WaitingPage() {
 	const navigate = useNavigate();
 	onMount(() => {
 		const interval = setInterval(async () => {
-			const saved_duel_url = localStorage.getItem('duel_url');
+			const saved_duel_url = localStorage.getItem("duel_url");
 			if (!saved_duel_url) return;
 
-			localStorage.removeItem('duel_url');
+			localStorage.removeItem("duel_url");
 			navigate(saved_duel_url);
-		},1000);
-		const timeout = setTimeout(()=> {
+		}, 1000);
+		const timeout = setTimeout(() => {
 			clearInterval(interval);
-		}, 10*1000);
-		
+		}, 10 * 1000);
+
 		onCleanup(() => {
 			clearInterval(interval);
 			clearTimeout(timeout);
 		});
-	})
+	});
 	return (
 		<div class="flex flex-col h-screen max-h-screen bg-night-600">
 			<HomeHeader />

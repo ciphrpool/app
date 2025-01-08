@@ -1,4 +1,4 @@
-import { createResource, For } from "solid-js";
+import { createResource, For, Show } from "solid-js";
 import AddIcon from "@assets/icons/add.svg?component-solid";
 import { A } from "@solidjs/router";
 import { api } from "@utils/auth/auth";
@@ -18,6 +18,7 @@ function ModulesDetails(props: ModulesDetailsProps) {
 			const res = await api.get("/modules/summary/all");
 
 			const modules: GetAllModulesSummaryResult = res.data.modules;
+
 			return modules;
 		} catch (error) {
 			fault.minor({ message: "Failed to get all your modules" });
@@ -75,7 +76,12 @@ function ModulesDetails(props: ModulesDetailsProps) {
 												./{module.name}
 											</h3>
 											{/* If the module is selected */}
-											<div class="bg-pl1-400 w-2 h-2 ml-auto"></div>
+											<Show when={module.active}>
+												<div
+													title="This module is currently active"
+													class="bg-pl1-400 w-2 h-2 ml-auto"
+												></div>
+											</Show>
 										</div>
 									</A>
 								</li>
