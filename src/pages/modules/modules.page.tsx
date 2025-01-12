@@ -304,8 +304,7 @@ function ModulesPage() {
 											name: params.module,
 										});
 										fault.major({
-											message:
-												`${params.module} is now active`,
+											message: `${params.module} is now active`,
 										});
 									} catch (error) {
 										fault.major({

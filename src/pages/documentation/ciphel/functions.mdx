@@ -1,0 +1,109 @@
+# Functions
+
+One of the most powerful features of Ciphel is its treatment of functions as first-class citizens. This means functions are treated just like any other piece of data - you can store them in variables, pass them as parameters to other functions, return them from functions, and even store them in data structures. This flexibility opens up many interesting programming possibilities.
+
+## Function Declaration Syntax
+
+The most basic way to create a function in Ciphel is using the 'fn' keyword. These are called static functions, and they form the backbone of your program's structure. A static function declaration includes the function's name, its parameters (each with a name and type), and optionally, a return type specified with the -> symbol.
+```ciphel
+fn my_function() {
+    println("Hello! World");
+}
+
+fn my_function_with_params(param : i64) -> i64 {
+    if param > 10 {
+        return param * 2;
+    }
+    return param + 1;
+}
+```
+
+
+The type of a static function follows a straightforward pattern: fn(parameter types) -> return type. If the function doesn't return anything, we use Unit as the return type. Under the hood, a static function is actually a pointer to the function's code, which means you can pass it around just like any other pointer.
+```ciphel
+fn my_function(param:i64) -> bool {
+    param > 10
+}
+
+let my_var : fn(i64)->bool = my_function;
+```
+
+## Parameter Passing
+
+Parameters in Ciphel functions are always named and typed, making it clear what kind of data the function expects and how that data will be referenced within the function. The parameters become local variables within the function's scope, accessible throughout the function's body.
+```ciphel
+
+fn my_function(first:i64, second:i64) -> bool {
+    first >= second
+}
+
+let my_var = my_function(10,20); // my_function is called with its arguments
+```
+
+## Return Values
+
+Functions in Ciphel can return any type of value, from simple primitive types to complex data structures. The return type must be declared in the function signature if the function returns something. When a function doesn't return a value, it implicitly returns Unit.
+```ciphel
+fn my_function() {
+    println("Hello! World");
+}
+// is equivalent to
+fn my_function() -> Unit {
+    println("Hello! World");
+}
+```
+When a function returns a value, you have two ways to express it: either use the 'return' keyword followed by an expression, or place an expression as the last instruction in a block. This latter approach provides a cleaner syntax when your function naturally concludes with a computation.
+```ciphel
+fn my_function(param : i64) -> i64 {
+    if param > 10 {
+        return param * 2;
+    }
+    param + 1
+}
+```
+## First-Class Functions
+
+Beyond static functions, Ciphel provides two more sophisticated types of functions: lambda functions and closures.
+
+Lambda functions are function variables that can be created anywhere in your code. They're defined as expressions with a list of named parameters followed by the function body. What makes lambdas special is that they're pure functions - they can only work with their parameters and global variables, and can't have side effects. Think of them as self-contained computational units. The type of a lambda follows the same pattern as static functions: (parameter types) -> return type. Like static functions, lambdas are pointers, but they point to data stored on the stack.
+```ciphel
+let my_var : (i64,i64) -> i64 = (x:i64,y:i64) -> x + y;
+let my_other_var : (i64,i64) -> i64 = (x:i64,y:i64) -> {
+    printf("x = {x}, y = {y}");
+    return x * y;
+};
+
+/*
+* You can create recursive lambda or closure with the rec keyword
+*/
+let rec my_recursive_function : (i64) -> i64 = (x:i64) -> {
+    if x <= 0 {
+        return x;
+    }
+    return my_recursive_function(x - 1);
+}
+```
+
+Closures take lambda functions one step further by capturing their environment. When you create a closure, it makes copies of any non-global variables it uses from its surrounding scope and stores them on the heap. This means the closure can "remember" values from when it was created, even after those values would normally be out of scope. Closures are defined similarly to lambdas but with the 'move' keyword, indicating that they take ownership of the variables they capture.
+```ciphel
+fn a_function() {
+    let acc = 0;
+    let my_closure : closed(i64) -> i64 = move (x:i64) -> {
+        acc = acc + x;
+        acc
+    };
+    printf("result : {my_closure(10)}"); // output >> "result : 10"
+    printf("result : {my_closure(10)}"); // output >> "result : 20"
+    printf("acc : {acc}");               // output >> "acc : 0"
+    // Note : since acc is copied when captured in the environment of the closure
+    // the variable acc and the captured variable acc are two different variables located at two distinct addresses
+    // if the variable acc was a pointer to heap allocated data, since the closure would copy the pointer, the data pointed would be the same,
+    // and the closure would be able to modify the data
+
+    free(my_closure); // free the closure
+}
+```
+
+A word of caution about closures: since they store their captured environment on the heap, you need to explicitly free them when you're done using them. Otherwise, you'll have a memory leak. This is one of the few places in Ciphel where memory management requires special attention.
+
+The combination of static functions, lambdas, and closures gives you a complete toolkit for working with functions as data. Each type has its own strengths: static functions for program structure, lambdas for pure computations, and closures when you need to capture the environment. Understanding when to use each type will help you write more elegant and efficient code.

@@ -20,10 +20,6 @@
 	:root {
 		@apply bg-night-900 text-moon max-h-screen;
 	}
-
-	h2 {
-		@apply uppercase tracking-widest font-semibold;
-	}
 }
 
 @layer components {
@@ -236,4 +232,188 @@ div:has(> .editor-line-readonly) {
 	font-family: "DM Mono", serif;
 	font-weight: 500;
 	font-style: italic;
+}
+
+/* PRISM SYNTAX HIGHLIGHTING COLORS FOR CODE BLOCK TAGS */
+.prose pre[class*="language-"] {
+	margin: 0;
+}
+
+.prose pre[class*="language-"] {
+	max-height: 400px; /* Adjust this value as needed */
+	overflow: auto;
+	padding: 1rem;
+	margin: 1.5rem 0;
+	background-color: #1e1e1e;
+	border-radius: 0;
+}
+
+/* Webkit scrollbar styling */
+.prose pre[class*="language-"]::-webkit-scrollbar {
+	width: 0.5rem;
+}
+
+.prose pre[class*="language-"]::-webkit-scrollbar-track {
+	background: none;
+}
+
+.prose pre[class*="language-"]::-webkit-scrollbar-thumb {
+	background: #474747;
+}
+
+.prose pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
+	background: #5c5c5c;
+}
+
+/* Ensure code doesn't wrap */
+.prose pre[class*="language-"] code {
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.6;
+}
+
+.prose p code,
+.prose li code {
+    padding: 0.2rem 0.4rem;
+    background: #1F1F1F;
+    font-family: monospace;
+}
+/* Hide backticks in MDX content when they're alone */
+.prose code:not([class])::before,
+.prose code:not([class])::after {
+    display: none !important;
+}
+/* Adjust the container to show scrollbars properly */
+.prose {
+	max-width: 100%;
+	overflow: visible;
+}
+/* Specific styles for Ciphel */
+.prose code {
+    color: #F8F4E3;
+    background: #1F1F1F;
+	border-radius: 0;
+}
+/* Remove border radius from pre elements that wrap code blocks */
+.prose pre {
+    border-radius: 0;
+}
+
+/* Ensure both inline and block code have no radius */
+.prose :not(pre) > code,
+.prose pre code {
+    border-radius: 0;
+}
+/* Token-specific styles */
+.prose code .token.comment {
+    color: #707070;
+    font-style: italic;
+}
+
+.prose code .token.constant {
+    color: #DD947E;
+}
+
+.prose code .token.keyword {
+    color: #509BB9;
+}
+
+.prose code .token.keyword.control {
+    color: #7CB4CB;
+}
+
+.prose code .token.function {
+    color: #FF70A5;
+}
+
+.prose code .token.string {
+    color: #FFAFCC;
+}
+
+.prose code .token.string.escape {
+    color: #FF478B;
+}
+
+.prose code .token.number {
+    color: #ff9385;
+}
+
+.prose code .token.operator {
+    color: #F8F4E3;
+}
+
+.prose code .token.punctuation {
+    color: #F8F4E3;
+}
+
+.prose code .token.variable {
+    color: #7587a6;
+}
+
+.prose code .token.type {
+    color: #D2914B;
+}
+
+.prose code .token.class-name {
+    color: #9b703f;
+}
+
+.prose code .token.regex {
+    color: #e9c062;
+}
+
+.prose code .token.important {
+    color: #f8f8f8;
+    font-weight: bold;
+}
+
+/* Invalid tokens */
+.prose code .token.invalid {
+    color: #f8f8f8;
+    background: #562d56bf;
+}
+
+/* HTML/XML specific */
+.prose code .token.tag {
+    color: #ac885b;
+}
+
+.prose code .token.attr-name {
+    color: #e0c589;
+}
+
+.prose code .token.attr-value {
+    color: #FFAFCC;
+}
+
+/* CSS specific */
+.prose code .token.property {
+    color: #c5af75;
+}
+
+.prose code .token.selector {
+    color: #cda869;
+}
+
+/* Additional styles for specific use cases */
+.prose code .token.deleted {
+    background: #420e09;
+    color: #f8f8f8;
+}
+
+.prose code .token.inserted {
+    background: #253b22;
+    color: #f8f8f8;
+}
+
+.prose code .token.changed {
+    background: #4a410d;
+    color: #f8f8f8;
+}
+
+/* Selection highlight */
+.prose code::selection {
+    background: #333333A1;
 }

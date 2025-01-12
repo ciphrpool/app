@@ -8,7 +8,7 @@ function Info(props: InfoProps) {
 	return (
 		<div class={props.class}>
 			<A href="/">
-				<h2 class="tracking-[0.5rem] dm-sans-400">Cipherpool</h2>
+				<h2 class="uppercase font-semibold tracking-[0.5rem] dm-sans-400">Cipherpool</h2>
 			</A>
 		</div>
 	);

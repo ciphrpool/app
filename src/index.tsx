@@ -2,6 +2,8 @@
 import { render } from "solid-js/web";
 import { Route, Router } from "@solidjs/router";
 import { JSXElement, lazy } from "solid-js";
+import "@assets/editor/prism";
+import "prismjs/themes/prism-tomorrow.css";
 import "./index.css";
 import {
 	FaultContext,
@@ -27,6 +29,7 @@ const SearchPage = lazy(() => import("./pages/users/search.page"));
 const UserPage = lazy(() => import("./pages/users/user.page"));
 const ModulePage = lazy(() => import("./pages/modules/modules.page"));
 const LandingPage = lazy(() => import("./pages/home/landing.page"));
+const DocumentationPage = lazy(() => import("./pages/documentation/documentation.page"));
 
 const root = document.getElementById("root");
 const fault = new FaultTarget();
@@ -56,6 +59,11 @@ render(
 							path="/welcolm"
 							component={() => <LandingPage />}
 						/>
+						<Route
+							path={["/documentation/:section", "/documentation"]}
+							component={() => <DocumentationPage />}
+						/>
+						{/* Protected route */}
 						<Route
 							path="/"
 							component={() => (

@@ -4,10 +4,23 @@ import solid_svg from "vite-plugin-solid-svg";
 import glsl from "vite-plugin-glsl";
 import path from "path";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import mdx from "@mdx-js/rollup";
+import type { Plugin } from "vite";
+import remarkGfm from "remark-gfm";
+import rehypePrism from "rehype-prism-plus";
+import rehypeRaw from "rehype-raw";
 
 export default defineConfig({
 	plugins: [
 		solid(),
+		mdx({
+			jsxImportSource: "solid-jsx",
+			remarkPlugins: [remarkGfm],
+			rehypePlugins: [
+				rehypeRaw,
+				[rehypePrism, { ignoreMissing: true }], // ignoreMissing prevents errors for unknown languages
+			],
+		}),
 		solid_svg({
 			defaultAsComponent: true,
 		}),
@@ -16,6 +29,7 @@ export default defineConfig({
 			test: /\.(jpe?g|png|gif|tiff|webp|svg|avif)$/i,
 			includePublic: true,
 		}),
+		protobufPatch(),
 	],
 	resolve: {
 		alias: {
@@ -27,6 +41,24 @@ export default defineConfig({
 		},
 	},
 	optimizeDeps: {
-		include: ["ts_textures"],
+		include: ["solid-js", "ts_textures"],
 	},
 });
+
+function protobufPatch(): Plugin {
+	return {
+		name: "protobuf-patch",
+		transform(code, id) {
+			// https://github.com/protobufjs/protobuf.js/issues/1754
+			if (id.endsWith("@protobufjs/inquire/index.js")) {
+				return {
+					code: code.replace(
+						`eval("quire".replace(/^/,"re"))`,
+						"require"
+					),
+					map: null,
+				};
+			}
+		},
+	};
+}

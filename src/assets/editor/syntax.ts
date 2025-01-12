@@ -13,6 +13,7 @@ const syntax = {
 		"enum",
 		"struct",
 		"union",
+		"module",
 		"as",
 		"return",
 		"let",

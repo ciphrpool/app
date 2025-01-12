@@ -1,0 +1,45 @@
+# The Ciphel Programming Language
+
+## Language Design Philosophy
+
+Ciphel was created with a specific purpose in mind: to provide players in Cipherpool with a powerful yet controlled environment for programming AI behavior. The language strikes a careful balance between flexibility and predictability, giving players the tools they need to create sophisticated strategies while maintaining fair and engaging gameplay.
+
+At its core, Ciphel embodies several key principles:
+
+Static Typing with Inference: The language uses a strong, static type system that catches errors at compile time, ensuring reliability in the heat of battle. Type inference reduces verbosity where possible, letting you focus on strategy rather than syntax. This combination provides both safety and convenience, crucial in a competitive environment.
+
+Resource Awareness: Every aspect of Ciphel is designed with resource management in mind. From the energy-based instruction scheduling to explicit memory management, the language makes resource costs visible and manageable. This creates strategic depth - it's not just about what your code does, but how efficiently it does it.
+
+Controlled Concurrency: The four-thread model with energy-based scheduling creates interesting strategic choices without overwhelming complexity. Each thread is a valuable resource that must be used wisely, and the shared heap creates opportunities for both cooperation and competition.
+
+First-Class Functions: By treating functions as first-class citizens, Ciphel enables elegant solutions to complex problems. Whether using static functions, pure lambdas, or environment-capturing closures, you have the tools to create sophisticated control structures and reusable abstractions.
+
+## Program Structure
+
+A Ciphel program is more than just a sequence of instructions - it's a strategic blueprint for your AI's behavior in the digital battleground of Cipherpool. Each program controls a cursor, an autonomous entity that explores the map, interacts with human data residue, and works to expand your AI's consciousness.
+
+Thread Organization: Each player controls four threads, which manifest as four independent cursors in the game world. These cursors are your agents of action, capable of extracting and processing data from human residue, placing machines to evolve your capabilities, and ultimately working to outmaneuver your opponent. While each cursor operates independently with its own source code, stack, and global memory, they can coordinate through the shared heap memory. This creates interesting strategic possibilities - your cursors can work together to gather resources, establish control over the map, and pursue both defensive and offensive strategies.
+
+Memory Spaces:
+- The Stack: Local variables and function calls live here, automatically managed within each scope
+- Global Memory: Thread-specific data that persists throughout execution
+- The Heap: Shared memory space for inter-thread communication and dynamic data
+
+Control Flow: Ciphel provides a rich set of control structures:
+- Conditional branching with if statements and match expressions
+- Loop constructs for repeated operations
+- Error handling for both expected and unexpected situations
+- Function calls for code organization and reuse
+
+Thread Communication: Threads can communicate through:
+- Shared heap memory
+- Thread control operations (spawn, wait, wake, join)
+- Standard output (though remember this is visible to your opponent)
+
+Resource Management: Programs must carefully manage several resources:
+- Energy consumption through instruction execution
+- Memory allocation and deallocation in the heap
+- Thread activation and deactivation
+- Stack space within each thread
+
+The structure of a Ciphel program reflects both its technical requirements and strategic purpose. Good programs are not just technically correct - they're efficiently organized, strategically sound, and resource-aware. Understanding these fundamentals is key to mastering Ciphel and succeeding in Cipherpool.

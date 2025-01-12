@@ -1,0 +1,150 @@
+# Control Flow
+
+## Conditional Statements
+
+Ciphel gives you two powerful ways to make decisions in your code: the 'if' statement and the 'match' statement.
+
+The 'if' statement is your basic decision-maker. It looks at a condition that's either true or false and decides which code to run based on that. You can chain multiple decisions together using 'else if' statements, and provide a fallback option with 'else' that runs when none of the conditions are true.
+```ciphel
+if my_var == 2 {
+    do_something();
+} // The if does not need to be followed by else block
+
+if my_other_var == 3 {
+    do_something();
+} else if my_other_var = 4 {
+    do_something_else();
+} else {
+    say_hello();
+}
+```
+
+The 'match' statement is like a more sophisticated cousin of 'if'. Instead of just working with true/false conditions, it can branch your code based on specific values. You give it an expression to evaluate, and then define different cases for the possible values that expression might have. What makes match special is that it works with all sorts of types - primitive types, strings (whether they're stored on the stack or heap), enums, and even unions. Each case is completely independent - there's no falling through from one case to another like you might see in other languages.
+```ciphel
+match my_number {
+    case 1 => {
+        do_something();
+    }
+    case 2 | 3 => { // multiple cases can be tested like that
+        do_something_else();
+    }
+    else => {
+        say_hello();
+    }
+}
+
+match my_string {
+    case "Hello! World" => {
+        do_something();
+    }
+    case "Goodbye!" => {
+        do_something_else();
+    }
+    // There is no need to have an else block here, however it is up to you to decide if it is safe to omit certains cases or else block
+}
+       
+enum MyEnum {
+    Value1,
+    Value2,
+    Value3,
+}
+
+let my_enum = MyEnum::Value2;
+match my_enum {
+    case MyEnum::Value1 => {
+        do_something();
+    },
+    case MyEnum::Value2 => {
+        do_something_else();
+    },
+    else => {
+        say_hello();
+    }
+}
+
+
+union MyUnion {
+    Point {
+        x : i64,
+        y : i64,
+    },
+    Point2 {
+        x : u32,
+        y : i64,
+    }
+}
+let my_union = MyUnion::Point2 { x : 1, y : 5 };
+match my_union {
+    case MyUnion::Point { x, y } => { // you can pattern match union to retrieve the inner fields of the matched case
+        do_something();
+    },
+    case MyUnion::Point2 { x, y } => {
+        do_something_else();
+    }
+}
+```
+## Loop Constructs
+
+When you need to repeat some code, Ciphel offers three different types of loops, each suited for different situations.
+
+The while loop is your basic conditional loop. Give it a condition, and it'll keep running its code block as long as that condition stays true. It's perfect when you don't know exactly how many times you need to loop, but you know when you want to stop.
+```ciphel
+while my_var < 10 {
+    do_something();
+}
+```
+
+The infinite loop is exactly what it sounds like - it keeps going forever (or until you tell it to stop). While this might sound dangerous, it's actually really useful in certain situations, like when you're running a continuous process.
+```ciphel
+loop {
+    do_something();
+    // the loop will never stop here, so be careful of infinite loop
+}
+```
+The for loop is your most structured option. It works with three parts: initialization (where you set up, usually by creating an index), a condition (that keeps the loop going while it's true), and an update statement (like increasing your index). It's perfect when you know exactly how many times you want to loop.
+```ciphel
+for ( let i = 0; i < 10; i = i + 1 ) {
+    do_something();
+}
+```
+All these loops come with two helpful control keywords: 'continue', which skips to the next iteration of the loop, and 'break', which exits the loop entirely. These give you fine-grained control over your loop's behavior.
+```ciphel
+for ( let i = 0; i < 10; i = i + 1 ) {
+    if i % 2 == 0 {
+        continue; // will skip to the next iteration if i is even
+    }
+    if stop_condition(i) {
+        break; // will leave the loop when stop_condition returns true
+    }
+    do_something();
+}
+```
+## Error Handling
+
+Error handling in Ciphel is designed to be both robust and flexible, handling both unexpected problems and anticipated error cases.
+
+For unexpected errors - things like stack overflows, memory violations, or dividing by zero - Ciphel's runtime includes an error handler. These are serious issues that could crash your program, but Ciphel gives you tools to handle them gracefully.
+
+For expected errors - the kind that might happen during normal operation - Ciphel uses the Error type. Functions that might fail typically return either an Error value (which can be either Ok or Err) or a tuple where the last value is an Error. When a function returns an Error, you can check its state using the Ok() or Err() functions. This makes it clear when operations succeed or fail and lets you handle both cases appropriately.
+```ciphel
+let (my_var,err) = might_fail();
+if err == Err() {
+    // my_var is unsafe to use
+    do_something();
+} else {
+    // my_var is fine
+    do_something_with(my_var);
+}
+```
+
+Ciphel also provides a 'Try else' pattern for more comprehensive error handling. This lets you try a block of code that might cause unexpected errors, and if something goes wrong, execute an else block instead. Without this pattern, unexpected errors would simply terminate the thread. It's like having a safety net for your code.
+```ciphel
+try {
+    let my_var = 2 / 0; // will panic immediatly
+    do_something(); // will never be executed
+} else {
+    do_something_else(); // will be called
+}
+```
+
+This error handling system strikes a balance between catching serious problems and dealing with expected error cases, giving you the tools you need to write reliable code that can handle both normal operation and exceptional circumstances.

@@ -115,7 +115,7 @@ export async function signIn() {
 			window.location.href = "/";
 		}
 	} catch (error) {
-		console.error(error);
+		// console.error(error);
 	}
 }
 

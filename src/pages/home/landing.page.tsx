@@ -10,13 +10,6 @@ function LandingPage() {
 			<main class=" h-full justify-items-center p-4 dm-mono-medium flex-grow grid overflow-hidden">
 				<Todo>
 					Landing Page
-					<button
-						onclick={async () => {
-							await signIn();
-						}}
-					>
-						Log in
-					</button>
 				</Todo>
 			</main>
 			<Footer />
