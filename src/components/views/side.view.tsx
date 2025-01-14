@@ -6,6 +6,8 @@ import NotificationDetails from "@components/notifications/notifications.details
 import { A } from "@solidjs/router";
 import { useUserData } from "@utils/auth/auth.context";
 import { Show } from "solid-js";
+import { logOut } from "@utils/auth/auth";
+import { useDatabase } from "@utils/DB/db.context";
 
 interface SideViewProps {
 	default_open_index?: number;
@@ -13,6 +15,7 @@ interface SideViewProps {
 
 function SideView(props: SideViewProps) {
 	const user = useUserData();
+	const db = useDatabase();
 
 	return (
 		<section class="border-4 border-night-400 p-4 flex flex-col gap-4  overflow-hidden h-full">
@@ -59,16 +62,24 @@ function SideView(props: SideViewProps) {
 							<nav class="pl-8 pt-4">
 								<ul class="flex flex-col gap-4">
 									<li class="text-night-100 hover:text-moon">
-										<A href="/statistics">
-											{String.fromCodePoint(0x2b91)}{" "}
-											Statistics
-										</A>
+										<A href="/statistics">⮑ Statistics</A>
 									</li>
 									<li class="text-night-100 hover:text-moon">
 										<A href="/preferences">⮑ Preferences</A>
 									</li>
 									<li class="text-night-100 hover:text-moon">
 										<A href="/account">⮑ Account</A>
+									</li>
+									<li class="text-night-100 hover:text-moon">
+										<button
+											title="Log out"
+											onclick={async (e: MouseEvent) => {
+												if (!e.isTrusted) return;
+												await logOut(db);
+											}}
+										>
+											⮑ Log out
+										</button>
 									</li>
 								</ul>
 							</nav>

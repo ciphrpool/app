@@ -54,6 +54,10 @@ export const DB_MODULES = {
 		if (count === 0) throw new ModuleNotFoundError(name);
 	},
 
+	async clear(db: AppDatabase): Promise<void> {
+		await db.modules.clear();
+	},
+
 	async get(db: AppDatabase, name: string): Promise<Module | undefined> {
 		return db.modules.where("name").equals(name).first();
 	},

@@ -77,7 +77,9 @@ function Console(props: ConsoleProps) {
 		if (default_input_ref && !is_waiting_input()) {
 			default_input_ref.focus();
 		}
-		outputs_ref.scrollTop = outputs_ref.scrollHeight;
+		if (outputs_ref) {
+			outputs_ref.scrollTop = outputs_ref.scrollHeight;
+		}
 	}
 
 	onMount(() => {
@@ -125,7 +127,9 @@ function Console(props: ConsoleProps) {
 					if (default_input_ref && !is_waiting_input()) {
 						default_input_ref.focus();
 					}
-					outputs_ref.scrollTop = outputs_ref.scrollHeight;
+					if (outputs_ref) {
+						outputs_ref.scrollTop = outputs_ref.scrollHeight;
+					}
 				}}
 				onFocusOut={() => set_focus(false)}
 				onClick={() => {
@@ -134,7 +138,9 @@ function Console(props: ConsoleProps) {
 						if (default_input_ref && !is_waiting_input()) {
 							default_input_ref.focus();
 						}
-						outputs_ref.scrollTop = outputs_ref.scrollHeight;
+						if (outputs_ref) {
+							outputs_ref.scrollTop = outputs_ref.scrollHeight;
+						}
 					}
 				}}
 			>

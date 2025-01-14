@@ -9,6 +9,7 @@ In Cipherpool, each player commands four threads, each representing an independe
 When you write Ciphel code, it gets compiled into Ciphel assembly instructions that the Ciphel Virtual Machine (VM) can execute. These threads don't run truly in parallel - instead, they operate under an energy-based scheduling system that ensures fair resource distribution between players.
 
 Players have several thread control operations at their disposal:
+
 - Spawning new threads (up to the four-thread limit)
 - Closing their own threads
 - Waiting for specific thread events
@@ -35,6 +36,7 @@ This energy system creates an interesting strategic element: inactive threads do
 ### Memory Management
 
 Memory in Cipherpool's runtime is divided into three main areas:
+
 - Thread-specific stack memory
 - Thread-specific global memory
 - Shared heap memory
@@ -46,6 +48,7 @@ The stack and global memory are isolated to each thread, providing safe spaces f
 The runtime maintains a single-core execution model, meaning only one thread can execute at any given moment - there's no true parallelization. This makes the energy-based scheduling system particularly important as it ensures fair distribution of processing time between all active threads.
 
 Thread states are managed by the runtime, with threads able to be:
+
 - Active (consuming energy and executing instructions)
 - Waiting (suspended until a specific condition)
 - Sleeping (suspended for a specified time)
@@ -54,6 +57,7 @@ Thread states are managed by the runtime, with threads able to be:
 ### Event Loop
 
 The runtime's event loop operates on a one-second cycle, during which:
+
 1. The scheduler examines all threads
 2. Active threads are allocated their energy quota
 3. Instructions are executed until energy quotas are exhausted

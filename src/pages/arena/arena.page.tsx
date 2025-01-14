@@ -1,5 +1,5 @@
 import Header from "@components/headers/ArenaHeader";
-import Footer from "@components/footers/DefaultFooter";
+import ArenaFooter from "@components/footers/ArenaFooter";
 import Editor, { EditorErrorFallback } from "@components/editor/Editor";
 import Control from "@components/editor/Control";
 import { P1, Te_Player } from "@utils/player.type";
@@ -82,7 +82,7 @@ function ArenaPage() {
 			<main class="flex-grow w-full overflow-hidden grid grid-cols-2 grid-flow-row">
 				<ArenaManager />
 			</main>
-			<Footer />
+			<ArenaFooter />
 		</div>
 	);
 }

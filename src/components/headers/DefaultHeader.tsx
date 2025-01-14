@@ -12,7 +12,9 @@ function Info(props: InfoProps) {
 	return (
 		<div class={props.class}>
 			<A href="/">
-				<h2 class="uppercase font-semibold tracking-[0.5rem] dm-sans-400">Cipherpool</h2>
+				<h2 class="uppercase font-semibold tracking-[0.5rem] dm-sans-400">
+					Cipherpool
+				</h2>
 			</A>
 		</div>
 	);
@@ -24,7 +26,7 @@ function DefaultHeader() {
 			<Info class="col-span-2 p-4 bg-night-700 px-8" />
 			<nav class="col-span-1 bg-moon p-4 flex justify-end px-8 gap-4">
 				<div class="flex flex-row gap-4 items-center text-night-900 select-none">
-					<button 
+					<button
 						class="text-night-900 hover:underline hover:underline-offset-4"
 						onclick={async () => {
 							await signIn();
@@ -32,7 +34,7 @@ function DefaultHeader() {
 					>
 						Sign up
 					</button>
-					 / 
+					/
 					<button
 						class="text-night-900 hover:underline hover:underline-offset-4"
 						onclick={async () => {
@@ -40,7 +42,8 @@ function DefaultHeader() {
 						}}
 					>
 						Log in
-					</button><UserIcon class="w-8 h-8"/>
+					</button>
+					<UserIcon class="w-8 h-8" />
 				</div>
 			</nav>
 		</header>

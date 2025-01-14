@@ -8,7 +8,9 @@ function Info(props: InfoProps) {
 	return (
 		<div class={props.class}>
 			<A href="/">
-				<h2 class="uppercase font-semibold tracking-[0.5rem] dm-sans-400">Cipherpool</h2>
+				<h2 class="uppercase font-semibold tracking-[0.5rem] dm-sans-400">
+					Cipherpool
+				</h2>
 			</A>
 		</div>
 	);
@@ -21,7 +23,7 @@ function HomeHeader() {
 			<nav class="col-span-1 bg-moon dm-mono-medium text-night-800 p-4 flex gap-4 justify-between px-8">
 				<A href="/leaderbord">Leaderboard</A>
 				<A href="/tournaments">Tournaments</A>
-				<A href="/docs">Docs</A>
+				<A href="/documentation">Docs</A>
 			</nav>
 		</header>
 	);

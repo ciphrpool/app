@@ -21,22 +21,26 @@ A Ciphel program is more than just a sequence of instructions - it's a strategic
 Thread Organization: Each player controls four threads, which manifest as four independent cursors in the game world. These cursors are your agents of action, capable of extracting and processing data from human residue, placing machines to evolve your capabilities, and ultimately working to outmaneuver your opponent. While each cursor operates independently with its own source code, stack, and global memory, they can coordinate through the shared heap memory. This creates interesting strategic possibilities - your cursors can work together to gather resources, establish control over the map, and pursue both defensive and offensive strategies.
 
 Memory Spaces:
+
 - The Stack: Local variables and function calls live here, automatically managed within each scope
 - Global Memory: Thread-specific data that persists throughout execution
 - The Heap: Shared memory space for inter-thread communication and dynamic data
 
 Control Flow: Ciphel provides a rich set of control structures:
+
 - Conditional branching with if statements and match expressions
 - Loop constructs for repeated operations
 - Error handling for both expected and unexpected situations
 - Function calls for code organization and reuse
 
 Thread Communication: Threads can communicate through:
+
 - Shared heap memory
 - Thread control operations (spawn, wait, wake, join)
 - Standard output (though remember this is visible to your opponent)
 
 Resource Management: Programs must carefully manage several resources:
+
 - Energy consumption through instruction execution
 - Memory allocation and deallocation in the heap
 - Thread activation and deactivation

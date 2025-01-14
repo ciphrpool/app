@@ -29,7 +29,9 @@ const SearchPage = lazy(() => import("./pages/users/search.page"));
 const UserPage = lazy(() => import("./pages/users/user.page"));
 const ModulePage = lazy(() => import("./pages/modules/modules.page"));
 const LandingPage = lazy(() => import("./pages/home/landing.page"));
-const DocumentationPage = lazy(() => import("./pages/documentation/documentation.page"));
+const DocumentationPage = lazy(
+	() => import("./pages/documentation/documentation.page")
+);
 
 const root = document.getElementById("root");
 const fault = new FaultTarget();

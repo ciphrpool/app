@@ -1,4 +1,7 @@
 import { useNavigate } from "@solidjs/router";
+import { AppDatabase } from "@utils/DB/db";
+import { DB_MODULES } from "@utils/DB/module.db";
+import { DB_NOTIFICATIONS } from "@utils/DB/notification.db";
 import axios from "axios";
 import {
 	Accessor,
@@ -114,6 +117,29 @@ export async function signIn() {
 			// window.location.reload();
 			window.location.href = "/";
 		}
+	} catch (error) {
+		// console.error(error);
+	}
+}
+
+export async function logOut(db: AppDatabase) {
+	try {
+		const res = await api.post("/auth/logout");
+
+		// Clear all cookies
+		document.cookie.split(";").forEach((cookie) => {
+			document.cookie = cookie
+				.replace(/^ +/, "")
+				.replace(
+					/=.*/,
+					`=;expires=${new Date(0).toUTCString()};path=/`
+				);
+		});
+		localStorage.clear();
+		sessionStorage.clear();
+		DB_MODULES.clear(db);
+		DB_NOTIFICATIONS.clear(db);
+		window.location.href = "/";
 	} catch (error) {
 		// console.error(error);
 	}

@@ -276,14 +276,14 @@ div:has(> .editor-line-readonly) {
 
 .prose p code,
 .prose li code {
-    padding: 0.2rem 0.4rem;
-    background: #1F1F1F;
-    font-family: monospace;
+	padding: 0.2rem 0.4rem;
+	background: #1f1f1f;
+	font-family: monospace;
 }
 /* Hide backticks in MDX content when they're alone */
 .prose code:not([class])::before,
 .prose code:not([class])::after {
-    display: none !important;
+	display: none !important;
 }
 /* Adjust the container to show scrollbars properly */
 .prose {
@@ -292,128 +292,128 @@ div:has(> .editor-line-readonly) {
 }
 /* Specific styles for Ciphel */
 .prose code {
-    color: #F8F4E3;
-    background: #1F1F1F;
+	color: #f8f4e3;
+	background: #1f1f1f;
 	border-radius: 0;
 }
 /* Remove border radius from pre elements that wrap code blocks */
 .prose pre {
-    border-radius: 0;
+	border-radius: 0;
 }
 
 /* Ensure both inline and block code have no radius */
 .prose :not(pre) > code,
 .prose pre code {
-    border-radius: 0;
+	border-radius: 0;
 }
 /* Token-specific styles */
 .prose code .token.comment {
-    color: #707070;
-    font-style: italic;
+	color: #707070;
+	font-style: italic;
 }
 
 .prose code .token.constant {
-    color: #DD947E;
+	color: #dd947e;
 }
 
 .prose code .token.keyword {
-    color: #509BB9;
+	color: #509bb9;
 }
 
 .prose code .token.keyword.control {
-    color: #7CB4CB;
+	color: #7cb4cb;
 }
 
 .prose code .token.function {
-    color: #FF70A5;
+	color: #ff70a5;
 }
 
 .prose code .token.string {
-    color: #FFAFCC;
+	color: #ffafcc;
 }
 
 .prose code .token.string.escape {
-    color: #FF478B;
+	color: #ff478b;
 }
 
 .prose code .token.number {
-    color: #ff9385;
+	color: #ff9385;
 }
 
 .prose code .token.operator {
-    color: #F8F4E3;
+	color: #f8f4e3;
 }
 
 .prose code .token.punctuation {
-    color: #F8F4E3;
+	color: #f8f4e3;
 }
 
 .prose code .token.variable {
-    color: #7587a6;
+	color: #7587a6;
 }
 
 .prose code .token.type {
-    color: #D2914B;
+	color: #d2914b;
 }
 
 .prose code .token.class-name {
-    color: #9b703f;
+	color: #9b703f;
 }
 
 .prose code .token.regex {
-    color: #e9c062;
+	color: #e9c062;
 }
 
 .prose code .token.important {
-    color: #f8f8f8;
-    font-weight: bold;
+	color: #f8f8f8;
+	font-weight: bold;
 }
 
 /* Invalid tokens */
 .prose code .token.invalid {
-    color: #f8f8f8;
-    background: #562d56bf;
+	color: #f8f8f8;
+	background: #562d56bf;
 }
 
 /* HTML/XML specific */
 .prose code .token.tag {
-    color: #ac885b;
+	color: #ac885b;
 }
 
 .prose code .token.attr-name {
-    color: #e0c589;
+	color: #e0c589;
 }
 
 .prose code .token.attr-value {
-    color: #FFAFCC;
+	color: #ffafcc;
 }
 
 /* CSS specific */
 .prose code .token.property {
-    color: #c5af75;
+	color: #c5af75;
 }
 
 .prose code .token.selector {
-    color: #cda869;
+	color: #cda869;
 }
 
 /* Additional styles for specific use cases */
 .prose code .token.deleted {
-    background: #420e09;
-    color: #f8f8f8;
+	background: #420e09;
+	color: #f8f8f8;
 }
 
 .prose code .token.inserted {
-    background: #253b22;
-    color: #f8f8f8;
+	background: #253b22;
+	color: #f8f8f8;
 }
 
 .prose code .token.changed {
-    background: #4a410d;
-    color: #f8f8f8;
+	background: #4a410d;
+	color: #f8f8f8;
 }
 
 /* Selection highlight */
 .prose code::selection {
-    background: #333333A1;
+	background: #333333a1;
 }
