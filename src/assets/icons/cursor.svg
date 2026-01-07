@@ -1,0 +1,17 @@
+
+<svg
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <path d="M0 0H32V32H0V0Z" fill="#474747" />
+    <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M29 3H3V29H29V3ZM0 0V32H32V0H0Z"
+        fill="#F8F4E3"
+    />
+    <path d="M12 12H20V20H12V12Z" fill="#F8F4E3" />
+</svg>

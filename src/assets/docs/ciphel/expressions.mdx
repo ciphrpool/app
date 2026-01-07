@@ -1,0 +1,88 @@
+# Expressions
+
+In Ciphel, expressions are at the heart of how we compute and transform data. An expression is any piece of code that produces or modifies data. Let's break down the different types of expressions and how they work together.
+
+## Basic Operations
+
+The simplest expressions are direct representations of data. These could be basic numbers, boolean values, or even more complex data structures like arrays or custom structs.
+
+```ciphel
+let my_var =
+    /* here come the expression */
+    ( "Hello! World", 10);
+
+// Note : an expression can also be block with its own scope
+// therefore the following can be done
+let my_var = {
+    let my_inner_var = 10;
+    do_something(&my_inner_var);
+
+    my_inner_var
+};
+// In this case the block will be executed once at the assignation of my_var
+```
+
+When you want to perform operations on data, Ciphel provides a rich set of operators that follow standard mathematical precedence rules:
+
+- Arithmetic operators for working with numbers:
+
+    - Multiplication (\*), Division (/), Modulo (%)
+    - Addition (+), Subtraction (-)
+    - Bit shifting left (\<\<) and right (>>)
+    - Bitwise operations: AND (&), OR (|), XOR (^)
+
+- Comparison operators that produce boolean results:
+
+    - Greater than (>), Greater than or equal (>=)
+    - Less than (\<), Less than or equal (\<=)
+    - Equal (==), Not equal (!=)
+
+- Logical operators for boolean operations:
+    - AND (&&), OR (||)
+    - NOT (!)
+
+These operators can be combined to form more complex expressions, with parentheses available to override the default operator precedence when needed.
+
+```ciphel
+let my_var = 6 * ( 3 + 7 ) + 10 - 1;
+```
+
+## Type Conversions
+
+Sometimes you need to convert data from one type to another, and Ciphel provides the 'as' operator for this purpose. Type conversion is explicit in Ciphel - you always need to say exactly what type you're converting to, which helps prevent unexpected behavior in your code.
+
+```ciphel
+let my_var : u64 = ( 10i16 + 5i16 ) as u64
+// Note : that a number can be directly followed by its type,
+// like 100u8 to help the compiler figure out the type
+// when not specified a number is a i64 by default,
+// if not indicated, the type can be inferred from the surrounding context.
+// Due to the simplicity of the language and the compiler, inference is very limited.
+// Therefore, prefer explicit typing if you are not sure
+```
+
+## Conditional Expressions
+
+What makes expressions in Ciphel particularly powerful is that conditional logic can be used as expressions too. This means you can use conditions to compute values, not just control program flow.
+
+The if expression is similar to an if statement, but with one key difference: it must always produce a value. Because of this, an if expression always requires an else branch - after all, we need to know what value to produce in all cases.
+
+```ciphel
+let my_var = if my_other_var == true then {
+    10
+} else {
+    let default = 5;
+    default + 2
+};
+```
+
+The match expression takes this concept even further. Given an input expression, it produces different values based on specific cases. Just like if expressions, match expressions must be complete - they need to handle all possible cases of the input expression. You can achieve this either by explicitly handling every possible case or by providing an else case to catch any unhandled possibilities.
+
+```ciphel
+let my_var = match my_other_var {
+    case 1 | 2 => { 5 },
+    else => { 10 }
+};
+```
+
+This combination of basic operations, type conversions, and conditional expressions gives you a flexible and powerful way to compute and transform data in your programs. The ability to use conditions as expressions often lets you write more concise and clearer code than you could with just statements.

@@ -1,0 +1,158 @@
+# Basic Language Elements
+
+## Variable Declaration and Scope
+
+Let's start with one of the most fundamental concepts in Ciphel: variables. Like in most programming languages, variables are containers for data, but in Ciphel, we've made some specific design choices to keep things both powerful and manageable.
+
+Before you can use a variable, you need to declare it. This is pretty straightforward: you use the 'let' keyword, give your variable a name, and specify what type of data it will hold.
+
+```ciphel
+let my_var : u64;
+```
+
+If you already know the value you want to store, you can do that right away in the same line, and Ciphel will figure out the type for you.
+
+```ciphel
+let my_var : str = "Hello, world!";
+let my_other_var = 7; // the type is automatically set to i64
+```
+
+Variables live within scopes, which are sections of code wrapped in curly braces. Think of scopes as containers - variables declared inside a scope can only be used within that scope. However, if you declare a variable globally (outside any scope), it's accessible everywhere in that thread. This helps keep your code organized and prevents variables from interfering with each other.
+
+```ciphel
+let my_global_var : str = "Hello, world!";
+{
+    let my_private_var = 7;
+    // my_global_var is accessible here
+}
+// my_private_var is not accessible here
+```
+
+## Primitive Data Types
+
+Every programming language needs its basic building blocks, and in Ciphel, we've included a carefully chosen set of primitive types that give you all the tools you need without unnecessary complexity:
+
+- Integer Numbers:
+
+    - Unsigned (positive only): u8, u16, u32, u64, u128
+    - Signed (positive and negative): i8, i16, i32, i64, i128
+      The number after each type tells you how many bits of memory that type uses.
+
+- Characters (char): We've made characters (char) use 4 bytes to handle any UTF-8 character. This means you can work with text in pretty much any language without having to worry about character encoding issues.
+
+- Booleans (bool): The simplest type of all - just true or false. Perfect for making decisions in your code.
+
+## Composite Data Types
+
+Building on these primitive types, Ciphel provides several ways to work with more complex data structures:
+
+- String: A sequence of characters that's perfect for handling text.
+
+```ciphel
+let my_string : String = string("Hello, World!"); // Note that it is a heap allocated string
+// To define a static string
+let my_static_string : str = "Hello, World!";
+```
+
+- Vector (Vec): Think of this as a growable list of items of the same type.
+
+```ciphel
+let my_vector : Vec[u64] = vec[1,2,3]; // Note that the vector are heap allocated
+```
+
+- Array: Similar to a vector, but with a fixed size that you decide when writing your code.
+
+```ciphel
+let my_array : [3]u64 = [1,2,3];
+```
+
+- Tuple: A fixed collection that can hold different types of data in a specific order.
+
+```ciphel
+let my_tuple : (u64, bool) = (1, true);
+```
+
+- Map: A collection where each piece of data has a label (key) you can use to find it.
+
+```ciphel
+let my_map : Map[u64]bool = map {
+    1 : false,
+    2 : true,
+};
+```
+
+- Unit: Sometimes you need to say "nothing" - that's what unit is for.
+
+```ciphel
+let my_unit : Unit = unit;
+```
+
+- Any: A special type that can represent any other type when you need that flexibility.
+
+- Address: A way to reference data indirectly through a pointer.
+
+```ciphel
+let my_pointer : &u64;
+```
+
+## Type System
+
+Ciphel uses static typing, which means it checks all your types before running your code. This helps catch errors early and makes your code more reliable. While this might sound restrictive, we've included type inference to make things more convenient - when you assign a value right away, Ciphel can often figure out the type for you.
+
+You can also create your own custom types:
+
+- Structs: Your own collections of data fields, each with its own name and type.
+
+```ciphel
+struct Point {
+    x : u64,
+    y : u64,
+}
+let point = Point{
+    x : 1,
+    y : 2
+};
+```
+
+- Enums: A way to create a set of named values.
+
+```ciphel
+enum Coordonate {
+    X,
+    Y,
+    Z,
+}
+let x = Coordonate::X;
+```
+
+- Unions: A more advanced way to organize data when you need different types of structs to work together.
+
+```ciphel
+union Point {
+    Point2D {
+        x : u64,
+        y : u64,
+    },
+    Point3D {
+        x : u64,
+        y : u64,
+        z : u64,
+    },
+}
+let point = Point::Point2D{
+    x : 1,
+    y : 2
+};
+```
+
+## Memory Management
+
+Memory in Ciphel is straightforward but powerful. Each player gets four threads to work with, and each thread has its own memory space:
+
+The Stack is where your local variables live. It's fast and automatically managed - when a scope ends, all its variables are cleaned up automatically. Just be careful not to use too much stack space, as it's limited.
+
+Global Memory is available throughout a thread's lifetime. Variables you declare globally stick around as long as the thread is running.
+
+The Heap is shared between all players and threads. You can allocate and free memory here as needed, but you need to manage it yourself - there's no automatic cleanup. This gives you a lot of flexibility, but you'll need to be careful to clean up after yourself to avoid memory leaks.
+
+Making good use of these memory spaces is key to writing efficient Ciphel code. Each has its strengths, and learning when to use which type of memory will make your programs more effective.

@@ -1,0 +1,160 @@
+# Standard Library
+
+## Core Functions
+
+### Error Handling
+
+- `core::Err()` : Returns the error value of an Error type
+- `core::Ok()` : Returns the success value of an Error type
+- `core::assert(condition: bool)` : Verifies a condition, terminates the thread if false
+
+### Memory Management
+
+- `core::mem::len(container: T) -> u64` : Returns the length of a container (String, Vec, Map)
+- `core::mem::cap(container: T) -> u64` : Returns the capacity of a container
+- `core::mem::free(ptr: &T)` : Deallocates memory allocated on the heap, Note that since vector, map, functions and string are already pointers there is no need to add '&' when freeing them
+- `core::mem::alloc(size: u64) -> &T` : Allocates memory on the heap
+- `core::mem::memcpy(dst: &T, src: &T, size: u64)` : Copies memory from source to destination
+- `core::mem::size_of(type: T) -> u64` : Returns the size in bytes of a type
+
+### Vector Operations
+
+- `core::vector::vec(len : u64, cap: optional u64) -> Vec[Any]` : Creates a new empty vector, the capacity is optional
+- `core::vector::push(vec: Vec[T], item: T)` : Adds an item to the end of a vector
+- `core::vector::pop(vec: Vec[T]) -> T` : Removes and returns the last item of a vector
+- `core::vector::extend(vec: Vec[T], other: []T)` : Adds all items from other array
+- `core::vector::delete(vec: Vec[T], index: u64)` : Removes item at specified index
+- `core::vector::clear_vec(vec: Vec[T])` : Removes all items from vector
+
+### Map Operations
+
+- `core::map::map(capacity : optional u64) -> Map[K]V` : Creates a new empty map, the capacity is optional
+- `core::map::insert(map: Map[K]V, key: K, value: V)` : Inserts key-value pair into map
+- `core::map::delete_key(map: Map[K]V, key: K)` : Removes entry with specified key
+- `core::map::get(map: Map[K]V, key: K) -> V` : Returns value associated with key
+- `core::map::clear_map(map: Map[K]V)` : Removes all entries from map
+- `core::map::free_map(map: Map[K]V)` : Deallocates map memory
+
+### String Operations
+
+- `core::string::string() -> String` : Creates a new empty string
+- `core::string::append(str: String, other: String)` : Concatenates two strings
+- `core::string::char_at(str: String, index: u64) -> char` : Returns character at specified index
+- `core::string::to_str(value: T) -> String` : Converts value to string representation
+- `core::string::clear_string(str: String)` : Removes all characters from string
+
+### Format Conversions
+
+- `core::format::format(value: str) -> String` : Formatted string, expressions are delimited by brackets
+- `core::format::itoa(value: i64) -> String` : Converts integer to string
+- `core::format::atoi(str: String) -> i64` : Converts string to integer
+- `core::format::ftoa(value: f64) -> String` : Converts float to string
+- `core::format::atof(str: String) -> f64` : Converts string to float
+- `core::format::btoa(value: bool) -> String` : Converts boolean to string
+- `core::format::atob(str: String) -> bool` : Converts string to boolean
+- `core::format::ctoa(value: char) -> String` : Converts character to string
+- `core::format::atoc(str: String) -> char` : Converts string to character
+
+### Thread Management
+
+- `core::thread::spawn(func: fn()) -> u64` : Creates new thread running specified function
+- `core::thread::close(thread_id: u64)` : Terminates specified thread
+- `core::thread::exit()` : Terminates current thread
+- `core::thread::wait()` : Suspends current thread
+- `core::thread::wake(thread_id: u64)` : Resumes specified thread
+- `core::thread::sleep(seconds: u64)` : Suspends thread for specified duration
+- `core::thread::join(thread_id: u64)` : Waits for specified thread to finish
+
+### Input/Output
+
+- `core::io::print(value: String or str)` : Outputs value without newline
+- `core::io::println(value: String or str)` : Outputs value with newline
+- `core::io::printf(format: str)` : Formatted output, expressions are delimited by brackets
+- `core::io::scan() -> String` : Reads input from standard input
+- `core::io::to_str(value: T) -> String` : Converts value to string representation
+
+### Iterators
+
+- `core::iter::items(map: Map[K]V>) -> Vec[(K,V)]` : Returns a vector with the keys and the values of the map
+- `core::iter::keys(map: Map[K]V) -> Vec[K]` : Returns a vector with the keys
+- `core::iter::values(map: Map[K]V) -> Vec[V]` : Returns a vector with the values
+
+### Mathematical Functions
+
+- `core::math::ceil(x: f64) -> f64` : Rounds up to nearest integer
+- `core::math::floor(x: f64) -> f64` : Rounds down to nearest integer
+- `core::math::abs(x: T where T is a numerical type) -> T` : Returns absolute value
+- `core::math::exp(x: f64) -> f64` : Returns e raised to power x
+- `core::math::log(x: f64, base: f64) -> f64` : Returns logarithm with specified base
+- `core::math::ln(x: f64) -> f64` : Returns natural logarithm
+- `core::math::log10(x: f64) -> f64` : Returns base-10 logarithm
+- `core::math::pow(x: f64, y: f64) -> f64` : Returns x raised to power y
+- `core::math::sqrt(x: f64) -> f64` : Returns square root
+
+### Trigonometric Functions
+
+- `core::math::acos(x: f64) -> f64` : Arc cosine
+- `core::math::asin(x: f64) -> f64` : Arc sine
+- `core::math::atan(x: f64) -> f64` : Arc tangent
+- `core::math::atan2(y: f64, x: f64) -> f64` : Two-argument arc tangent
+- `core::math::cos(x: f64) -> f64` : Cosine
+- `core::math::sin(x: f64) -> f64` : Sine
+- `core::math::tan(x: f64) -> f64` : Tangent
+- `core::math::hypot(x: f64, y: f64) -> f64` : Hypotenuse
+- `core::math::deg(rad: f64) -> f64` : Converts radians to degrees
+- `core::math::rad(deg: f64) -> f64` : Converts degrees to radians
+
+### Hyperbolic Functions
+
+- `core::math::cosh(x: f64) -> f64` : Hyperbolic cosine
+- `core::math::sinh(x: f64) -> f64` : Hyperbolic sine
+- `core::math::tanh(x: f64) -> f64` : Hyperbolic tangent
+- `core::math::acosh(x: f64) -> f64` : Inverse hyperbolic cosine
+- `core::math::asinh(x: f64) -> f64` : Inverse hyperbolic sine
+- `core::math::atanh(x: f64) -> f64` : Inverse hyperbolic tangent
+
+### Constants and Special Values
+
+- `core::math::is_nan(x: f64) -> bool` : Checks if value is Not a Number
+- `core::math::is_inf(x: f64) -> bool` : Checks if value is infinite
+- `core::math::pi() -> f64` : Returns π constant
+- `core::math::e() -> f64` : Returns e constant
+- `core::math::inf() -> f64` : Returns positive infinity
+- `core::math::neg_inf() -> f64` : Returns negative infinity
+
+## 2. Cipherpool Functions
+
+- `std::cursor::left() -> Unit` : TODO
+- `std::cursor::right() -> Unit` : TODO
+- `std::cursor::up() -> Unit` : TODO
+- `std::cursor::down() -> Unit` : TODO
+- `std::cursor::pos(tid: u64) -> (u8,u8)` : TODO
+- `std::cursor::move_to(direction : std::Direction)` : TODO
+
+- `std::data::mine() -> Error` : TODO
+- `std::data::soil(x: u64, y: u64) -> u64` : TODO
+- `std::data::data_count(kind: std::Kind) -> (u64,u64)` : TODO
+- `std::data::consume(amount: u64) -> (i32, Error)` : TODO
+- `std::data::decipher(amount: u64, kind: std::Kind) -> Error` : TODO
+
+- `std::ego::claim() -> Error` : TODO
+- `std::ego::count_ego(side: std::Side) -> u64` : TODO
+- `std::ego::is_claimed(side: std::Side, x: u64, y: u64) -> bool` : TODO
+
+- `std::neuron::take() -> Error` : TODO
+
+- `std::items::drop(item_id: u128, direction: std::Direction) -> Error` : TODO
+- `std::items::activate(item_id: u128) -> Error` : TODO
+- `std::items::deactivate(item_id: u128) -> Error` : TODO
+- `std::items::craft(item : std::Item) -> (u128, Error)` : TODO
+- `std::items::kind(item_id: u128) -> (std::Item, Error)` : TODO
+- `std::items::peek(x: u64, y: u64) -> bool` : TODO
+- `std::items::pos(item_id: u128) -> ((u64,u64), Error)` : TODO
+- `std::items::is_active(item_id: u128) -> (bool, Error)` : TODO
+- `std::items::shield(item_id: u128) -> (u64, Error)` : TODO
+
+- `std::CompressionUnit::set(item_id: u128, kind: std::Kind) -> Error` : TODO
+- `std::Firewall::charge(item_id: u128, charge:u64) -> Error` : TODO
+- `std::HoneyPot::mock(item_id: u128, mock: std::Item) -> Error` : TODO
+- `std::LogicBomb::init(item_id: u128, direction: std::Direction>,charge:u64) -> Error` : TODO
+- `std::WormholeGenerator::connect(item_id: u128, link: u128) -> Error` : TODO

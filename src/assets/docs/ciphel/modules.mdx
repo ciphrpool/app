@@ -1,0 +1,66 @@
+# Modules
+
+## Module System Overview
+
+In Ciphel, modules provide a way to organize and reuse code across your programs. The module system is intentionally straightforward but powerful, allowing you to build reusable libraries of code while maintaining clean organization.
+
+## User-Defined Modules
+
+When preparing for battles in Cipherpool, you can create your own modules to package reusable code. These modules are defined using the 'module' keyword and can contain custom types, functions, and other definitions that you want to use across different threads or programs.
+
+One important restriction to note is that in any Cipherpool arena or duel, you can only import one external module. This limitation encourages thoughtful organization of your code and adds an interesting strategic element to module design.
+
+To access items from a module, use the double colon syntax. For example, if you have a module named 'strategies', you could call a function from it like this: strategies::capture_neuron(). This clear naming helps keep your code organized and readable.
+
+```ciphel
+module MyModule {
+
+    fn my_function() {
+        println("Hello, World");
+    }
+
+}
+```
+
+Ciphel provides a convenient shortcut: when there's no ambiguity about where a function or type comes from, you can omit the module name entirely. For instance, core functions like `core::mem::alloc` can be simply called as `alloc`. This makes your code cleaner and more readable while still maintaining the benefits of the module system.
+
+## Built-in Modules
+
+Ciphel comes with two main built-in modules that provide essential functionality:
+
+### The Core Module
+
+The core module (accessed via 'core::') is always available and provides fundamental operations. It's organized into several submodules, each focusing on specific aspects of system interaction:
+
+- Memory management functions
+- Thread control and synchronization
+- Basic data structures
+- Error handling
+- Mathematical operations
+
+### The Standard Library Module
+
+The std module (accessed via 'std::') contains higher-level functionality, including everything needed to interact with the Cipherpool game world:
+
+- Map interaction functions
+- Data extraction and processing
+- Resource management
+- Game state queries
+- Strategic operations
+
+## Module Organization
+
+One unique aspect of Ciphel's module system is that only the built-in modules (core and std) can have submodules. User-defined modules must maintain a flat structure. This design decision keeps custom modules simple and easy to understand while allowing the standard libraries to maintain a more complex organization.
+
+## Strategic Considerations
+
+Since you can only import one custom module in a match, module design becomes an important strategic consideration. Your module needs to package all the custom functionality you might need during a match, balanced against the performance impact of larger modules.
+
+Consider:
+
+- Which functions and types you use frequently
+- How to organize related functionality
+- The balance between module size and functionality
+- Which operations need to be customized versus using standard library functions
+
+The module system in Ciphel thus becomes not just a code organization tool, but a strategic element in your overall approach to Cipherpool matches.
